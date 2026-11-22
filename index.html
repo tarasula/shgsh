@@ -340,7 +340,7 @@ const S=[
   npcs:[{id:'milkis',x:5,y:12,say:'Бит был на флешке… я её посеяла в спортзале.'},{id:'polina',x:30,y:6,sit:1,say:'Я заняла тебе место. Ну и сцену тоже.'},{id:'sasha',x:29,y:8,sit:1,say:'Шапку не сниму даже на концерте.'},{id:'oreh',x:35,y:6,sit:1,say:'Надеюсь, после концерта будет буфет.'},{id:'german',x:34,y:8,sit:1,say:'Мы с Орехом выступаем перед вами. Готовься.'},{id:'natasha',x:36,y:8,sit:1,say:'Все пришли. Ждём только вас.'},{id:'kamran',x:31,y:8,sit:1,say:'Какой ещё дисс? Бабушка вам устроит.'},DIR],
   outro:[['derz','Аппаратура на месте. Концерт начинается.'],['dima','Выходим на сцену. Беда пришла.']]},
  {t:'Глава 4: Дисс «Беда»',rhythm:1,
-  intro:[['dir','Новогодний концерт! Первыми выступают Герман и Орех.'],['german','А тебе это нужно послушать, царица…'],['oreh','Это для Математички. Зал, погнали!']],
+  intro:[['dir','Новогодний концерт! Первыми выступают Герман и Орех.'],['german','А тебе это нужно послушать, царица…'],['oreh','Это для Математички. А теперь — встречайте наших!']],
   intro2:[['dir','А теперь — Дерзкий и Дима!'],['derz','Трек называется «Беда». Посвящается тем, кто подставлял своих.'],['dima','Жми стрелки, когда нота дойдёт до белой линии. Сверху — сколько процентов попадаешь.']],
   outro:[['dir','Камран, Математичка — ко мне в кабинет. Видео я посмотрел.'],['math','Это… это всё неправда!'],['dir','Вы уволены. Камран — две недели дежурств по столовой.'],['dir','Дима, ты возвращаешься в школу. И весь класс тоже.'],['polina','Дима, подожди…']]},
  {t:'Глава 5: Дома',map:'home',homeCh:1,noMath:1,items:[],
@@ -359,7 +359,7 @@ const S=[
 let lvl=0;try{lvl=+localStorage.getItem('shgsh4b')||0}catch(e){}
 if(!(lvl>=0&&lvl<S.length))lvl=0;
 const P={x:0,y:0,dir:'up',fr:0,ft:0,sit:null};
-let gymOpen=0,DOOR=null,CALL=null,gangDone=0,homePhase='',escP='',hasKey=0,CUT=null,GS=null,FT=null,geoPhase='',geoGrade=0,SC=null,scDone=0,heard=0,met=0,note='',noteT=0;
+let sitAsked=0,gymOpen=0,DOOR=null,CALL=null,gangDone=0,homePhase='',escP='',hasKey=0,CUT=null,GS=null,FT=null,geoPhase='',geoGrade=0,SC=null,scDone=0,heard=0,met=0,note='',noteT=0;
 let items=[],guards=[],npcs=[],got=0,mode='title',inv=0,flash=0,t0=0,cam={x:0,y:0},RZ=null,KS=null,actx=null,lastPct=0;
 const keys={};
 const $=id=>document.getElementById(id);
@@ -372,7 +372,7 @@ function setup(){
   const s=S[lvl];switchMap(s.map||'school');homePhase=s.homeCh?'mom':'';escP='';if(s.rhythm){updTask();return}
   P.x=C(s.start[0]);P.y=C(s.start[1])+4;P.dir='right';P.sit=null;
   items=s.items.map(([k,x,y,n])=>({k,n,x:C(x),y:C(y),on:1}));
-  geoPhase=s.geo?'dir':'';guards=s.noMath?[]:[{id:'math',x:C(BOARD[0]),y:C(BOARD[1])+4,dx:0,dy:1,st:'teach',t:9+Math.random()*4,path:[],fr:0,ft:0,w:0,rp:0,lost:0,rt:0,ct:0}];heard=0;met=0;
+  sitAsked=0;geoPhase=s.geo?'dir':'';guards=s.noMath?[]:[{id:'math',x:C(BOARD[0]),y:C(BOARD[1])+4,dx:0,dy:1,st:'teach',t:9+Math.random()*4,path:[],fr:0,ft:0,w:0,rp:0,lost:0,rt:0,ct:0}];heard=0;met=0;
   npcs=[...s.npcs.map(n=>({...n,tx:n.x,ty:n.y,x:C(n.x),y:C(n.y)+4})),{...s.target,x:C(s.target.x),y:C(s.target.y)+4,target:1}];
   if(lvl===0&&scDone)npcs.push({id:'derz',tx:3,ty:8,x:C(3),y:C(8)+4,sit:1,say:'Колено болит. Но мы всё равно против матеши!'});
   got=0;inv=1.2;updTask();
@@ -445,9 +445,9 @@ const saveL=()=>{try{localStorage.setItem('shgsh4b',lvl)}catch(e){}};
 
 /* ===== КОНЦЕРТ: РИТМ-ИГРА ===== */
 let cast='duo',ACT=null;
-function startAct(){ACT={t:0};mode='act';snd(330,.4,'square',.04)}
-function updAct(dt){ACT.t+=dt;const b=Math.floor(ACT.t/BEAT);if(b!==ACT.b){ACT.b=b;snd(b%2?220:150,.18,'sine',.35);if(b%4===3)snd(880,.1,'square',.03)}
-  if(ACT.t>5){ACT=null;cast='duo';mode='card';talk(S[lvl].intro2,()=>startRhythm())}}
+function startAct(){ACT={t:0};mode='act'}
+function updAct(dt){ACT.t+=dt;const st=Math.floor(ACT.t/.25);if(st!==ACT.b){ACT.b=st;snd(90,.05,'sine',.08)}
+  if(ACT.t>4.4){ACT=null;cast='duo';mode='card';talk(S[lvl].intro2,()=>startRhythm())}}
 const LEAD=2;
 /* Ноты сняты с реальных ударов трека «Беда» (85 BPM, сложный режим): [секунда, дорожка, вторая дорожка для двойных нот] */
 const CHART=[[0.662,0],[1.015,0],[1.721,1],[2.074,1,3],[2.779,0],[3.485,2],[3.838,0],[4.191,0],[4.544,1],[4.897,1,3],[5.603,2],[5.956,3],[6.309,2,0],[6.662,3],[7.015,3],[7.191,0],[7.368,1],[7.721,3],[8.25,3],[8.427,1],[8.779,2],[8.956,3],[9.132,1],[9.485,3],[10.191,1],[10.544,1],[11.603,3],[11.956,0],[12.309,3],[12.662,3],[13.015,0],[13.368,2],[14.074,2],[14.427,3],[14.779,2],[15.132,0],[15.485,2],[16.191,3],[16.544,3],[16.897,0],[17.25,3],[17.603,2],[17.956,2],[18.132,3],[18.309,0],[18.662,1,3],[19.015,1],[19.721,0],[20.074,2],[20.427,1],[20.779,2],[21.132,0],[21.485,1],[21.838,1],[22.721,2],[23.25,0],[23.603,2],[23.956,1],[24.662,1],[25.368,0],[26.074,0],[26.427,2],[26.779,2],[26.956,3],[27.132,1],[27.485,1],[27.838,2],[28.191,0],[28.897,2],[29.25,2],[29.603,3],[29.956,0],[30.309,1,3],[31.015,0],[31.368,3],[31.721,1],[32.074,1,3],[32.25,2],[32.427,3],[32.779,0],[33.132,1],[33.485,3],[33.838,0],[34.544,0],[34.897,1],[35.25,0],[35.956,0],[36.662,1],[37.015,3],[37.368,0],[37.721,1],[38.074,1],[38.427,0],[38.779,2],[38.956,0],[39.485,1],[39.838,3],[40.191,0],[40.544,1],[40.721,3],[40.897,2],[41.25,0],[41.603,1],[42.309,0],[42.485,2],[43.015,2],[43.368,1],[43.721,2],[44.427,2],[44.779,3],[45.132,1],[45.485,2],[45.838,2],[46.191,1],[46.544,3],[46.897,1,3],[47.25,1,3],[47.779,3],[47.956,1],[48.309,2],[48.485,2],[48.662,3,1],[49.015,3],[49.368,0],[49.544,3],[49.721,0],[50.074,3],[50.427,3],[50.779,0],[51.132,2],[51.309,2],[51.485,1,3],[51.838,3],[52.191,3],[52.368,0],[52.544,1],[52.897,2],[53.074,3]];
@@ -496,10 +496,11 @@ function drawStage(tm,actors,audience){
 function drawRhythm(){
   const tm=ACT?ACT.t:RZ.time,bob=Math.floor(tm/BEAT)%2;
   if(cast==='act'){AUD=AUDALL.filter(a=>a!=='german'&&a!=='oreh');
-    drawStage(tm,[{id:'german',x:30,y:60+bob,dir:'down',fr:bob},{id:'oreh',x:88,y:60+(1-bob),dir:'down',fr:1-bob}],1);
+    const at=ACT?ACT.t:0,wf=Math.floor(at*6)%2,act=[];
+    if(at<2.2){const k=Math.max(0,(at-.2)/2);act.push({id:'german',x:30+k*320,y:60,dir:ACT&&at>.2?'right':'down',fr:ACT&&at>.2?wf:0},{id:'oreh',x:88+k*300,y:60,dir:ACT&&at>.2?'right':'down',fr:ACT&&at>.2?1-wf:0})}
+    if(at>1.6){const k=Math.min(1,(at-1.6)/2.2),walking=k<1;act.push({id:'derz',x:-40+k*68,y:54,dir:walking?'right':'down',fr:walking?wf:0},{id:'dima',x:-110+k*196,y:60,dir:walking?'right':'down',fr:walking?1-wf:0})}
+    drawStage(tm,act,1);
     g.fillStyle='#bbb';g.fillRect(64,74,4,5);g.fillStyle='#222';g.fillRect(65,79,2,34);
-    if(ACT){for(let i=0;i<5;i++){const yy=80-((ACT.t*40+i*20)%70);g.fillStyle=['#ffd84d','#fff','#4a8ae8'][i%3];g.fillRect(40+i*22+Math.sin(ACT.t*3+i)*6,yy,4,4);g.fillRect(43+i*22+Math.sin(ACT.t*3+i)*6,yy-6,1,6)}
-      g.fillStyle='rgba(0,0,0,.6)';g.fillRect(40,8,200,22);g.fillStyle='#fff';g.font='8px "Press Start 2P",monospace';g.fillText('Герман и Орех зажигают зал!',50,23)}
     pct.style.display='none';lyr.style.display='none';hl.textContent='Новогодний концерт';hr.textContent='';return}
   AUD=AUDALL;
   drawStage(tm,[{id:'derz',x:28,y:54+bob,dir:'down',fr:bob},{id:'dima',x:86,y:60+(1-bob),dir:'down',fr:1-bob}],1);
@@ -570,10 +571,11 @@ function action(){
   if(n.target){if(!left)win();else talk([[n.id,`Сначала найди всё: осталось ${left}.`]])}
   else talk([[n.id,n.say]]);
 }
-function deskFree(x,y){return M[y]&&M[y][x]===2&&!npcs.some(n=>n.sit&&n.tx===x&&n.ty===y)}
+function deskFree(x,y){return M[y]&&(M[y][x]===2||M[y][x]===16)&&!npcs.some(n=>n.sit&&n.tx===x&&n.ty===y)}
 function nearBed(){const [px,py]=tileOf(P);for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if((tile(x,y)===23||tile(x,y)===24)&&R[y]&&R[y][x]===3)return true;return false}
 function findDesk(){const [px,py]=tileOf(P);for(const [x,y] of [[px,py-1],[px-1,py-1],[px+1,py-1],[px,py],[px-1,py],[px+1,py]])if(deskFree(x,y))return[x,y];return null}
-function trySit(){const fd=findDesk();if(fd){const [x,y]=fd;P.sit={tx:x,ty:y};P.dir='up';if(S[lvl].fightCh&&!GS&&!gangDone)startGang();return}}
+function trySit(){const fd=findDesk();if(fd){const [x,y]=fd;P.sit={tx:x,ty:y};P.dir='up';
+    const m=guards.find(q=>q.id==='math');if(m&&m.st==='teach'&&!m.path.length&&R[y]&&R[y][x]===0&&curMap==='school'&&!sitAsked){sitAsked=1;if(Math.random()<.5){talk([['math','Дмитрий?.. Вас же вроде как не было на уроках.'],['dima','Я? Да я всё время тут сидел. На последней парте.'],['math','Хм… Ладно. Сиди тихо и пиши.']]);m.t=Math.max(m.t,8)}else{note='Математичка ничего не заметила…';noteT=2.5}return}if(S[lvl].fightCh&&!GS&&!gangDone)startGang();return}}
 function standUp(){if(!P.sit)return;P.x=C(P.sit.tx);P.y=C(P.sit.ty+1)+4;if(!free(P.x,P.y))P.y=C(P.sit.ty-1)+4;P.sit=null}
 function nearNpc(){let best=null,bd=99;for(const n of npcs){const d=Math.hypot(n.x-P.x,n.y-P.y);if(d<(n.target||n.id==='dir'?36:24)&&d<bd){bd=d;best=n}}return best}
 
@@ -1001,7 +1003,7 @@ function render(){
   if(P.sit){const X=P.sit.tx*TS,Y=P.sit.ty*TS;ents.push({y:Y+10,d:()=>drawChar(g,X,Y-4,'dima','up',0,1)})}
   else ents.push({y:P.y,d:()=>{if(inv>0&&Math.floor(t0*10)%2)return;drawChar(g,Math.round(P.x-8),Math.round(P.y-24),'dima',P.dir,P.fr)}});
   ents.sort((a,b)=>a.y-b.y).forEach(e=>e.d());
-  if(mode==='play'&&!P.sit&&!nearNpc()){const fd=findDesk();if(fd){const lx=fd[0]*TS+8,ly=fd[1]*TS-6;tag(lx,ly,'E — сесть за парту')}}
+  if(mode==='play'&&!P.sit&&!nearNpc()){const fd=findDesk();if(fd){const lx=fd[0]*TS+8,ly=fd[1]*TS-6;tag(lx,ly,M[fd[1]][fd[0]]===16?'E — сесть на стул':'E — сесть за парту')}}
   if(mode==='wait'&&homePhase==='rec')tag(P.x,P.y-30,'♪ …');
   if(mode==='play'&&S[lvl].homeCh&&homePhase==='bed'&&nearBed())tag(P.x,P.y-30,'E — лечь спать');
   if(mode==='play'){let gx=null,gy=null,gl='';
