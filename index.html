@@ -363,7 +363,7 @@ let gymOpen=0,DOOR=null,CALL=null,gangDone=0,homePhase='',escP='',hasKey=0,CUT=n
 let items=[],guards=[],npcs=[],got=0,mode='title',inv=0,flash=0,t0=0,cam={x:0,y:0},RZ=null,KS=null,actx=null,lastPct=0;
 const keys={};
 const $=id=>document.getElementById(id);
-const ov=$('ov'),dlg=$('dlg'),dn=$('dn'),dt=$('dt'),pc=$('pc').getContext('2d'),task=$('task'),hl=$('hl'),hr=$('hr'),pct=$('pct'),pv=$('pv'),lyr=$('lyr');
+const ov=$('ov'),dlg=$('dlg'),dn=$('dn'),dt=$('dt'),dt_=dt,pc=$('pc').getContext('2d'),task=$('task'),hl=$('hl'),hr=$('hr'),pct=$('pct'),pv=$('pv'),lyr=$('lyr');
 const esc2=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const C=v=>v*TS+TS/2;
@@ -391,14 +391,20 @@ function updTask(){
 /* ===== ДИАЛОГИ ===== */
 let queue=[],after=null;
 function talk(lines,cb){queue=lines.slice();after=cb;mode='dialog';nextLine()}
+/* ===== ПЕЧАТАЮЩИЕСЯ ТИТРЫ + звук «блип» (синтез, низкий голос ~163 Гц) ===== */
+let TY=null;
+function blip(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const t=actx.currentTime,gn=actx.createGain();gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(.16,t+.004);gn.gain.setValueAtTime(.16,t+.035);gn.gain.exponentialRampToValueAtTime(.001,t+.075);gn.connect(actx.destination);
+  [[163,'square',.35],[326,'triangle',.9],[815,'sine',.12]].forEach(([f,ty,v])=>{const o=actx.createOscillator(),og=actx.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);og.gain.value=v;o.connect(og);og.connect(gn);o.start(t);o.stop(t+.08)})}catch(e){}}
+function typeStep(dt){if(!TY||TY.i>=TY.full.length)return;TY.acc+=dt*38;let n=0;while(TY.acc>=1&&TY.i<TY.full.length){TY.acc-=1;TY.i++;n++;const ch=TY.full[TY.i-1];if(ch!==' '&&TY.i%2===1)blip()}if(n)dt_.textContent=TY.full.slice(0,TY.i)}
+function typingBusy(){if(TY&&TY.i<TY.full.length){TY.i=TY.full.length;dt_.textContent=TY.full;return true}return false}
 function nextLine(){
   if(!queue.length){dlg.classList.remove('on');mode='play';const f=after;after=null;if(f)f();return}
   const [id,tx]=queue.shift();
-  dn.textContent=N[id]||id;dt.textContent=tx;if(/царица/.test(tx))play('tsar');if(/Кто вы такие/.test(tx))play('r1');
+  dn.textContent=N[id]||id;dt.textContent='';TY={full:tx,i:0,acc:0};if(/царица/.test(tx))play('tsar');if(/Кто вы такие/.test(tx))play('r1');
   pc.clearRect(0,0,16,26);drawChar(pc,0,look(id).tall?5:2,id,'down',0);
   dlg.classList.add('on');
 }
-dlg.addEventListener('click',()=>{if(mode==='dialog')nextLine()});
+dlg.addEventListener('click',()=>{if(mode==='dialog'&&!typingBusy())nextLine()});
 
 /* ===== ЭКРАНЫ ===== */
 function show(html){ov.innerHTML=html;ov.classList.add('on')}
@@ -547,7 +553,7 @@ document.querySelectorAll('.pad button').forEach(b=>{
 $('act').addEventListener('click',()=>action());
 $('reset').addEventListener('click',()=>{gymOpen=0;DOOR=null;CALL=null;gangDone=0;hasKey=0;escP='';BR=null;restoreDesks();CUT=null;GS=null;FT=null;fui.classList.remove('on');P.sit=null;stopDiss();lvl=0;saveL();KS=null;RZ=null;ACT=null;SC=null;scDone=0;dlg.classList.remove('on');queue=[];after=null;setup();titleScreen()});
 function action(){
-  if(mode==='dialog'){nextLine();return}
+  if(mode==='dialog'){if(!typingBusy())nextLine();return}
   if(mode==='brawl'){punch();return}
   if(mode!=='play')return;
   if(P.sit){standUp();return}
@@ -1016,7 +1022,7 @@ function render(){
   hr.textContent=mode==='title'||!items.length?'':`${got}/${items.length}`;
 }
 let last=performance.now();
-function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(loop)}
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
 }
 </script>
