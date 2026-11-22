@@ -167,9 +167,18 @@ function buildVault(){const m=[],rr=[];for(let y=0;y<H;y++){m.push(Array(W).fill
   [[15,12],[15,14],[24,12],[24,14],[25,13],[14,10]].forEach(([x,y])=>m[y][x]=46);
   return{M:m,R:rr,ROOMS:rooms,FLOOR:[['#3a3640','#34303a']]}}
 const VAULTMAP=buildVault();
-function switchMap(name){const s=name==='home'?HOMEMAP:name==='vault'?VAULTMAP:SCHOOL;for(let y=0;y<H;y++){M[y]=s.M[y].slice();R[y]=s.R[y].slice()}ROOMS.length=0;ROOMS.push(...s.ROOMS);FLOOR.length=0;FLOOR.push(...s.FLOOR);curMap=name;
+const CASM=[[10,7],[13,7],[16,7],[23,7],[26,7],[29,7],[10,12],[13,12],[16,12],[23,12],[26,12],[29,12]];
+function buildCasino(){const m=[],rr=[];for(let y=0;y<H;y++){m.push(Array(W).fill(1));rr.push(Array(W).fill(-1))}
+  const rooms=[{n:'Казино',x:8,y:6,w:24,h:12,wc:'#1c1736',wb:'#b040ff',led:1}];
+  rooms.forEach((r,i)=>{for(let y=r.y;y<r.y+r.h;y++)for(let x=r.x;x<r.x+r.w;x++){m[y][x]=0;rr[y][x]=i}});
+  m[18][20]=4;rr[18][20]=0;
+  CASM.forEach(([x,y])=>{m[y][x]=50;m[y+1][x]=16});
+  m[16][9]=10;m[16][30]=10;
+  return{M:m,R:rr,ROOMS:rooms,FLOOR:[['#3a2f58','#33294e']]}}
+const CASMAP=buildCasino();
+function switchMap(name){const s=name==='home'?HOMEMAP:name==='vault'?VAULTMAP:name==='casino'?CASMAP:SCHOOL;for(let y=0;y<H;y++){M[y]=s.M[y].slice();R[y]=s.R[y].slice()}ROOMS.length=0;ROOMS.push(...s.ROOMS);FLOOR.length=0;FLOOR.push(...s.FLOOR);curMap=name;
   if(typeof REMOVED!=='undefined')REMOVED=[];const old=g;g=bg.getContext('2d');for(let y=0;y<H;y++)for(let x=0;x<W;x++)drawTile(x,y);g=old}
-const SOLID=new Set([45,46,47,48,49,40,41,43,44,36,37,38,1,2,5,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,31,33]),OPAQUE=new Set([1,9,12,15,17,18,30,43]),WALLS=new Set([1,9,12,15,17,18,43]);
+const SOLID=new Set([50,45,46,47,48,49,40,41,43,44,36,37,38,1,2,5,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,31,33]),OPAQUE=new Set([1,9,12,15,17,18,30,43]),WALLS=new Set([1,9,12,15,17,18,43]);
 const tile=(x,y)=>(x<0||y<0||x>=W||y>=H)?1:M[y][x];
 const solidAt=(px,py)=>SOLID.has(tile(Math.floor(px/TS),Math.floor(py/TS)));
 
@@ -178,7 +187,7 @@ function drawTile(x,y){
   const r=(a,b,w,h,c)=>{g.fillStyle=c;g.fillRect(X+a,Y+b,w,h)};
   if(WALLS.has(t)){
     if(curMap!=='school'){let nb=0;for(let yy=y-1;yy<=y+1;yy++)for(let xx=x-1;xx<=x+1;xx++)if(R[yy]&&R[yy][xx]>=0)nb=1;if(!nb){r(0,0,TS,TS,'#141826');if((x*7+y*3)%11===0)r(6,6,1,1,'#2a3050');return}}
-    r(0,0,TS,TS,curMap==='home'?'#4a3a34':curMap==='vault'?'#2a2430':'#bdb6a6');
+    r(0,0,TS,TS,curMap==='home'?'#4a3a34':curMap==='vault'?'#2a2430':curMap==='casino'?'#120e20':'#bdb6a6');
     const below=tile(x,y+1),bri=R[y+1]?R[y+1][x]:-1;
     if(!WALLS.has(below)){
       if(ROOMS[bri]&&ROOMS[bri].wc){r(0,4,TS,12,ROOMS[bri].wc);r(0,13,TS,3,ROOMS[bri].wb);if(ROOMS[bri].led)r(0,4,TS,1,(x%3)?'#c040ff':'#ff60d0')}
@@ -239,6 +248,7 @@ function drawTile(x,y){
   if(t===45){r(0,1,TS,14,'#4a4a54');r(1,2,14,12,'#2a2a30');[4,9].forEach(b=>r(1,b,14,1,'#6a6a74'));const c=['#a87040','#c0303a','#3a6ad0','#e0b030'];for(let i=0;i<3;i++){r(2+i*4,4+(x%2),3,5-(x%2),c[(x+i)%4]);r(2+i*4,10,3,3,c[(x+i+1)%4])}}
   if(t===46){r(1,3,14,12,'#8a5a30');r(1,3,14,2,'#a87040');r(1,14,14,1,'#5a3418');r(2,5,1,9,'#6a4020');r(13,5,1,9,'#6a4020');r(3,6,10,1,'#6a4020');r(3,11,10,1,'#6a4020');r(6,8,4,1,'#3a2410')}
   if(t===47||t===48){r(3,9,10,7,'#3a2a4a');r(2,9,12,1,'#e0b030');r(4,11,8,3,'#4a3a5a');r(2,1,12,8,'#9ac8e8');r(3,2,10,6,'#6a7aa8');r(3,2,1,6,'#c8e8ff');if(t===47){[[4,3],[5,5],[7,6],[9,6],[11,5],[12,3]].forEach(([a,b])=>r(a,b,1,1,'#ffd84d'));r(7,6,3,2,'#e8283b');r(8,6,1,1,'#ff9aa0')}}
+  if(t===50){r(2,0,12,16,'#22222c');r(2,0,12,2,'#b040ff');r(3,3,10,7,'#0a0a0e');r(4,4,8,5,'#1f8a3a');r(5,5,2,3,'#f6f2e4');r(7,5,2,3,'#f6f2e4');r(9,5,2,3,'#f6f2e4');r(4,11,8,3,'#30303a');r(5,12,2,1,'#e8283b');r(9,12,2,1,'#ffd84d');r(1,14,14,2,'#141418')}
   if(t===49){r(2,2,12,13,'#2a2a30');r(3,3,10,11,'#3a3a44');r(7,6,3,3,'#a8a8b0');r(8,7,1,1,'#222');r(11,8,1,3,'#c8c8d0')}
   if(t===11){r(0,4,TS,11,'#2a160a');r(0,2,TS,10,'#4a2a14');if(x===33)r(4,4,7,4,'#ddd')}
 }
@@ -428,7 +438,7 @@ function updTask(){
   if(homePhase==='mom2'||homePhase==='bro'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Ты дома. Найди маму в зале и расскажи, как прошёл день (E).</span>`;return}
   if(homePhase==='bed4'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Отчима и брата увезли. Иди в свою комнату и ляг спать (E рядом с кроватью).</span>`;return}
   if(homePhase==='arrest'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Полиция приехала.</span>`;return}
-  if(s.malCh){const tx=curMap==='vault'?(hasNeck?'Ожерелье у тебя! Выходи через дверь внизу.':'Секретный склад директора. Обыщи ящики и полки (E) — где-то здесь должно быть что-то ценное.'):
+  if(s.malCh){const tx=curMap==='casino'?'Казино. Подойди к любому автомату, сядь на стул (E), потом E — Играть. С игроками тоже можно поговорить.':curMap==='vault'?(hasNeck?'Ожерелье у тебя! Выходи через дверь внизу.':'Секретный склад директора. Обыщи ящики и полки (E) — где-то здесь должно быть что-то ценное.'):
     malP==='find'?'Найди Малю в коридоре и поговори с ним (E).':malP==='key'?'Ключ от шкафа директора у буфетчицы. Иди в столовую и попроси его (E рядом с ней).':malP==='vault'?'Ключ у тебя. Иди в кабинет директора и открой шкаф (E). Директор сегодня на совещании.':'Неси ожерелье Мале — он в коридоре.';
     task.innerHTML=`<b>${esc2(s.t)}</b><span>${tx}</span>`;return}
   if(s.fightCh&&escP){task.innerHTML=`<b>${esc2(s.t)}</b><span>${escP==='key'?'Все двери заперты! Ключ только у директора — беги к нему в кабинет. В коридоре громилы с битами: прячься за перевёрнутыми стульями, осколки зеркал замедляют.':'Ключ у тебя! Беги в спортзал — телефон лежит в самом дальнем углу.'}</span>`;return}
@@ -658,7 +668,7 @@ function action(){
   if(mode==='dialog'){if(!typingBusy())nextLine();return}
   if(mode==='brawl'){punch();return}
   if(mode!=='play')return;
-  if(P.sit){standUp();return}
+  if(P.sit){if(curMap==='casino'&&CS&&CS.ph==='walk'){casSit();return}standUp();return}
   if(mode==='play'&&preNpc())return;
   if(homePhase==='bed3'&&nearBed()){startNight();return}
   if(homePhase==='bed4'&&nearBed()){startPhoneNight();return}
@@ -1193,7 +1203,7 @@ function update(dt){
 const dirTo=(x,y)=>{if(mode!=='play'&&mode!=='dialog'&&mode!=='scene')return null;const dx=P.x-x,dy=P.y-y;if(Math.hypot(dx,dy)>96||Math.hypot(dx,dy)<1)return null;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')};
 const gdir=q=>Math.abs(q.dx)>Math.abs(q.dy)?(q.dx>0?'right':'left'):(q.dy>0?'down':'up');
 function render(){
-  if(CS){drawCasino();return}
+  if(CS&&CS.ph!=='walk'&&CS.ph!=='after'){drawCasino();return}
   if(PH){drawPhone();return}
   if(CALL){drawCall();return}
   if(CUT){drawCut();return}
@@ -1253,13 +1263,13 @@ function render(){
     if(escP==='key'){gx=C(33);gy=C(18);gl='Директор'}else if(escP==='gym'){const it=items.find(i=>i.on);if(it){gx=it.x;gy=it.y;gl='Телефон'}}
     else if(homePhase==='mom2'||homePhase==='run'){gx=C(18);gy=C(6);gl='Мама'}
     else if(homePhase==='bed3'||homePhase==='bed4'){gx=C(32);gy=C(7);gl='Кровать'}
-    else if(S[lvl].malCh){if(curMap==='vault'){if(hasNeck){gx=C(20);gy=C(16);gl='Выход'}else{gx=C(20);gy=C(10);gl='?'}}else if(malP==='find'||malP==='back'){gx=C(21);gy=C(12);gl='Маля'}else if(malP==='key'){gx=C(19);gy=C(2);gl='Буфетчица'}else if(malP==='vault'){gx=C(28);gy=C(17);gl='Шкаф'}}
+    else if(S[lvl].malCh){if(curMap==='casino'){if(!P.sit){gx=C(13);gy=C(8);gl='Автомат'}}else if(curMap==='vault'){if(hasNeck){gx=C(20);gy=C(16);gl='Выход'}else{gx=C(20);gy=C(10);gl='?'}}else if(malP==='find'||malP==='back'){gx=C(21);gy=C(12);gl='Маля'}else if(malP==='key'){gx=C(19);gy=C(2);gl='Буфетчица'}else if(malP==='vault'){gx=C(28);gy=C(17);gl='Шкаф'}}
     else if(homePhase==='sneak'){gx=C(9);gy=C(18);gl='Телефон'}
     else if(S[lvl].homeCh){if(homePhase==='mom'){gx=C(18);gy=C(6);gl='Мама'}else{gx=C(32);gy=C(7);gl='Кровать'}}
     if(gx!==null){const sx=gx-cam.x,sy=gy-cam.y;if(sx>8&&sx<VW-8&&sy>20&&sy<VH-8){const by=Math.round(gy-34+Math.sin(t0*5)*2);g.fillStyle='#ffd84d';g.beginPath();g.moveTo(gx-5,by);g.lineTo(gx+5,by);g.lineTo(gx,by+6);g.fill()}
       else{const cx=Math.max(14,Math.min(VW-14,sx)),cy=Math.max(28,Math.min(VH-14,sy)),a=Math.atan2(sy-cy,sx-cx);g.save();g.translate(cam.x+cx,cam.y+cy);g.rotate(a);g.fillStyle='#ffd84d';g.beginPath();g.moveTo(9,0);g.lineTo(-5,-6);g.lineTo(-5,6);g.fill();g.restore();tag(cam.x+cx,cam.y+cy-8,gl)}}}
   if(mode==='play'&&!P.sit&&!P.hide&&!P.climb&&!P.pull&&!P.hold&&!nearNpc()){if(GYM.some(o=>Math.hypot(o.x-P.x,o.y-P.y)<22&&o.z<2))tag(P.x,P.y-30,'E — взять');else if(curMap==='school'&&nearSweets())tag(P.x,P.y-30,'E — съесть пирожное');else if(nearTile([40]))tag(P.x,P.y-30,'E — залезть на стенку');else if(nearTile([41]))tag(P.x,P.y-30,'E — турник');else if(nearTile([19,20]))tag(P.x,P.y-30,(S[lvl].malCh&&nearTile([19,20])[0]===28)?'E — открыть шкаф':'E — спрятаться в шкаф');else if(curMap==='vault'){if(nearTile([47]))tag(P.x,P.y-30,'E — взять ожерелье');else if(nearTile([46]))tag(P.x,P.y-30,'E — открыть ящик');else if(nearTile([45])||nearTile([49]))tag(P.x,P.y-30,'E — осмотреть')}}
-  if(mode==='play'&&P.sit)tag(P.sit.tx*TS+8,P.sit.ty*TS-26,'E — встать');
+  if(mode==='play'&&P.sit)tag(P.sit.tx*TS+8,P.sit.ty*TS-26,curMap==='casino'?'E — ИГРАТЬ':'E — встать');
   if(BR)drawBrawlWorld();
   if(DOOR){const k=Math.min(1,DOOR.t/.6),X=DOOR.x*TS,Y=DOOR.y*TS;g.fillStyle='#6a3a18';g.fillRect(X,Y,Math.max(3,Math.round(16*(1-k))),TS);g.fillStyle='#8a5a30';g.fillRect(X+1,Y+1,Math.max(1,Math.round(14*(1-k))),TS-2);if(k<1){g.fillStyle='#e0b030';g.fillRect(X+Math.round(10*(1-k)),Y+7,2,2)}}
   if(mode==='play'){const n=nearNpc();if(n){const bx=Math.round(n.x+6),by=Math.round(n.y-(n.sit?24:32));g.fillStyle='#000';g.fillRect(bx,by,9,9);g.fillStyle='#fff';g.fillRect(bx+1,by+1,7,7);g.fillStyle='#000';g.font='7px "Press Start 2P",monospace';g.fillText('E',bx+2,by+8)}}
@@ -1270,6 +1280,9 @@ function render(){
   if(mode==='brawl'||(BR&&BR.end))drawBrawlHud();
   if(PS&&PS.out){g.fillStyle=`rgba(0,0,0,${Math.min(1,(PS.t-PS.out)/1.3)})`;g.fillRect(0,0,VW,VH)}
   if(curMap==='home'&&(NS||homePhase==='run'||homePhase==='sneak')){g.fillStyle='rgba(10,10,40,.35)';g.fillRect(0,0,VW,VH)}
+  if(curMap==='casino'){g.save();g.translate(-cam.x,-cam.y);CASM.forEach(([x,y],i)=>{const ph=Math.floor(t0*4+i)%5;g.fillStyle=ph===0?'#ffd84d':ph===1?'#e8283b':'#1f8a3a';g.fillRect(x*TS+4,y*TS+4,8,5);g.fillStyle='rgba(255,255,255,.8)';for(let k=0;k<3;k++)g.fillRect(x*TS+5+k*2+k,y*TS+5,2,3)});
+    const on=Math.sin(t0*7)>-.6;g.font='8px "Press Start 2P",monospace';g.fillStyle=on?'rgba(255,80,200,.3)':'rgba(0,0,0,0)';g.fillRect(19*TS-6,5*TS-1,60,13);g.fillStyle=on?'#ff70d8':'#6a2a5a';g.fillText('КАЗИНО',19*TS-2,5*TS+9);g.restore();
+    g.fillStyle='rgba(40,0,80,.08)';g.fillRect(0,0,VW,VH)}
   if(curMap==='vault'){g.fillStyle='rgba(10,8,30,.16)';g.fillRect(0,0,VW,VH)}
   if(AR&&AR.ph!=='done'){g.fillStyle=Math.floor(t0*4)%2?'rgba(232,40,59,.10)':'rgba(40,90,232,.12)';g.fillRect(0,0,VW,VH)}
   if(fadeT>0){fadeT-=1/60;g.fillStyle=`rgba(0,0,0,${Math.min(1,fadeT/1.6)})`;g.fillRect(0,0,VW,VH)}
@@ -1365,11 +1378,16 @@ const MALQ={lose:['Ничего, щас зайдёт!','Крути дальше,
 const CASIN=[['malya','Вот оно — место, где из пятидесяти делают миллион. Ожерелье я уже сдал — на балансе 50 000.'],['dima','Это… казино? Маля, ты серьёзно?'],['malya','Садись, крути. Ставка — десятка за раз. Я рядом.'],['dima','Ну… была не была.']];
 const CASEND=[['malya','ЛЯМ! Дима, у нас целый лям!'],['dima','Миллион… Я могу отдать долг! Маля, ты гений!'],['malya','Я ж говорил. Ладно, я погнал — не скучай!'],['dimaT','Маля ушёл…'],['dima','Блин, а зачем останавливаться? Поставлю всё — будет два ляма. И долг отдам, и маме останется!']];
 const fmt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
-function startCasino(){mode='casino';flash=.4;CS={t:0,at:0,ph:'enter',bal:50000,bet:10000,n:0,reels:[0,1,2].map(i=>({pos:i*2,from:0,to:0,t0:0,dur:0,done:1,last:0})),spin:0,win:0,wt:0,parts:[],say:'',sayT:0,dust:Array.from({length:24},()=>({x:Math.random()*160,y:Math.random()*96,v:2+Math.random()*4}))};}
+function startCasinoOld(){mode='casino';flash=.4;CS={t:0,at:0,ph:'enter',bal:50000,bet:10000,n:0,reels:[0,1,2].map(i=>({pos:i*2,from:0,to:0,t0:0,dur:0,done:1,last:0})),spin:0,win:0,wt:0,parts:[],say:'',sayT:0,dust:Array.from({length:24},()=>({x:Math.random()*160,y:Math.random()*96,v:2+Math.random()*4}))};}
+function startCasino(){startCasinoOld();CS.ph='walk';VST=null;switchMap('casino');GYM=[];guards=[];items=[];
+  npcs=[{id:'malya',x:C(21),y:C(16)+4,say:'Садись за любой автомат, Дима. Я рядом.'},{id:'gamb',x:C(29),y:C(13)+4,tx:29,ty:13,sit:1,say:'Не мешай… Я тут с утра сижу. Вот-вот зайдёт, чувствую.'}];
+  P.x=C(20);P.y=C(17)+4;P.dir='up';P.sit=null;P.hide=null;P.hold=null;mode='play';fadeT=1.2;updTask();
+  setTimeout(()=>{if(CS&&CS.ph==='walk'&&mode==='play')talk(CASIN)},700)}
+function casSit(){CS.sitAt=performance.now();CS.ph='slots';CS.t=0;mode='casino';flash=.3;snd(300,.08,'square',.05)}
 function casSay(t){CS.say=t;CS.sayT=2.6}
-function casAct(){const c=CS;if(!c)return;
+function casAct(){const c=CS;if(!c)return;if(performance.now()-(c.sitAt||0)<400)return;
   if(c.ph==='alone'){if(c.ct<1.2)return;c.ph='last';c.ct=0;c.hb=0;c.bet=c.bal;c.bal=0;const tg=[4,4,3];c.reels.forEach((r,i)=>{const b=Math.round(r.pos);r.from=b;r.to=b+5*(3+i)+((tg[i]-(b%5))+5)%5;r.t0=c.t;r.dur=[2.4,4.6,9][i];r.done=0;r.last=b});snd(200,.3,'sawtooth',.06);return}
-  if(c.ph==='lose'&&c.lt>6){c.ph='after';c.t=9;c.ct=0;return}
+  if(c.ph==='lose'&&c.lt>2.5){c.ph='after';c.ct=0;mode='casino';return}
   if(c.ph==='slots'&&!c.spin){if(c.n>=SPINS.length)return;const sp=SPINS[c.n];c.bal-=c.bet;c.spin=1;c.cur=sp;snd(300,.08,'square',.05);
     c.reels.forEach((r,i)=>{const b=Math.round(r.pos);r.from=b;r.to=b+5*(3+i)+((sp.r[i]-(b%5))+5)%5;r.t0=c.t;r.dur=1.1+i*.45;r.done=0;r.last=b});return}
   if(c.ph==='win'&&c.wt>1.2){c.wt=9}}
@@ -1389,7 +1407,7 @@ function updCas(dt){const c=CS;c.t+=dt;if(c.sayT>0)c.sayT-=dt;
     c.hb-=dt;if(c.hb<=0){c.hb=Math.max(.32,.9-c.ct*.07);snd(62,.12,'sine',.6);setTimeout(()=>snd(55,.1,'sine',.45),150)}
     if(all){c.ph='lose';c.lt=0;flash=1;[392,370,349,311].forEach((f,i)=>setTimeout(()=>snd(f,i===3?.9:.3,'sawtooth',.07),i*320))}}
   if(c.ph==='lose'){c.lt+=dt}
-  if(c.ph==='after'){c.ct+=dt;if(c.ct>1.4&&!c.t3){c.t3=1;talk([['dima','(сидит на стуле перед погасшим экраном) Теперь я остался должен ещё 1 000 000 гривен…'],['dima','Что же мне теперь делать?']],()=>{CS=null;finale()})}}
+  if(c.ph==='after'){c.ct+=dt;npcs=npcs.filter(n=>n.id!=='malya');if(c.ct>1.4&&!c.t3){c.t3=1;talk([['dima','(сидит на стуле перед погасшим экраном) Теперь я остался должен ещё 1 000 000 гривен…'],['dima','Что же мне теперь делать?']],()=>{CS=null;finale()})}}
   if(c.ph==='alone')c.ct+=dt}
 function drawSym(id,cx,cy){const r=(a,b,w,h,col)=>{g.fillStyle=col;g.fillRect(Math.round(cx+a*2),Math.round(cy+b*2),w*2,h*2)};
   if(id===0){r(-1,-6,1,4,'#2a8a2a');r(0,-6,4,1,'#2a8a2a');r(3,-5,1,3,'#2a8a2a');r(-5,-2,5,5,'#c81a2a');r(-4,-3,3,7,'#c81a2a');r(1,-1,5,5,'#c81a2a');r(2,-2,3,7,'#c81a2a');r(-4,-1,1,1,'#ff9aa0');r(2,0,1,1,'#ff9aa0')}
@@ -1452,9 +1470,9 @@ function drawCasino(){const c=CS,t=c.at;hl.textContent='Казино';hr.textCon
     if(c.ph==='alone'&&mode==='casino'){const on=Math.floor(t*3)%2;g.fillStyle=on?'#e8483b':'#b8302a';g.fillRect(196,145,106,18);g.fillStyle='#fff';g.font='6px "Press Start 2P",monospace';g.fillText('E — ПОСТАВИТЬ ВСЁ',202,157)}
     if(c.ph==='last'){const pu=(Math.sin(c.t*6)+1)/2;g.strokeStyle=`rgba(232,40,59,${.4+pu*.5})`;g.lineWidth=6;g.strokeRect(9,5,302,164);g.lineWidth=1;g.font='8px "Press Start 2P",monospace';g.fillStyle=Math.floor(c.t*4)%2?'#fff':'#e8483b';g.fillText('ВСЁ ИЛИ НИЧЕГО',104,34)}
     if(c.ph==='lose'){g.fillStyle='rgba(50,0,0,.72)';g.fillRect(0,0,VW,VH);for(let i=0;i<6;i++){g.fillStyle='rgba(232,40,59,.25)';g.fillRect(0,(Math.random()*VH)|0,VW,2)}
-      const lines=['НЕТ!!!','ЗА ЧТО?!','Я ВСЁ','ПРОИГРАЛ…'];let n=Math.floor((c.lt-2.6)*10);if(c.lt<2.6){const cx=160,cyy=86;g.fillStyle='#8a1020';g.fillRect(cx-76,cyy-30,152,60);g.fillStyle='#1a0408';g.fillRect(cx-74,cyy-28,148,56);g.font='7px "Press Start 2P",monospace';g.fillStyle='#ff8090';g.fillText('ВЫИГРЫШ',cx-28,cyy-14);g.font='18px "Press Start 2P",monospace';g.fillStyle=Math.floor(c.lt*6)%2?'#fff':'#ff3040';g.fillText('0',cx-9,cyy+8);g.font='7px "Press Start 2P",monospace';g.fillStyle='#ffd84d';g.fillText('БАЛАНС: 0 ₴',cx-38,cyy+22)}g.font='22px "Press Start 2P",monospace';
-      lines.forEach((ln,i)=>{const sh=ln.slice(0,Math.max(0,Math.min(ln.length,n)));n-=ln.length;if(!sh)return;const w=sh.length*22,jx=Math.round((Math.random()-.5)*3),jy=Math.round((Math.random()-.5)*3),x0=160-ln.length*11+jx,y0=44+i*36+jy;g.fillStyle='#000';g.fillText(sh,x0+3,y0+3);g.fillStyle=i<2?'#ff3040':'#fff';g.fillText(sh,x0,y0)});
-      if(c.lt>6){g.font='6px "Press Start 2P",monospace';g.fillStyle=Math.floor(c.lt*3)%2?'#ffd84d':'#fff';g.fillText('БАЛАНС: 0 ₴   ·   E — дальше',62,182)}}
+      const lines=['НЕТ!!!','ЗА ЧТО?!','Я ВСЁ','ПРОИГРАЛ…'];let n=0;if(1){const cx=160,cyy=86;g.fillStyle='#8a1020';g.fillRect(cx-76,cyy-30,152,60);g.fillStyle='#1a0408';g.fillRect(cx-74,cyy-28,148,56);g.font='7px "Press Start 2P",monospace';g.fillStyle='#ff8090';g.fillText('ВЫИГРЫШ',cx-28,cyy-14);g.font='18px "Press Start 2P",monospace';g.fillStyle=Math.floor(c.lt*6)%2?'#fff':'#ff3040';g.fillText('0',cx-9,cyy+8);g.font='7px "Press Start 2P",monospace';g.fillStyle='#ffd84d';g.fillText('БАЛАНС: 0 ₴',cx-38,cyy+22)}g.font='22px "Press Start 2P",monospace';
+      [].forEach((ln,i)=>{const sh=ln.slice(0,Math.max(0,Math.min(ln.length,n)));n-=ln.length;if(!sh)return;const w=sh.length*22,jx=Math.round((Math.random()-.5)*3),jy=Math.round((Math.random()-.5)*3),x0=160-ln.length*11+jx,y0=44+i*36+jy;g.fillStyle='#000';g.fillText(sh,x0+3,y0+3);g.fillStyle=i<2?'#ff3040':'#fff';g.fillText(sh,x0,y0)});
+      if(c.lt>2.5){g.font='6px "Press Start 2P",monospace';g.fillStyle=Math.floor(c.lt*3)%2?'#ffd84d':'#fff';g.fillText('E — дальше',128,182)}}
     if(c.sayT>0&&c.ph!=='end'&&c.ph!=='lose'){g.fillStyle='rgba(0,0,0,.75)';g.fillRect(14,118,170,20);drawChar(g,16,116,'malya','down',0,1);g.fillStyle='#ffd84d';g.font='6px "Press Start 2P",monospace';g.fillText('Маля:',34,126);g.fillStyle='#fff';g.fillText(c.say,34,135)}
     g.fillStyle='#c81a2a';g.fillRect(296,150,8,14);g.fillStyle='#fff';g.fillRect(296,154,8,2);g.fillStyle='#bbb';g.fillRect(297,149,6,1);
     g.setTransform(1,0,0,1,0,0);
