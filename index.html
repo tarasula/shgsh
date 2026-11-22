@@ -428,7 +428,7 @@ function titleScreen(){
   const b2=$('b2');if(b2)b2.onclick=()=>{lvl=0;saveL();card()};
 }
 function card(){
-  NS=null;BRUISE.clear();PS=null;BS=null;fadeT=0;
+  NS=null;BW=null;SNK=null;BRUISE.clear();PS=null;BS=null;fadeT=0;
   dlg.classList.remove('on');queue=[];after=null;gymOpen=0;DOOR=null;CALL=null;try{VEL.pause();VEL.style.display='none'}catch(e){}gangDone=0;hasKey=0;escP='';BR=null;restoreDesks();CUT=null;GS=null;FT=null;fui.classList.remove('on');P.sit=null;stopDiss();scDone=0;SC=null;mode='card';KS=null;ACT=null;cast='duo';RZ=S[lvl].rhythm?{time:0,notes:[],hit:0,miss:0,end:1e9,fx:[],beat:-1,idle:1}:null;setup();
   const [a,b]=S[lvl].t.split(': ');
   show(`<div class="tag">${esc(a.toUpperCase())} ИЗ ${S.length}</div><h2>${esc(b)}</h2><button class="btn" id="b1">Начать</button>`);
@@ -925,18 +925,22 @@ function startBrother(){mode='bro';BS={t:0,x:C(8),y:C(17)+4}}
 const BRP=[[8,17],[8,12],[19,12],[19,9],[19,8]];
 function updBro(dt){const b=BS;b.t+=dt;const tot=3.4,k=Math.min(1,b.t/tot)*(BRP.length-1),i=Math.min(BRP.length-2,Math.floor(k)),q=k-i,a=BRP[i],c=BRP[i+1];b.x=C(a[0])+(C(c[0])-C(a[0]))*q;b.y=C(a[1])+4+(C(c[1])-C(a[1]))*q;b.dir=c[0]>a[0]?'right':c[1]<a[1]?'up':'down';if(b.t>=tot)b.dir='down';
   if(b.t>=3.4&&!b.snd){b.snd=1;play('bro')}
-  if(b.t>5.2&&!b.talked){b.talked=1;talk([['brat2','О, братишка. Ну привет ещё раз.'],['dima','Ты?!'],['mom','Дима, знакомься — это твой старший брат. Он сегодня к нам переехал.'],['dima','(про себя) Подожди… это же главарь той банды!'],['brat2','Тсс. Маме — ни слова.'],['mom','Ладно, мальчики, хватит. Дима, поздно уже — иди спать.']],()=>{npcs.push({id:'brat2',x:BS.x,y:BS.y,say:'Чего уставился? Спать иди.'});BS=null;homePhase='bed3';updTask()})}}
+  if(b.t>5.2&&!b.talked){b.talked=1;talk([['brat2','О, братишка. Ну привет ещё раз.'],['dima','Ты?!'],['mom','Дима, знакомься — это твой старший брат. Он сегодня к нам переехал.'],['dima','(про себя) Подожди… это же главарь той банды!'],['brat2','Тсс. Маме — ни слова.'],['mom','Ладно, мальчики, хватит. Дима, поздно уже — иди спать.']],()=>{BW={x:BS.x,y:BS.y,dir:'down',fr:0,pts:[[19,9],[19,12],[8,12],[8,15],[8,17]]};BS=null;homePhase='bed3';updTask()})}}
 /* ===== НОЧЬ ДОМА: угрозы, мама в синяках, тихий звонок ===== */
-let NS=null;
+let NS=null,BW=null;
+function walkPts(e,sp,dt){if(!e.pts.length)return true;const [tx,ty]=e.pts[0],px=C(tx),py=C(ty)+4,dx=px-e.x,dy=py-e.y,d=Math.hypot(dx,dy);
+  if(d<=sp*dt){e.x=px;e.y=py;e.pts.shift()}else{e.x+=dx/d*sp*dt;e.y+=dy/d*sp*dt;e.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}e.ft=(e.ft||0)+dt;if(e.ft>.15){e.ft=0;e.fr^=1}return!e.pts.length}
 const THREAT=[['brat2','(шёпотом) Слушай сюда, братишка. Расскажешь кому-нибудь про школу — тебе конец. Понял?'],['dima','Да я и так знаю, что вы все только что из тюрьмы. По вашему виду это сразу видно.'],['dima','Я позвоню в полицию и всё им расскажу.'],['brat2','Ну-ну. Попробуй.']];
 const MOMHURT=[['dima','Мама! Что случилось?!'],['mom','Ничего такого… Просто потеряла сознание и упала.'],['dima','Ну да. На его кулаки упала, что ли? Я сейчас позвоню в полицию — вас всех арестуют!'],['otchim','Нет. Никуда ты не позвонишь. Иначе здесь никому не поздоровится.'],['mom','Лучше давайте поужинаем, как нормальная семья.'],['dimaT','Нет. Я это так просто не оставлю. Телефон в ванной — надо тихо туда пробраться и позвонить в полицию.']];
-function startNight(){mode='night';npcs=npcs.filter(n=>n.id!=='brat2');NS={t:0,bx:C(29),by:C(10)+4,bd:'up'}}
+function startNight(){mode='night';BW=null;NS={t:0,bx:C(8),by:C(17)+4,bd:'up',pts:[[8,12],[29,12],[29,8],[31,8]],arr:0}}
 function updNight(dt){const s=NS;s.t+=dt;const t=s.t;
-  if(t>1.2&&t<3.2){const k=(t-1.2)/2;if(k<.5){s.by=C(10)+4+(C(8)+4-(C(10)+4))*(k/.5);s.bd='up'}else{s.bx=C(29)+(C(31)-C(29))*((k-.5)/.5);s.bd='right'}}
-  if(s.leave!==undefined){const k=Math.min(1,(t-s.leave)/1.8);s.bf=Math.floor(t*6)%2;if(k<.45){s.bx=C(31)+(C(29)-C(31))*(k/.45);s.bd='left'}else{s.bx=C(29);s.by=C(8)+4+(C(11)+4-(C(8)+4))*((k-.45)/.55);s.bd='down'}if(k>=1&&!s.gone){s.gone=1;s.scream()}}
-  if(t>3.4&&!s.talked){s.talked=1;talk(THREAT,()=>{mode='night';s.leave=s.t;s.scream=()=>{flash=.6;snd(300,.5,'sawtooth',.06);snd(240,.6,'sawtooth',.05);talk([['dima','Стоп… Кто-то кричит?!']],()=>{NS=null;P.x=C(31);P.y=C(9)+4;P.dir='left';BRUISE.add('mom');homePhase='run';mode='play';updTask()})}})}}
-function drawNightWorld(){if(!NS)return;const X=32*TS,Y=7*TS;drawChar(g,X,Y-6,'dima','down',0,1);g.fillStyle='#3a5aa0';g.fillRect(X+2,Y+9,12,20);g.fillStyle='#4a6ab8';g.fillRect(X+2,Y+9,12,2);if(!NS.gone)drawChar(g,Math.round(NS.bx-8),Math.round(NS.by-24),'brat2',NS.bd,(NS.t>1.2&&NS.t<3.2)||NS.leave!==undefined?Math.floor(NS.t*6)%2:0)}
-function startSneak(){homePhase='sneak';npcs=npcs.filter(n=>n.id!=='otchim');P.x=C(19);P.y=C(9)+4;P.dir='down';inv=1;
+  if(!s.arr&&t>.8){const e={x:s.bx,y:s.by,dir:s.bd,fr:s.bf||0,ft:s.ft,pts:s.pts};if(walkPts(e,110,dt))s.arr=t;s.bx=e.x;s.by=e.y;s.bd=e.dir;s.bf=e.fr;s.ft=e.ft}
+  if(false){const k=(t-1.2)/2;if(k<.5){s.by=C(10)+4+(C(8)+4-(C(10)+4))*(k/.5);s.bd='up'}else{s.bx=C(29)+(C(31)-C(29))*((k-.5)/.5);s.bd='right'}}
+  if(s.leave!==undefined&&!s.gone){if(!s.lp)s.lp=[[29,8],[29,12],[22,12]];const e={x:s.bx,y:s.by,dir:s.bd,fr:s.bf||0,ft:s.ft,pts:s.lp};const dn=walkPts(e,80,dt);s.bx=e.x;s.by=e.y;s.bd=e.dir;s.bf=e.fr;s.ft=e.ft;if(dn){s.gone=1;s.scream()}}
+  if(s.arr&&t>s.arr+.4&&!s.talked){s.bd='right';s.talked=1;talk(THREAT,()=>{mode='night';s.leave=s.t;s.scream=()=>{flash=.6;snd(300,.5,'sawtooth',.06);snd(240,.6,'sawtooth',.05);talk([['dima','Стоп… Кто-то кричит?!']],()=>{NS=null;P.x=C(31);P.y=C(9)+4;P.dir='left';BRUISE.add('mom');homePhase='run';mode='play';updTask()})}})}}
+function drawNightWorld(){if(!NS)return;const X=32*TS,Y=7*TS;drawChar(g,X,Y-6,'dima','down',0,1);g.fillStyle='#3a5aa0';g.fillRect(X+2,Y+9,12,20);g.fillStyle='#4a6ab8';g.fillRect(X+2,Y+9,12,2);if(!NS.gone&&NS.t>.8)drawChar(g,Math.round(NS.bx-8),Math.round(NS.by-24),'brat2',NS.bd,(!NS.arr||NS.leave!==undefined)?NS.bf||0:0)}
+let SNK=null;
+function startSneak(){homePhase='sneak';npcs=npcs.filter(n=>n.id!=='otchim');if(!SNK)SNK=[P.x,P.y];else{P.x=SNK[0];P.y=SNK[1]}if(!free(P.x,P.y)){P.x=C(19);P.y=C(9)+4}P.dir='down';inv=1;
   guards=[{id:'otchim',x:C(26),y:C(12)+4,dx:-1,dy:0,st:'patrol',pp:[[13,12],[26,12]],pi:0,path:[],fr:0,ft:0,w:0}];go(guards[0],...guards[0].pp[0]);
   items=[{k:'phone',n:'телефон',x:C(9),y:C(18),on:1}];got=0;note='Тихо! Отчим ходит по коридору. Иди, когда он отвернётся.';noteT=3.5;updTask()}
 function homeAI(m,dt){const ex=P.x-m.x,ey=P.y-m.y,d=Math.hypot(ex,ey);
@@ -1012,6 +1016,7 @@ function update(dt){
   if(mode==='gang'){updGang(dt);return}
   if(mode==='fight'){updFight(dt);return}
   if(mode==='brawl'){updBrawl(dt);return}
+  if(BW&&!BW.night&&walkPts(BW,70,dt))BW.hid=1;
   if(mode==='police'){updPolice(dt);return}
   if(mode==='night'){updNight(dt);return}
   if(mode==='bro'){updBro(dt);return}
@@ -1068,6 +1073,7 @@ function render(){
   if(S[lvl]&&S[lvl].geo&&geoPhase!=='dir'){g.save();drawWorldMap();g.restore()}
   if(SC){const [,dy]=derzPos(SC.t);ents.push({y:dy,d:drawScene})}
   if(PS){const c=PS.cop,dr=PS.dr;ents.push({y:c.y,d:()=>drawChar(g,Math.round(c.x-8),Math.round(c.y-24),'cop',c.dir,c.fr)});ents.push({y:dr.y,d:()=>drawChar(g,Math.round(dr.x-8),Math.round(dr.y-24),'dir',dr.dir,dr.fr)})}
+  if(BW&&!BW.hid&&!NS)ents.push({y:BW.y,d:()=>drawChar(g,Math.round(BW.x-8),Math.round(BW.y-24),'brat2',BW.dir,BW.fr)});
   if(NS)ents.push({y:9999,d:drawNightWorld});
   if(BS)ents.push({y:BS.y,d:()=>drawChar(g,Math.round(BS.x-8),Math.round(BS.y-24),'brat2',BS.dir||'down',BS.t<3.4?Math.floor(BS.t*6)%2:0)});
   if(GS)GS.ents.forEach(b=>ents.push({y:b.y,d:()=>{if(!b.hid)drawChar(g,Math.round(b.x-8),Math.round(b.y-24),b.id,b.dir||'down',b.fr||0)}}));
