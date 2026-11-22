@@ -745,7 +745,7 @@ function grab(){if(mode!=='brawl'||!BR||BR.end)return;const m=BR.me;if(m.spin>0)
   let bi=-1,bd=20;BR.props.forEach((pr,i)=>{const d=Math.hypot(pr.x-P.x,pr.y-P.y+4);if(d<bd){bd=d;bi=i}});
   if(bi>=0){m.hold=BR.props[bi].k;BR.props.splice(bi,1);return}
   const fd=findDesk();if(fd){setTile(fd[0],fd[1],0);REMOVED.push(fd);m.hold='desk'}}
-function launch(){if(BR.me.hold==='desk'){const a=AEL.r5;if(!a||a.paused||a.ended)play('r5')}const m=BR.me,[fx,fy]=facing();BR.proj.push({k:m.hold,x:P.x+fx*10,y:P.y-8+fy*10,vx:fx*190,vy:fy*190,dist:0,hit:new Set(),rot:0});m.hold=null;snd(200,.2,'square',.05)}
+function launch(){if(BR.me.hold==='desk'&&!BR.ev.r5){BR.ev.r5=1;play('r5')}const m=BR.me,[fx,fy]=facing();BR.proj.push({k:m.hold,x:P.x+fx*10,y:P.y-8+fy*10,vx:fx*190,vy:fy*190,dist:0,hit:new Set(),rot:0});m.hold=null;snd(200,.2,'square',.05)}
 function fWalk(f,tx,ty,sp,dt){f.rt-=dt;if(f.rt<=0||!f.path.length){f.rt=.45;const a=tileOf(f),b=[Math.floor(tx/TS),Math.floor(ty/TS)];f.path=bfs(a[0],a[1],b[0],b[1]);if(f.path.length)f.path.pop()}
   let gx=tx,gy=ty;if(f.path.length){const [px,py]=f.path[0];gx=C(px);gy=C(py)+4;if(Math.hypot(gx-f.x,gy-f.y)<3){f.path.shift()}}
   const dx=gx-f.x,dy=gy-f.y,d=Math.hypot(dx,dy)||1,nx=f.x+dx/d*sp*dt,ny=f.y+dy/d*sp*dt;if(freeC(nx,f.y))f.x=nx;if(freeC(f.x,ny))f.y=ny;
@@ -776,7 +776,7 @@ function updBrawl(dt){
   // сценарий: Дерзкий, Саша
   const dz=B.f.find(x=>x.id==='derz');
   if(!B.ev.dz&&B.t>7&&dz&&!dz.ko){B.ev.dz=1;const br=B.f.find(x=>x.id==='brat'&&!x.ko);if(br){br.x=dz.x+12;br.y=dz.y;br.dir='left'}dz.hp=0;dz.ko=1;flash=.4;snd(80,.4,'sine',.5);pop(dz.x,dz.y-30,'БАХ!','#fff');say('Главарь вырубил Дерзкого битой!',3)}
-  if(!B.ev.km&&B.t>2.5){B.ev.km=1;play('r2');say('Камран орёт из-за парты!',2)}
+  if(!B.ev.km&&alive('gang').length<=2){B.ev.km=1;play('r2');say('Камран: «Уйдите из нашего класса!»',3)}
   if(!B.ev.sj&&B.t>10){B.ev.sj=1;const sn=npcs.find(n=>n.id==='sasha');if(sn)sn.hid=1;B.f.push(mkF('sasha',C(2),C(5)+4,40,'our'));say('Саша бежит на помощь!',3)}
   const sa=B.f.find(x=>x.id==='sasha');if(sa&&sa.ko&&B.ev.sk<2)B.ev.sk=2;if(dz&&dz.ko)B.ev.dz=1;
   if(sa&&!sa.ko&&B.ev.sk===0&&B.t>16){B.ev.sk=1;B.skT=B.t;sa.stun=3;sa.x=C(1);sa.y=Math.max(C(3)+4,Math.min(C(9)+4,sa.y));const b=alive('gang').find(x=>look(x.id).bat)||alive('gang')[0];if(b){b.x=sa.x+12;b.y=sa.y;b.dir='left';b.stun=2}
