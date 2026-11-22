@@ -56,7 +56,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
 <body>
 <div class="wrap">
   <h1>Школа глазами школьника</h1>
-  <p class="sub">2D фан-игра по 4 сезону: Диму выгнали, Камран подставил, а на новогоднем концерте звучит дисс «Беда».</p>
+  <p class="sub">2D фан-игра по 4–6 сезонам: дисс «Беда», банда в школе, отчим, Маля и казино.</p>
   <div class="housing"><div class="screen" id="screen">
     <canvas id="c" width="320" height="192" aria-label="Экран игры"></canvas>
     <div class="hud"><span id="hl"></span><span id="hr"></span></div>
@@ -462,9 +462,9 @@ function show(html){ov.innerHTML=html;ov.classList.add('on')}
 function hide(){ov.classList.remove('on')}
 function titleScreen(){
   mode='title';
-  show(`<canvas id="tpc" width="72" height="30" style="width:216px;height:90px;image-rendering:pixelated;margin-bottom:6px"></canvas><div class="tag">ФАН-ИГРА · 4 СЕЗОН</div><h2>Школа глазами школьника: Беда</h2><p>Диму выгнали из школы, весь класс ушёл за ним. Проберись обратно с Милкисом, найди улики против Камрана, собери аппаратуру и зачитай с Дерзким дисс «Беда» на новогоднем концерте. А по коридорам ходит Маля — он знает, где взять деньги.</p>
+  show(`<h2 style="font-size:clamp(15px,3.4vw,28px);color:#ffd84d;text-shadow:3px 3px 0 #000;margin-bottom:4px">Школа глазами школьника</h2><div class="tag" style="color:#fff;margin-bottom:8px">ИГРА · 4–6 СЕЗОН</div><canvas id="tcast" width="210" height="58" style="width:min(620px,96%);aspect-ratio:210/58;image-rendering:pixelated;margin-bottom:10px"></canvas>
   <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" id="b1">${lvl?'Продолжить: глава '+(lvl+1):'Играть'}</button>${lvl?'<button class="btn alt" id="b2">Сначала</button>':''}<button class="btn alt" id="b3">Выбрать главу</button></div>`);
-  portrait();
+  castLine();
   $('b1').onclick=()=>card();
   const b2=$('b2');if(b2)b2.onclick=()=>{lvl=0;saveL();card()};
   $('b3').onclick=()=>chapterMenu();
@@ -492,6 +492,11 @@ function win(){
     lvl++;saveL();card();
   });
 }
+function castLine(){const c=$('tcast');if(!c)return;const x=c.getContext('2d');x.clearRect(0,0,210,58);
+  const back=['math','rashida','dir','geo','bufet','mom','otchim','brat2','cop','brat','thug'],front=['milkis','polina','derz','sasha','dima','malya','oreh','german','kamran','natasha'];
+  x.fillStyle='rgba(0,0,0,.35)';x.fillRect(0,50,210,8);
+  back.forEach((id,i)=>drawChar(x,8+i*18,look(id).tall?3:0,id,'down',0));
+  front.forEach((id,i)=>drawChar(x,14+i*19+(id==='dima'||id==='malya'?0:0),look(id).tall?31:28,id,'down',0))}
 function portrait(){const c=$('tpc');if(!c)return;const x=c.getContext('2d');x.clearRect(0,0,72,30);drawChar(x,10,3,'dima','down',0);drawChar(x,46,3,'malya','down',0)}
 function finale(){
   mode='end';lvl=0;saveL();fui.classList.remove('on');casMusic(0);CS=null;PH=null;AR=null;
