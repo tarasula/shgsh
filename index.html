@@ -77,7 +77,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
       <button class="act" id="act" aria-label="Действие">E</button>
     </div>
   </div>
-  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
+  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="mus" style="margin:0 0 10px">Музыка: вкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
 </div>
 <script>
 {
@@ -383,7 +383,7 @@ const S=[
  {t:'Глава 6: Брат',fightCh:1,items:[],noMath:1,
   intro:[['dir','(по громкой связи) Так, внимание! Звонок был — все идём на урок, быстро!'],['dima','Утро. Снова школа. Надо зайти в класс и сесть за парту.']],
   target:{id:'rashida',x:7,y:1},start:[7,12],
-  npcs:[{id:'sasha',x:2,y:4,sit:1,say:'Рашида Жавдатовна сегодня злая. Садись быстрее.'},{id:'kamran',x:10,y:8,sit:1,say:'Чё смотришь? Садись уже.'},{id:'oreh',x:5,y:6,sit:1,say:'Слышал? Говорят, у тебя дома новый папа.'},{id:'german',x:9,y:4,sit:1,say:'Свободная парта есть сзади.'},{id:'derz',x:3,y:8,sit:1,say:'Если что — я боксом занимался. Профессионально.'},{id:'polina',x:6,y:8,sit:1,say:'Садись рядом, Дима.'}],
+  npcs:[{id:'sasha',x:2,y:4,sit:1,say:'Рашида Жавдатовна сегодня злая. Садись быстрее.'},{id:'kamran',x:10,y:8,sit:1,say:'Чё смотришь? Садись уже.'},{id:'oreh',x:5,y:6,sit:1,say:'Слышал? Говорят, у тебя дома новый папа.'},{id:'german',x:9,y:4,sit:1,say:'Свободная парта есть сзади.'},{id:'derz',x:3,y:8,sit:1,say:'Если что — я боксом занимался. Профессионально.'},{id:'polina',x:6,y:8,sit:1,say:'Садись рядом, Дима.'},{id:'malya',x:10,y:6,sit:1,say:'Слышь, Дима… после урока поговорим.'}],
   outro:[]},
  {t:'Глава 7: Маля',malCh:1,items:[],noMath:1,
   intro:[['dimaT','Прошло два дня. Школу снова открыли, а до срока осталось пять.'],['dimaT','Миллион рублей… Маля говорил, что может помочь. Надо найти его в коридоре.']],
@@ -644,7 +644,7 @@ function deskFree(x,y){return M[y]&&(M[y][x]===2||M[y][x]===16)&&!npcs.some(n=>n
 function nearBed(){const [px,py]=tileOf(P);for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if((tile(x,y)===23||tile(x,y)===24)&&R[y]&&R[y][x]===3)return true;return false}
 function findDesk(){const [px,py]=tileOf(P);for(const [x,y] of [[px,py-1],[px-1,py-1],[px+1,py-1],[px,py],[px-1,py],[px+1,py]])if(deskFree(x,y))return[x,y];return null}
 function trySit(){const fd=findDesk();if(fd){const [x,y]=fd;P.sit={tx:x,ty:y};P.dir='up';
-    const m=guards.find(q=>q.id==='math');if(m&&m.st==='teach'&&!m.path.length&&R[y]&&R[y][x]===0&&curMap==='school'&&!sitAsked){sitAsked=1;if(Math.random()<.5){talk([['math','Дмитрий?.. Вас же вроде как не было на уроках.'],['dima','Я? Да я всё время тут сидел. На последней парте.'],['math','Хм… Ладно. Сиди тихо и пиши.']]);m.t=Math.max(m.t,8)}else{note='Математичка ничего не заметила…';noteT=2.5}return}if(S[lvl].fightCh&&!GS&&!gangDone)startGang();return}}
+    const m=guards.find(q=>q.id==='math');if(m&&m.st==='teach'&&!m.path.length&&R[y]&&R[y][x]===0&&curMap==='school'&&!sitAsked){sitAsked=1;if(Math.random()<.5){talk([['math','Дмитрий?.. Вас же вроде как не было на уроках.'],['dima','Я? Да я всё время тут сидел. На последней парте.'],['math','Хм… Ладно. Сиди тихо и пиши.']]);m.t=Math.max(m.t,8)}else{note='Математичка ничего не заметила…';noteT=2.5}return}if(S[lvl].fightCh&&!GS&&!gangDone){if(!malMet){malMet=1;talk(MALMEET,()=>{if(!GS&&!gangDone)startGang()})}else startGang()}return}}
 function standUp(){if(!P.sit)return;P.x=C(P.sit.tx);P.y=C(P.sit.ty+1)+4;if(!free(P.x,P.y))P.y=C(P.sit.ty-1)+4;P.sit=null}
 function nearNpc(){let best=null,bd=99;for(const n of npcs){const d=Math.hypot(n.x-P.x,n.y-P.y);if(d<(n.target||n.id==='dir'?36:24)&&d<bd){bd=d;best=n}}return best}
 
@@ -766,7 +766,7 @@ function startGang(){
 function updGang(dt){GS.t+=dt;const t=GS.t;
   GS.ents.forEach(b=>{const k=Math.max(0,Math.min(1,(t-b.delay)/1.6));if(k<=0){b.hid=1;return}b.hid=0;
     const mx=C(7),my=C(6)+4;if(k<.5){const q=k/.5;b.x=b.fx+(mx-b.fx)*q;b.y=b.fy+(my-b.fy)*q}else{const q=(k-.5)/.5;b.x=mx+(b.tx-mx)*q;b.y=my+(b.ty-my)*q}b.fr=k<1?Math.floor(t*8)%2:0;if(k>=1&&b.id==='brat')b.dir='down'});
-  if(t>3.8&&!GS.talked){GS.talked=1;talk([['rashida','Это что такое?! Кто вы такие?! Отпустите меня!'],['brat','Тихо, Рашида Жавдатовна. Мы не к вам.'],['brat','Уведите её.'],['brat','Ну что, Дима… привет. Я твой брат.'],['dima','Какой ещё брат?!'],['derz','Дима, я с тобой. Я боксом занимался!'],['polina','Я — в шкаф!']],()=>{mode='gang';GS.pol=t})}
+  if(t>3.8&&!GS.talked){GS.talked=1;talk([['rashida','Это что такое?! Кто вы такие?! Отпустите меня!'],['brat','Тихо, Рашида Жавдатовна. Мы не к вам.'],['brat','Уведите её.'],['brat','Ну что, Дима… привет. Я твой брат.'],['dima','Какой ещё брат?!'],['derz','Дима, я с тобой. Я боксом занимался!'],['malya','Э, вы чё, попутали? Это наш класс!'],['polina','Я — в шкаф!']],()=>{mode='gang';GS.pol=t})}
   if(GS.pol!==undefined){const rs=npcs.find(n=>n.id==='rashida'),k3=Math.min(1,(t-GS.pol)/2.2),c1=GS.ents[0],c2=GS.ents[1];
     if(!GS.a3){GS.a3=1;play('r3');const a=AEL.r3;GS.r3t=t;if(a)a.onended=()=>{if(GS&&!GS.a4){GS.a4=1;GS.r4t=GS.t;play('r4');const b=AEL.r4;if(b)b.onended=()=>{if(GS)GS.r4done=1}}}}
     if(!GS.a4&&t-GS.r3t>1.6){GS.a4=1;GS.r4t=t;play('r4')}if(GS.a4&&!GS.r4done&&t-GS.r4t>2.2)GS.r4done=1;
@@ -797,7 +797,7 @@ function startBrawl(){
   const f=bands.map(b=>mkF(b.id,b.x,b.y,b.id==='brat'?90:52,'gang'));
   const dz=npcs.find(n=>n.id==='derz');if(dz)dz.hid=1;
   f.push(mkF('derz',C(4),C(9)+4,50,'our'));
-  ['oreh','german','kamran'].forEach(id=>{const n=npcs.find(q=>q.id===id);if(n){n.hid=1;f.push(mkF(id,C(n.tx||n.x/TS|0),C((n.ty||0)+1)+4,id==='oreh'?45:30,'our'))}});
+  ['oreh','german','kamran','malya'].forEach(id=>{const n=npcs.find(q=>q.id===id);if(n){n.hid=1;f.push(mkF(id,C(n.tx||n.x/TS|0),C((n.ty||0)+1)+4,id==='oreh'?45:id==='malya'?40:30,'our'))}});
   BR={t:0,f,me:{hp:100,max:100,cd:0,hold:null,spin:0,pT:0},props:[[4,5],[8,7],[11,5],[1,7],[11,9]].map(([x,y])=>({k:'chair',x:C(x),y:C(y)+2})),proj:[],pops:[],ev:{dz:0,sj:0,sk:0},msg:'Бандиты увели Рашиду Жавдатовну! E — бить, Q — схватить парту или стул, Q ещё раз — раскрутить и бросить.',msgT:5,end:0};
   fui.innerHTML='<button id="bp">Удар (E)</button><button id="bg">Взять / бросить (Q)</button>';$('bp').onclick=punch;$('bg').onclick=grab;fui.classList.add('on');updTask();
 }
@@ -981,7 +981,7 @@ function updBro(dt){const b=BS;b.t+=dt;const tot=3.4,k=Math.min(1,b.t/tot)*(BRP.
   if(b.t>5.2&&!b.talked){b.talked=1;talk([['brat2','О, братишка. Ну привет ещё раз.'],['dima','Ты?!'],['mom','Дима, знакомься — это твой старший брат. Он сегодня к нам переехал.'],['dima','(про себя) Подожди… это же главарь той банды!'],['brat2','Тсс. Маме — ни слова.'],['mom','Ладно, мальчики, хватит. Дима, поздно уже — иди спать.']],()=>{BW={x:BS.x,y:BS.y,dir:'down',fr:0,pts:[[19,9],[19,12],[8,12],[8,15],[8,17]]};BS=null;homePhase='bed3';updTask()})}}
 /* ===== НОЧЬ ДОМА: угрозы, мама в синяках, тихий звонок ===== */
 let NS=null,BW=null,GYM=[],RP=null,BUB=[],ATE=0,malMet=0,malP='',hasNeck=0,VST=null,AR=null,PH=null,CS=null,CMU=null,crN=0;
-const OUCH={math:'Ай! Ты что делаешь, Дмитрий?!',derz:'Ай! Ну больно же!',polina:'Ай! Дима, ну ты чего?!',sasha:'Эй! Шапку чуть не сбил!',oreh:'Ой! Я же ничего не сделал!',german:'Ай! За что?!',kamran:'Ты чё, совсем?!',milkis:'Ай! Дима, ну ты даёшь!',natasha:'Ай! Больно!',bufet:'Ай! Ещё раз — и без пирожных останешься!',dir:'Дмитрий! Это что ещё такое?!',rashida:'Дмитрий! Немедленно прекрати!',geo:'Ай! Глобус чуть не уронил!',mom:'Ай! Дима!',otchim:'Ну всё, щенок…',thug:'Ты чё, бессмертный?!'};
+const OUCH={math:'Ай! Ты что делаешь, Дмитрий?!',derz:'Ай! Ну больно же!',polina:'Ай! Дима, ну ты чего?!',sasha:'Эй! Шапку чуть не сбил!',oreh:'Ой! Я же ничего не сделал!',german:'Ай! За что?!',kamran:'Ты чё, совсем?!',milkis:'Ай! Дима, ну ты даёшь!',natasha:'Ай! Больно!',bufet:'Ай! Ещё раз — и без пирожных останешься!',malya:'Ты чё, Дима? Я ж свой!',dir:'Дмитрий! Это что ещё такое?!',rashida:'Дмитрий! Немедленно прекрати!',geo:'Ай! Глобус чуть не уронил!',mom:'Ай! Дима!',otchim:'Ну всё, щенок…',thug:'Ты чё, бессмертный?!'};
 const SWEETS=['эклер','кусок торта «Наполеон»','пончик с глазурью','пирожное «Картошка»','корзиночку с кремом','кусок шоколадного торта'];
 function ouch(e,id){if(e.ob>0)return;e.ob=1.2;BUB.push({e,txt:OUCH[id]||'Ай!',t:2.2});snd(260,.12,'square',.05);if(id==='math'&&e.st&&(e.st==='teach'||e.st==='roam')){e.dx=P.x-e.x;e.dy=P.y-e.y;const d=Math.hypot(e.dx,e.dy)||1;e.dx/=d;e.dy/=d}}
 function ballHits(o){const sp=Math.hypot(o.vx,o.vy);if(sp<40)return;
@@ -1054,7 +1054,7 @@ const OBST=[[4,11],[10,13],[14,12],[17,11],[21,13],[25,12],[30,11],[35,13]],SHAR
 function startEscape(fromBrawl){
   gangDone=1;mode='play';fui.classList.remove('on');escP=hasKey?'gym':'key';
   if(!fromBrawl){P.x=C(7);P.y=C(9)+4}P.sit=null;P.kx=P.ky=0;inv=1.5;
-  if(fromBrawl&&BR)BR.f.filter(f=>f.team==='our').forEach(f=>{const n=npcs.find(q=>q.id===f.id);if(n){n.sit=0;n.tx=undefined;n.ty=undefined;n.x=f.x;n.y=f.y;n.hid=0;n.say=n.id==='derz'?'Голова гудит… Беги за телефоном, я в норме.':n.id==='sasha'?'……я в порядке. Наверное.':n.id==='oreh'?'Я больше в эту школу не приду. Никогда.':n.id==='german'?'Это было… очень страшно.':'Я ничего не видел. Понял?'}});
+  if(fromBrawl&&BR)BR.f.filter(f=>f.team==='our').forEach(f=>{const n=npcs.find(q=>q.id===f.id);if(n){n.sit=0;n.tx=undefined;n.ty=undefined;n.x=f.x;n.y=f.y;n.hid=0;n.say=n.id==='derz'?'Голова гудит… Беги за телефоном, я в норме.':n.id==='sasha'?'……я в порядке. Наверное.':n.id==='oreh'?'Я больше в эту школу не приду. Никогда.':n.id==='german'?'Это было… очень страшно.':n.id==='malya'?'Нормально мы их… Слушай, Дима, моё предложение в силе.':'Я ничего не видел. Понял?'}});
   DOOR=null;[[19,10],[32,10],[9,14],[23,14]].forEach(([x,y])=>setTile(x,y,30));if(hasKey&&gymOpen)setTile(9,14,34);
   OBST.forEach(([x,y])=>setTile(x,y,31));SHARDS.forEach(([x,y])=>setTile(x,y,32));
   const mk=(a,b,dl)=>({id:'thug',x:C(1),y:C(12)+4,dx:1,dy:0,st:'enter',ent:dl,pp:[a,b],pi:0,path:[],fr:0,ft:0,lost:0,rt:0,hid:1});
@@ -1062,7 +1062,6 @@ function startEscape(fromBrawl){
   setTile(0,12,35);flash=.5;snd(70,.5,'sine',.5);snd(120,.25,'square',.08);
   npcs.forEach(n=>{if(n.id!=='rashida'&&n.id!=='polina')n.hid=0});
   if(!npcs.some(n=>n.id==='dir'))npcs.push({id:'dir',x:C(33),y:C(18)+4,say:'Беги в спортзал, Дима! Быстрее!'});
-  if(!malMet&&!npcs.some(n=>n.id==='malya'))npcs.push({id:'malya',x:C(11),y:C(12)+4,meet:1,say:'…'});
   items=hasKey?[{k:'phone',n:'телефон',x:C(1),y:C(22),on:1}]:[];got=0;
   note='Громилы вламываются в школу! '+(hasKey?(gymOpen?'Беги в спортзал за телефоном!':'Открой дверь спортзала ключом (E).'):'Все двери заперты — ключ у директора.');noteT=4;updTask();
 }
@@ -1242,7 +1241,7 @@ function render(){
 }
 
 /* ===== МАЛЯ, АРЕСТ, УГРОЗА, СКЛАД, КАЗИНО ===== */
-const MALMEET=[['malya','Слышь, Дима. Хочешь много бабок? Ну, денег. Я могу тебе помочь.'],['dima','Какие ещё бабки?! Тут бандиты по школе ходят! Не нужна мне никакая помощь.'],['malya','Ну как знаешь. Передумаешь — ты знаешь, где меня найти.']];
+const MALMEET=[['malya','(шёпотом с соседней парты) Слышь, Дима. Хочешь много бабок? Ну, денег. Я могу тебе помочь.'],['dima','Какие ещё бабки? Урок начинается. Не нужна мне никакая помощь.'],['malya','Ну как знаешь. Передумаешь — ты знаешь, где меня найти.']];
 const MALASK=[['dima','Маля! Слушай… можно мне разбогатеть? Очень надо. Срочно.'],['malya','О, передумал всё-таки. Хорошо. Но только придётся тебе достать около 50 тысяч гривен. Без вклада — никак.'],['dima','50 тысяч?! Где я их возьму?'],['malya','Это уже твои проблемы. Найдёшь — приходи.'],['dimaT','50 тысяч… В кабинете директора стоит шкаф, а за ним, говорят, секретный склад. Ключ — у буфетчицы.']];
 const BUFKEY=[['dima','Здравствуйте! Директор попросил кое-что достать со склада. Дайте, пожалуйста, ключ от шкафа.'],['bufet','Директор? Сам попросил? Хм… Ну ладно, держи. Только верни сразу — и ничего там не трогай!'],['dima','Конечно-конечно. Спасибо!']];
 const MALGIVE=[['dima','Вот. Ожерелье. Тысяч на пятьдесят.'],['malya','Ого… Вот это вещь! Ну всё, Дима, погнали. Я знаю одно место — там из пятидесяти делают миллион.'],['dima','Куда?'],['malya','Увидишь.']];
@@ -1300,10 +1299,11 @@ function drawPhone(){g.setTransform(1,0,0,1,0,0);hl.textContent='Ночь';hr.te
   if(flash>0){g.fillStyle=`rgba(232,72,59,${flash*.5})`;g.fillRect(0,0,VW,VH)}}
 
 /* ----- казино: музыка (синтез) ----- */
-function casMusic(on){try{
+function casMusic(on,vol){try{
+  if(on&&CMU){CMU.m.gain.setTargetAtTime(vol||.55,actx.currentTime,.3);return}
   if(!on){if(CMU){clearInterval(CMU.iv);try{CMU.m.gain.setTargetAtTime(0,actx.currentTime,.15)}catch(e){}CMU=null}return}
   actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.resume)actx.resume();if(CMU)return;
-  const m=actx.createGain();m.gain.value=.55;m.connect(actx.destination);
+  const m=actx.createGain();m.gain.value=vol||.55;m.connect(actx.destination);
   const nb=actx.createBuffer(1,actx.sampleRate*.5,actx.sampleRate),dd=nb.getChannelData(0);for(let i=0;i<dd.length;i++)dd[i]=Math.random()*2-1;
   const st=60/124/4,CHD=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]],mf=n=>440*Math.pow(2,(n-69)/12);let step=0,nt=actx.currentTime+.1;
   const tone=(f,t,d,ty,v,lp)=>{const o=actx.createOscillator(),gn=actx.createGain();o.type=ty;o.frequency.value=f;gn.gain.setValueAtTime(v,t);gn.gain.exponentialRampToValueAtTime(.0008,t+d);let n=o;if(lp){const fl=actx.createBiquadFilter();fl.type='lowpass';fl.frequency.value=lp;o.connect(fl);n=fl}n.connect(gn);gn.connect(m);o.start(t);o.stop(t+d+.02)};
@@ -1393,7 +1393,10 @@ function drawCasino(){const c=CS,t=c.at;hl.textContent='Казино';hr.textCon
   if(flash>0){g.fillStyle=`rgba(255,216,77,${flash*.5})`;g.fillRect(0,0,VW,VH)}}
 
 let last=performance.now();
-function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);render();requestAnimationFrame(loop)}
+let MUS=1,musW='';try{MUS=localStorage.getItem('shgshMus')!=='0'}catch(e){}
+function musTick(){const want=MUS&&mode!=='title'&&mode!=='rhythm'&&mode!=='act'&&mode!=='kiss'&&!(S[lvl]&&S[lvl].rhythm&&mode!=='end');const v=CS?.55:.17,k=want?'on'+v:'off';if(k===musW&&(!want||CMU))return;musW=k;if(want)casMusic(1,v);else casMusic(0)}
+$('mus').onclick=()=>{MUS=!MUS;try{localStorage.setItem('shgshMus',MUS?'1':'0')}catch(e){}$('mus').textContent=MUS?'Музыка: вкл':'Музыка: выкл';musW='';if(!MUS)casMusic(0)};$('mus').textContent=MUS?'Музыка: вкл':'Музыка: выкл';
+function loop(now){musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
 }
 </script>
