@@ -1204,7 +1204,7 @@ function update(dt){
 const dirTo=(x,y)=>{if(mode!=='play'&&mode!=='dialog'&&mode!=='scene'&&mode!=='casino')return null;const dx=P.x-x,dy=P.y-y;if(Math.hypot(dx,dy)>96||Math.hypot(dx,dy)<1)return null;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')};
 const gdir=q=>Math.abs(q.dx)>Math.abs(q.dy)?(q.dx>0?'right':'left'):(q.dy>0?'down':'up');
 function render(){
-  if(CS&&!['walk','walk2','after','vid','end','leave'].includes(CS.ph)){drawCasino();return}
+  if(CS&&!['walk','walk2','after','vid','end','leave','msit'].includes(CS.ph)){drawCasino();return}
   if(PH){drawPhone();return}
   if(CALL){drawCall();return}
   if(CUT){drawCut();return}
@@ -1229,7 +1229,7 @@ function render(){
       g.fillStyle='#8ac8ff';g.fillRect(Math.round(n.x+6),Math.round(n.y-18+(t0*20)%6),1,2);g.fillRect(Math.round(n.x-7),Math.round(n.y-16+(t0*16)%6),1,2);
       tag(n.x,n.y-22,'Не бейте!');return}
     if(n.sit){const X=n.tx*TS,Y=n.ty*TS;drawChar(g,X,Y-4,n.id,lk||'up',0,1)}
-    else{drawChar(g,Math.round(n.x-8),Math.round(n.y-24),n.id,lk||'down',0);if(n.globe){const gx=Math.round(n.x-4),gy=Math.round(n.y-14);g.fillStyle='#3a8ad0';g.fillRect(gx,gy+1,8,6);g.fillRect(gx+1,gy,6,8);g.fillStyle='#5ab05a';g.fillRect(gx+2,gy+2,3,2);g.fillRect(gx+5,gy+4,2,2);g.fillStyle='#fff';g.fillRect(gx+1,gy+1,1,1)}}
+    else{drawChar(g,Math.round(n.x-8),Math.round(n.y-24),n.id,n.mv?n.dir:(lk||'down'),n.mv?n.fr:0);if(n.globe){const gx=Math.round(n.x-4),gy=Math.round(n.y-14);g.fillStyle='#3a8ad0';g.fillRect(gx,gy+1,8,6);g.fillRect(gx+1,gy,6,8);g.fillStyle='#5ab05a';g.fillRect(gx+2,gy+2,3,2);g.fillRect(gx+5,gy+4,2,2);g.fillStyle='#fff';g.fillRect(gx+1,gy+1,1,1)}}
     if(n.target){const ok=!items.some(i=>i.on);g.fillStyle=ok?'#3fe07a':'#ffd84d';const yy=Math.round(n.y-(look(n.id).tall?38:35)+Math.sin(t0*4)*1.5);g.fillRect(Math.round(n.x-1),yy,2,5);g.fillRect(Math.round(n.x-1),yy+7,2,2)}}});
   for(const q of guards)ents.push({y:q.y,d:()=>{if(q.hid)return;const chs=q.id==='thug'&&q.st==='chase';NB=chs;drawChar(g,Math.round(q.x-8),Math.round(q.y-24),q.id,gdir(q),q.fr);NB=false;if(chs)drawSwing(q.x,q.y-12,gdir(q),.3-((t0*2)%.6>.3?(t0*2)%.3:.3-(t0*2)%.3));
     const bub=q.id==='thug'?(q.st==='chase'?'СТОЯТЬ!':''):q.st==='chase'?'ДМИТРИЙ!':q.st==='complain'&&!q.path.length?'бу-бу-бу…':q.st==='teach'&&!q.path.length?'x + 5 = 12':'';
@@ -1384,7 +1384,7 @@ function startCasino(){startCasinoOld();CS.ph='walk';VST=null;switchMap('casino'
   npcs=[{id:'malya',x:C(21),y:C(16)+4,say:'Садись за любой автомат, Дима. Я рядом.'},{id:'gamb',x:C(29),y:C(13)+4,tx:29,ty:13,sit:1,say:'Не мешай… Я тут с утра сижу. Вот-вот зайдёт, чувствую.'}];
   P.x=C(20);P.y=C(17)+4;P.dir='up';P.sit=null;P.hide=null;P.hold=null;mode='play';fadeT=1.2;updTask();
   setTimeout(()=>{if(CS&&CS.ph==='walk'&&mode==='play')talk(CASIN)},700)}
-function casSit(){CS.sitAt=performance.now();if(CS.ph==='walk2'){CS.ph='alone';CS.ct=0;mode='casino';P.sitDir=null;return}const m=npcs.find(n=>n.id==='malya');if(m&&!m.sit){const nx=M[P.sit.ty][P.sit.tx+1]===16?P.sit.tx+1:P.sit.tx-1;Object.assign(m,{sit:1,tx:nx,ty:P.sit.ty,x:C(nx),y:C(P.sit.ty)+4,say:'Крути давай!'});CS.mx=nx}CS.ph='slots';CS.t=0;mode='casino';flash=.3;snd(300,.08,'square',.05)}
+function casSit(){CS.sitAt=performance.now();if(CS.ph==='walk2'){CS.ph='alone';CS.ct=0;mode='casino';P.sitDir=null;return}const m=npcs.find(n=>n.id==='malya');if(m&&!m.sit){const nx=M[P.sit.ty][P.sit.tx+1]===16?P.sit.tx+1:P.sit.tx-1,ty=P.sit.ty;CS.mx=nx;Object.assign(m,{mv:1,fr:0,ft:0,dir:'down',pts:[[19,Math.round((m.y-4-8)/TS)],[19,ty+1],[nx,ty+1]]});CS.ph='msit';mode='casino';note='Маля идёт к тебе…';noteT=2;return}CS.ph='slots';CS.t=0;mode='casino';flash=.3;snd(300,.08,'square',.05)}
 function casSay(t){CS.say=t;CS.sayT=2.6}
 function casAct(){const c=CS;if(!c)return;if(performance.now()-(c.sitAt||0)<400)return;
   if(c.ph==='alone'){if(c.ct<1.2)return;if(!c.said){c.said=1;talk(CASALONE,()=>{mode='casino';c.ct=0});return}c.ph='last';c.ct=0;c.hb=0;c.bet=c.bal;c.bal=0;const tg=[4,4,3];c.reels.forEach((r,i)=>{const b=Math.round(r.pos);r.from=b;r.to=b+5*(3+i)+((tg[i]-(b%5))+5)%5;r.t0=c.t;r.dur=[2.4,4.6,9][i];r.done=0;r.last=b});snd(200,.3,'sawtooth',.06);return}
@@ -1400,7 +1400,8 @@ function updCas(dt){const c=CS;c.t+=dt;if(c.sayT>0)c.sayT-=dt;
   c.parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=120*dt;p.t-=dt});c.parts=c.parts.filter(p=>p.t>0);
   if(c.ph==='win'){c.wt+=dt;if(Math.random()<.25)coinSnd();if(Math.random()<dt*14)c.parts.push({x:Math.random()*320,y:-4,vx:0,vy:40+Math.random()*50,t:3,c:'#ffd84d',coin:1});
     if(c.wt>3.2){c.ph='slots';c.parts=[];if(c.n>=SPINS.length){c.ph='vid';c.vt=0;const m=npcs.find(n=>n.id==='malya');P.sitDir=m&&m.tx<P.sit.tx?'left':'right';play('castalk')}}}
-  if(c.ph==='vid'){c.vt+=dt;const a=AEL.castalk;if(c.vt>.5&&((a&&a.ended)||c.vt>7.5)){c.ph='end';talk(CASEND,()=>{c.ph='leave';mode='casino';const m=npcs.find(n=>n.id==='malya');if(m){Object.assign(m,{sit:0,tx:undefined,ty:undefined,y:C(P.sit.ty+1)+4,pts:[[m.x/TS|0,P.sit.ty+1],[20,16],[20,18]],fr:0})}})}}
+  if(c.ph==='vid'){c.vt+=dt;const a=AEL.castalk;if(c.vt>.5&&((a&&a.ended)||c.vt>7.5)){c.ph='end';talk(CASEND,()=>{c.ph='leave';mode='casino';const m=npcs.find(n=>n.id==='malya');if(m){Object.assign(m,{sit:0,mv:1,ft:0,tx:undefined,ty:undefined,y:C(P.sit.ty+1)+4,pts:[[m.x/TS|0,P.sit.ty+1],[19,P.sit.ty+1],[19,16],[20,16],[20,18]],fr:0})}})}}
+  if(c.ph==='msit'){const m=npcs.find(n=>n.id==='malya');if(!m){c.ph='slots';return}if(!m.sit){if(walkPts(m,70,dt)){Object.assign(m,{mv:0,sit:1,tx:c.mx,ty:P.sit.ty,x:C(c.mx),y:C(P.sit.ty)+4,say:'Крути давай!'});c.st=0;snd(180,.08,'square',.05)}}else{c.st=(c.st||0)+dt;if(c.st>.7&&!c.said0){c.said0=1;talk([['malya','(садится рядом) Ну что, погнали. Крути, Дима!']],()=>{c.ph='slots';c.t=0;c.sitAt=performance.now();mode='casino';flash=.3})}}}
   if(c.ph==='leave'){const m=npcs.find(n=>n.id==='malya');if(!m||walkPts(m,60,dt)){npcs=npcs.filter(n=>n.id!=='malya');c.ph='walk2';mode='play';P.sitDir='up';updTask()}}
   if(c.ph==='cele'){c.ct+=dt;if(c.ct>1.4&&!c.clap){c.clap=1;flash=.6;snd(1400,.06,'square',.1);snd(180,.15,'sawtooth',.1);jingle();for(let i=0;i<90;i++){const a=Math.random()*Math.PI*2,v=50+Math.random()*150;c.parts.push({x:160,y:100,vx:Math.cos(a)*v,vy:Math.sin(a)*v-50,t:2+Math.random(),c:['#ffd84d','#ff60d0','#40e0ff','#c8ff40','#fff'][i%5]})}}
     if(c.clap&&Math.random()<.2)coinSnd();
