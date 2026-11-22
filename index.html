@@ -2,8 +2,15 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ШГШ: Беда</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ШГШ">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -52,7 +59,8 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
 .keys{color:var(--soft);font-size:14px;margin:10px 0 0}
 
 .tc,.rot{display:none}
-.tc{position:absolute;inset:0;touch-action:none;-webkit-user-select:none;user-select:none}
+.tc{position:absolute;inset:0;z-index:2;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dlg,.fui{z-index:3}.ov{z-index:4}.tc button{touch-action:none;-webkit-tap-highlight-color:transparent}
 .tz{position:absolute;top:0;bottom:0}.tzl{left:0;width:50%}.tzr{right:0;width:50%}
 .joy{position:absolute;display:none;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;background:rgba(255,255,255,.12);border:3px solid rgba(255,255,255,.45);pointer-events:none}
 .joy i{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:rgba(255,255,255,.55)}
@@ -72,7 +80,8 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
  .screen{aspect-ratio:auto;width:100vw;height:100vh;height:100dvh;border-radius:0;display:flex;align-items:center;justify-content:center}
  .screen>canvas#c{width:auto;height:100%;max-width:100%;aspect-ratio:5/3}
  .tc{display:block}
- .dlg{left:12%;right:12%}
+ .dlg{left:8%;right:200px}
+ .hud{left:calc((100vw - min(100vw,100vh*5/3))/2 + 8px);right:auto}
 }
 @media (orientation:portrait) and (pointer:coarse){.rot{display:block;background:#e8483b;color:#fff;border-radius:8px;padding:8px 12px;margin:0 0 10px;font:400 10px/1.5 "Press Start 2P",monospace;text-align:center}}
 
@@ -94,7 +103,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
     <div class="tc" id="tc"><div class="tz tzl" id="tzL"></div><div class="tz tzr" id="tzR"></div><div class="joy" id="joy"><i></i></div><div class="tlook">правый палец —<br>куда смотреть</div>
       <button class="tb tbQ" data-c="KeyQ">Q</button><button class="tb tbE" data-c="KeyE">E</button>
       <div class="tlanes"><div><button data-c="ArrowLeft">◀</button><button data-c="ArrowDown">▼</button></div><div><button data-c="ArrowUp">▲</button><button data-c="ArrowRight">▶</button></div></div>
-      <div class="tmenu"><button id="tmus" aria-label="Музыка">♪</button><button id="trst" aria-label="Заново">⟲</button></div></div>
+      <div class="tmenu"><button id="tfs" aria-label="На весь экран">⛶</button><button id="tmus" aria-label="Музыка">♪</button><button id="trst" aria-label="Заново">⟲</button></div></div>
     <div class="ov" id="ov"></div>
   </div></div>
   <div class="below">
@@ -1531,14 +1540,15 @@ function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return
   const setK=(x,y)=>{const d=.38;keys.left=x<-d?1:0;keys.right=x>d?1:0;keys.up=y<-d?1:0;keys.down=y>d?1:0};
   const fd=(id,ts)=>{for(const t of ts)if(t.identifier===id)return t;return null};
   const L=$('tzL'),Rz=$('tzR');
-  L.addEventListener('touchstart',e=>{e.preventDefault();unlockAudio();if(JOY.on)return;const t=e.changedTouches[0],r=R0();JOY.on=1;JOY.id=t.identifier;JOY.bx=t.clientX;JOY.by=t.clientY;JOY.x=JOY.y=0;joy.style.display='block';joy.style.left=(t.clientX-r.left)+'px';joy.style.top=(t.clientY-r.top)+'px';kn.style.transform=''},{passive:false});
+  L.addEventListener('touchstart',e=>{e.preventDefault();unlockAudio();if(mode==='dialog'){action();return}if(JOY.on)return;const t=e.changedTouches[0],r=R0();JOY.on=1;JOY.id=t.identifier;JOY.bx=t.clientX;JOY.by=t.clientY;JOY.x=JOY.y=0;joy.style.display='block';joy.style.left=(t.clientX-r.left)+'px';joy.style.top=(t.clientY-r.top)+'px';kn.style.transform=''},{passive:false});
   const mv=e=>{const t=fd(JOY.id,e.changedTouches);if(t&&JOY.on){e.preventDefault();let dx=(t.clientX-JOY.bx)/45,dy=(t.clientY-JOY.by)/45;const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l}JOY.x=dx;JOY.y=dy;setK(dx,dy);kn.style.transform=`translate(${dx*32}px,${dy*32}px)`}
-    const u=fd(LOOK.id,e.changedTouches);if(u){e.preventDefault();const dx=u.clientX-LOOK.sx,dy=u.clientY-LOOK.sy;if(Math.hypot(dx,dy)>14){LOOK.on=1;LOOK.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');LOOK.sx+=dx*.5;LOOK.sy+=dy*.5}}};
+    const u=fd(LOOK.id,e.changedTouches);if(u){e.preventDefault();const dx=u.clientX-LOOK.sx,dy=u.clientY-LOOK.sy;if(Math.hypot(dx,dy)>14){LOOK.on=1;const h=tc.querySelector('.tlook');if(h)h.remove();LOOK.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');LOOK.sx+=dx*.5;LOOK.sy+=dy*.5}}};
   const end=e=>{if(fd(JOY.id,e.changedTouches)){JOY.on=0;JOY.id=null;JOY.x=JOY.y=0;setK(0,0);joy.style.display='none'}if(fd(LOOK.id,e.changedTouches)){LOOK.on=0;LOOK.id=null}};
-  Rz.addEventListener('touchstart',e=>{e.preventDefault();unlockAudio();const t=e.changedTouches[0];LOOK.id=t.identifier;LOOK.sx=t.clientX;LOOK.sy=t.clientY},{passive:false});
+  Rz.addEventListener('touchstart',e=>{e.preventDefault();unlockAudio();if(mode==='dialog'){action();return}const t=e.changedTouches[0];LOOK.id=t.identifier;LOOK.sx=t.clientX;LOOK.sy=t.clientY},{passive:false});
   tc.addEventListener('touchmove',mv,{passive:false});tc.addEventListener('touchend',end);tc.addEventListener('touchcancel',end);
   const key=(c,t)=>dispatchEvent(new KeyboardEvent(t,{code:c,key:c==='KeyE'?'e':c==='KeyQ'?'q':c,bubbles:true}));
   tc.querySelectorAll('[data-c]').forEach(b=>{const c=b.dataset.c;b.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();b.style.filter='brightness(1.5)';key(c,'keydown')},{passive:false});b.addEventListener('touchend',e=>{e.preventDefault();b.style.filter='';key(c,'keyup')});b.addEventListener('mousedown',()=>key(c,'keydown'));b.addEventListener('mouseup',()=>key(c,'keyup'))});
+  $('tfs').onclick=()=>{const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else if(f){const p=f.call(d);const lk=()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};if(p&&p.then)p.then(lk).catch(()=>{});else lk()}};const canFS=!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen),standalone=matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone;if(standalone)$('tfs').style.display='none';else if(!canFS)$('tfs').onclick=()=>{show(`<div class="tag">ИГРА НА ВЕСЬ ЭКРАН</div><h2 style="font-size:14px">Убрать строку браузера</h2><p>Safari на iPhone не даёт сайтам прятать строку. Сделай так:<br>1. Открой игру в <b>Safari</b> (не внутри Телеграма).<br>2. Нажми «Поделиться» ⬆️ → <b>«На экран Домой»</b>.<br>3. Запускай игру с иконки ШГШ — она откроется на весь экран, без вкладок и строки.</p><button class="btn" id="b1">Понятно</button>`);$('b1').onclick=()=>{hide();if(mode==='title')titleScreen()}};
   $('tmus').onclick=()=>$('mus').click();$('trst').onclick=()=>$('reset').click();
   window.__joy={JOY,LOOK}})();
 function loop(now){$('tc').classList.toggle('rh',mode==='rhythm');musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
