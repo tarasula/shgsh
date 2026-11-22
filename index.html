@@ -462,7 +462,7 @@ function show(html){ov.innerHTML=html;ov.classList.add('on')}
 function hide(){ov.classList.remove('on')}
 function titleScreen(){
   mode='title';
-  show(`<h2 style="font-size:clamp(15px,3.4vw,28px);color:#ffd84d;text-shadow:3px 3px 0 #000;margin-bottom:4px">Школа глазами школьника</h2><div class="tag" style="color:#fff;margin-bottom:8px">ИГРА · 4–6 СЕЗОН</div><canvas id="tcast" width="210" height="58" style="width:min(620px,96%);aspect-ratio:210/58;image-rendering:pixelated;margin-bottom:10px"></canvas>
+  show(`<h2 style="font-size:clamp(15px,3.4vw,28px);color:#ffd84d;text-shadow:3px 3px 0 #000;margin-bottom:4px">Школа глазами школьника</h2><div class="tag" style="color:#fff;margin-bottom:8px">ИГРА · 4–6 СЕЗОН</div><canvas id="tcast" width="240" height="96" style="width:240px;height:96px;image-rendering:pixelated;margin-bottom:8px;flex:none"></canvas>
   <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" id="b1">${lvl?'Продолжить: глава '+(lvl+1):'Играть'}</button>${lvl?'<button class="btn alt" id="b2">Сначала</button>':''}<button class="btn alt" id="b3">Выбрать главу</button></div>`);
   castLine();
   $('b1').onclick=()=>card();
@@ -492,11 +492,35 @@ function win(){
     lvl++;saveL();card();
   });
 }
-function castLine(){const c=$('tcast');if(!c)return;const x=c.getContext('2d');x.clearRect(0,0,210,58);
-  const back=['math','rashida','dir','geo','bufet','mom','otchim','brat2','cop','brat','thug'],front=['milkis','polina','derz','sasha','dima','malya','oreh','german','kamran','natasha'];
-  x.fillStyle='rgba(0,0,0,.35)';x.fillRect(0,50,210,8);
-  back.forEach((id,i)=>drawChar(x,8+i*18,look(id).tall?3:0,id,'down',0));
-  front.forEach((id,i)=>drawChar(x,14+i*19+(id==='dima'||id==='malya'?0:0),look(id).tall?31:28,id,'down',0))}
+function castLine(){const c=$('tcast');if(!c)return;const x=c.getContext('2d');const fit=()=>{const w=Math.max(200,Math.min(620,ov.clientWidth*.94,(ov.clientHeight-150)*2.5));c.style.width=Math.round(w)+'px';c.style.height=Math.round(w*.4)+'px'};fit();
+  const others=['math','rashida','dir','geo','bufet','mom','otchim','brat2','cop','brat','thug','milkis','polina','sasha','oreh','german','kamran','natasha'];
+  const bills=Array.from({length:22},()=>({x:Math.random()*60,y:Math.random()*40,v:6+Math.random()*10,r:Math.random()*6,s:.6+Math.random()}));
+  const st=performance.now();
+  const frame=now=>{if(!c.isConnected||mode!=='title')return;fit();const t=(now-st)/1000;x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,240,96);
+    others.forEach((id,i)=>{const bob=Math.round(Math.sin(t*3+i)*.6);drawChar(x,3+i*13,1+bob,id,'down',(Math.floor(t*2+i)%4===0)?1:0)});
+    x.fillStyle='rgba(0,0,0,.35)';x.fillRect(0,86,240,10);
+    const big=(id,px,py,dir,fr,rot)=>{x.save();x.translate(px+16,py+24);if(rot)x.rotate(rot);x.scale(2,2);drawChar(x,-8,-12,id,dir,fr);x.restore()};
+    /* Дерзкий: плакат и сальто */
+    const cyc=t%4,flip=cyc>2.9&&cyc<3.7,k=flip?(cyc-2.9)/.8:0,jy=flip?-Math.sin(k*Math.PI)*16:Math.abs(Math.sin(t*5))*-2,rot=flip?k*Math.PI*2:0;
+    const DX=22,DY=36+jy;big('derz',DX,DY,'down',flip?0:Math.floor(t*4)%2,rot);
+    if(!flip){x.fillStyle='#8a5a30';x.fillRect(DX+4,DY-2,2,22);x.fillRect(DX+26,DY-2,2,22);x.fillStyle='#fff';x.fillRect(DX-12,DY-22,56,22);x.fillStyle='#e8283b';x.font='5px "Press Start 2P",monospace';x.fillText('МЫ ПРОТИВ',DX-7,DY-13);x.fillText('МАТЕШИ!!',DX-4,DY-5);x.strokeStyle='#222';x.lineWidth=1;x.strokeRect(DX-11.5,DY-21.5,55,21)}
+    else{x.fillStyle='#ffd84d';x.font='5px "Press Start 2P",monospace';x.fillText('САЛЬТО!',DX-2,DY-6)}
+    /* Дима: селфи */
+    const MX=104,MY=36;big('dima','left'===0?0:MX,MY,'down',0);
+    const arm=Math.sin(t*2)*2;x.fillStyle='#f0c7a4';x.fillRect(MX+28,MY+20+arm,6,3);x.fillRect(MX+32,MY+10+arm,3,12);x.fillStyle='#111';x.fillRect(MX+30,MY+2+arm,8,12);x.fillStyle='#3a6ad0';x.fillRect(MX+31,MY+3+arm,6,9);
+    const ph=t%2.2;if(ph<.18){x.fillStyle=`rgba(255,255,255,${.9-ph*4})`;x.fillRect(0,0,240,96);x.fillStyle='#fff';x.beginPath();x.arc(MX+34,MY+7+arm,10,0,7);x.fill()}
+    if(ph>.18&&ph<1.2){x.fillStyle='#ffd84d';x.font='5px "Press Start 2P",monospace';x.fillText('*щёлк*',MX+26,MY-4)}
+    /* Маля: плавает в деньгах */
+    const LX=178,LY=40+Math.sin(t*2.4)*3,sw=Math.sin(t*4);
+    bills.forEach(b=>{b.y-=b.v*.016;b.x+=Math.sin(t*2+b.r)*.3;if(b.y<-6){b.y=50;b.x=Math.random()*60}});
+    bills.forEach(b=>{if(b.y<20){x.fillStyle='#3a9a4a';x.fillRect(Math.round(162+b.x),Math.round(16+b.y),7,4);x.fillStyle='#8ad08a';x.fillRect(Math.round(164+b.x),Math.round(17+b.y),2,2)}});
+    big('malya',LX,LY,'down',0);
+    x.fillStyle='#f0c7a4';x.fillRect(LX-2,LY+22+sw*5,6,3);x.fillRect(LX+28,LY+22-sw*5,6,3);
+    for(let i=0;i<14;i++){const bx=158+i*6,by=70+Math.round(Math.sin(t*3+i)*2);x.fillStyle=i%2?'#2f8a3e':'#3aa34a';x.fillRect(bx,by,9,20);x.fillStyle='#8ad08a';x.fillRect(bx+2,by+2,3,3)}
+    bills.forEach(b=>{if(b.y>=20&&b.y<44){x.fillStyle='#3a9a4a';x.fillRect(Math.round(162+b.x),Math.round(16+b.y),7,4);x.fillStyle='#8ad08a';x.fillRect(Math.round(164+b.x),Math.round(17+b.y),2,2)}});
+    x.fillStyle='#ffd84d';x.font='5px "Press Start 2P",monospace';x.fillText('₴₴₴',196+Math.round(sw*2),62);
+    requestAnimationFrame(frame)};
+  requestAnimationFrame(frame)}
 function portrait(){const c=$('tpc');if(!c)return;const x=c.getContext('2d');x.clearRect(0,0,72,30);drawChar(x,10,3,'dima','down',0);drawChar(x,46,3,'malya','down',0)}
 function finale(){
   mode='end';lvl=0;saveL();fui.classList.remove('on');casMusic(0);CS=null;PH=null;AR=null;
