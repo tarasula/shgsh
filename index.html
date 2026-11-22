@@ -945,7 +945,13 @@ function updBro(dt){const b=BS;b.t+=dt;const tot=3.4,k=Math.min(1,b.t/tot)*(BRP.
   if(b.t>=3.4&&!b.snd){b.snd=1;play('bro')}
   if(b.t>5.2&&!b.talked){b.talked=1;talk([['brat2','О, братишка. Ну привет ещё раз.'],['dima','Ты?!'],['mom','Дима, знакомься — это твой старший брат. Он сегодня к нам переехал.'],['dima','(про себя) Подожди… это же главарь той банды!'],['brat2','Тсс. Маме — ни слова.'],['mom','Ладно, мальчики, хватит. Дима, поздно уже — иди спать.']],()=>{BW={x:BS.x,y:BS.y,dir:'down',fr:0,pts:[[19,9],[19,12],[8,12],[8,15],[8,17]]};BS=null;homePhase='bed3';updTask()})}}
 /* ===== НОЧЬ ДОМА: угрозы, мама в синяках, тихий звонок ===== */
-let NS=null,BW=null,GYM=[],RP=null;
+let NS=null,BW=null,GYM=[],RP=null,BUB=[],ATE=0;
+const OUCH={math:'Ай! Ты что делаешь, Дмитрий?!',derz:'Ай! Ну больно же!',polina:'Ай! Дима, ну ты чего?!',sasha:'Эй! Шапку чуть не сбил!',oreh:'Ой! Я же ничего не сделал!',german:'Ай! За что?!',kamran:'Ты чё, совсем?!',milkis:'Ай! Дима, ну ты даёшь!',natasha:'Ай! Больно!',bufet:'Ай! Ещё раз — и без пирожных останешься!',dir:'Дмитрий! Это что ещё такое?!',rashida:'Дмитрий! Немедленно прекрати!',geo:'Ай! Глобус чуть не уронил!',mom:'Ай! Дима!',otchim:'Ну всё, щенок…',thug:'Ты чё, бессмертный?!'};
+const SWEETS=['эклер','кусок торта «Наполеон»','пончик с глазурью','пирожное «Картошка»','корзиночку с кремом','кусок шоколадного торта'];
+function ouch(e,id){if(e.ob>0)return;e.ob=1.2;BUB.push({e,txt:OUCH[id]||'Ай!',t:2.2});snd(260,.12,'square',.05);if(id==='math'&&e.st&&(e.st==='teach'||e.st==='roam')){e.dx=P.x-e.x;e.dy=P.y-e.y;const d=Math.hypot(e.dx,e.dy)||1;e.dx/=d;e.dy/=d}}
+function ballHits(o){const sp=Math.hypot(o.vx,o.vy);if(sp<40)return;
+  for(const n of npcs){if(n.hid)continue;const d=Math.hypot(n.x-o.x,n.y-6-(o.y-o.z*.3));if(d<11){ouch(n,n.id);o.vx=-o.vx*.5;o.vy=-o.vy*.5;o.vz=Math.max(o.vz,50);return}}
+  for(const q of guards){if(q.hid)continue;const d=Math.hypot(q.x-o.x,q.y-6-o.y);if(d<11){ouch(q,q.id);o.vx=-o.vx*.5;o.vy=-o.vy*.5;o.vz=Math.max(o.vz,50);return}}}
 function nearTile(set){const [px,py]=tileOf(P);for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(set.includes(tile(x,y)))return[x,y];return null}
 function preNpc(){
   if(P.hide){P.hide=null;note='Дима вылез из шкафа.';noteT=1.5;return true}
@@ -957,7 +963,11 @@ function preNpc(){
   let bi=-1,bd=22;GYM.forEach((o,i)=>{const d=Math.hypot(o.x-P.x,o.y-P.y);if(d<bd&&o.z<2){bd=d;bi=i}});
   if(bi>=0){P.hold=GYM.splice(bi,1)[0];note=P.hold.k==='ball'?'Мяч в руках. E — бросить.':'Скакалка в руках. E — начать прыгать.';noteT=2;return true}
   return false}
+function nearSweets(){const [px,py]=tileOf(P);for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(tile(x,y)===5&&R[y]&&R[y][x]===1)return true;return false}
 function postNpc(){
+  if(curMap==='school'&&nearSweets()){const sw=rnd(SWEETS);ATE++;snd(520,.06,'square',.04);setTimeout(()=>snd(620,.06,'square',.04),90);
+    note=`Ням! Дима съел ${sw}. Съедено: ${ATE}`+(ATE===5?' — буфетчица в шоке!':ATE>=8?' — живот уже болит…':'');noteT=2.5;
+    if(ATE===5){const b=npcs.find(n=>n.id==='bufet');if(b)BUB.push({e:b,txt:'Дмитрий! А платить кто будет?!',t:2.5})}return true}
   const lad=nearTile([40]);if(lad){P.climb={tx:lad[0],ty:lad[1],h:0};note='↑↓ — лезть по шведской стенке, ←→ или E — слезть.';noteT=2.5;return true}
   const bar=nearTile([41]);if(bar){P.pull={tx:bar[0],ty:bar[1],n:0,k:0};note='E — подтянуться, стрелки — спрыгнуть.';noteT=2.5;return true}
   const wd=nearTile([19,20]);if(wd){const pol=npcs.find(n=>n.id==='polina'&&n.hid);if(pol&&curMap==='school'&&wd[0]===12){talk([['polina','(из шкафа) Занято! Я тут посижу, Дима…']]);return true}
@@ -969,11 +979,12 @@ function updRope(dt){const r=RP;if(r.fall){r.fall+=dt;if(r.fall>1.4){RP=null;mod
   r.vz-=480*dt;r.z+=r.vz*dt;if(r.z<0){r.z=0;r.vz=0}
   const T2=Math.PI*2,m1=r.a%T2;r.a+=r.sp*dt;const m2=r.a%T2;if(m1<Math.PI&&m2>=Math.PI){if(r.z<5){r.fall=.01;flash=.3;snd(90,.3,'sine',.4);note=`Упал! Прыжков: ${r.j}`;noteT=2.5}else{r.j++;r.sp+=.18;if(r.j>=20){note='20 прыжков! Вот это спортсмен!';noteT=2.5;RP=null;mode='play'}}}
   if(keys.left||keys.right||keys.up||keys.down){note=`Прыжков: ${r.j}`;noteT=1.5;RP=null;mode='play'}}
-function updGym(dt){for(const o of GYM){if(!(o.vx||o.vy||o.vz||o.z>0))continue;
+function updGym(dt){BUB.forEach(b=>{b.t-=dt;if(b.e.ob>0)b.e.ob-=dt});BUB=BUB.filter(b=>b.t>0);for(const n of npcs)if(n.ob>0)n.ob-=dt;for(const o of GYM){if(!(o.vx||o.vy||o.vz||o.z>0))continue;ballHits(o);
     o.vz-=380*dt;o.z+=o.vz*dt;if(o.z<0){o.z=0;if(Math.abs(o.vz)>30){o.vz=-o.vz*.6;o.vx*=.8;o.vy*=.8;snd(200,.04,'sine',.08)}else o.vz=0}
     const nx=o.x+o.vx*dt,ny=o.y+o.vy*dt;if(solidAt(nx,o.y))o.vx=-o.vx*.7;else o.x=nx;if(solidAt(o.x,ny))o.vy=-o.vy*.7;else o.y=ny;
     if(o.z<=0){o.vx*=.985;o.vy*=.985;if(Math.hypot(o.vx,o.vy)<4){o.vx=o.vy=0}}}
   if(mode==='play')for(const o of GYM)if(o.k==='ball'&&o.z<4&&Math.hypot(o.x-P.x,o.y-P.y)<9&&(keys.left||keys.right||keys.up||keys.down)){const [fx,fy]={right:[1,0],left:[-1,0],up:[0,-1],down:[0,1]}[P.dir];o.vx=fx*120;o.vy=fy*120;o.vz=60}}
+function drawBubbles(){BUB.forEach(b=>{const e=b.e;g.globalAlpha=Math.min(1,b.t*2);tag(e.x,(e.y||0)-(e.sit?22:30),b.txt);g.globalAlpha=1})}
 function drawGym(){for(const o of GYM){g.fillStyle='rgba(0,0,0,.25)';g.fillRect(Math.round(o.x-4),Math.round(o.y-1),8,2);const y=Math.round(o.y-6-o.z),x=Math.round(o.x);
     if(o.k==='ball'){g.fillStyle='#e8483b';g.fillRect(x-3,y-3,6,6);g.fillRect(x-4,y-2,8,4);g.fillStyle='#fff';g.fillRect(x-1,y-3,2,6);g.fillStyle='#ff9a8a';g.fillRect(x-2,y-2,1,1)}
     else{g.fillStyle='#3a6ad0';g.fillRect(x-6,y+2,12,1);g.fillRect(x-6,y-2,1,4);g.fillRect(x+5,y-2,1,4);g.fillStyle='#e0b030';g.fillRect(x-7,y-3,3,2);g.fillRect(x+4,y-3,3,2)}}}
@@ -1143,6 +1154,7 @@ function render(){
     if(inv>0&&Math.floor(t0*10)%2)return;drawChar(g,Math.round(P.x-8),Math.round(P.y-24),'dima',P.dir,P.fr);
     if(P.hold){const o=P.hold,x=Math.round(P.x),y=Math.round(P.y-30);if(o.k==='ball'){g.fillStyle='#e8483b';g.fillRect(x-3,y-3,6,6);g.fillStyle='#fff';g.fillRect(x-1,y-3,2,6)}else{g.fillStyle='#3a6ad0';g.fillRect(x-6,y,12,1)}}}});
   if(GYM.length)ents.push({y:-1,d:drawGym});
+  ents.push({y:99999,d:drawBubbles});
   ents.sort((a,b)=>a.y-b.y).forEach(e=>e.d());
   if(mode==='play'&&!P.sit&&!nearNpc()){const fd=findDesk();if(fd){const lx=fd[0]*TS+8,ly=fd[1]*TS-6;tag(lx,ly,M[fd[1]][fd[0]]===16?'E — сесть на стул':'E — сесть за парту')}}
   if(mode==='wait'&&homePhase==='rec')tag(P.x,P.y-30,'♪ …');
@@ -1156,7 +1168,7 @@ function render(){
     else if(S[lvl].homeCh){if(homePhase==='mom'){gx=C(18);gy=C(6);gl='Мама'}else{gx=C(32);gy=C(7);gl='Кровать'}}
     if(gx!==null){const sx=gx-cam.x,sy=gy-cam.y;if(sx>8&&sx<VW-8&&sy>20&&sy<VH-8){const by=Math.round(gy-34+Math.sin(t0*5)*2);g.fillStyle='#ffd84d';g.beginPath();g.moveTo(gx-5,by);g.lineTo(gx+5,by);g.lineTo(gx,by+6);g.fill()}
       else{const cx=Math.max(14,Math.min(VW-14,sx)),cy=Math.max(28,Math.min(VH-14,sy)),a=Math.atan2(sy-cy,sx-cx);g.save();g.translate(cam.x+cx,cam.y+cy);g.rotate(a);g.fillStyle='#ffd84d';g.beginPath();g.moveTo(9,0);g.lineTo(-5,-6);g.lineTo(-5,6);g.fill();g.restore();tag(cam.x+cx,cam.y+cy-8,gl)}}}
-  if(mode==='play'&&!P.sit&&!P.hide&&!P.climb&&!P.pull&&!P.hold&&!nearNpc()){if(GYM.some(o=>Math.hypot(o.x-P.x,o.y-P.y)<22&&o.z<2))tag(P.x,P.y-30,'E — взять');else if(nearTile([40]))tag(P.x,P.y-30,'E — залезть на стенку');else if(nearTile([41]))tag(P.x,P.y-30,'E — турник');else if(nearTile([19,20]))tag(P.x,P.y-30,'E — спрятаться в шкаф')}
+  if(mode==='play'&&!P.sit&&!P.hide&&!P.climb&&!P.pull&&!P.hold&&!nearNpc()){if(GYM.some(o=>Math.hypot(o.x-P.x,o.y-P.y)<22&&o.z<2))tag(P.x,P.y-30,'E — взять');else if(curMap==='school'&&nearSweets())tag(P.x,P.y-30,'E — съесть пирожное');else if(nearTile([40]))tag(P.x,P.y-30,'E — залезть на стенку');else if(nearTile([41]))tag(P.x,P.y-30,'E — турник');else if(nearTile([19,20]))tag(P.x,P.y-30,'E — спрятаться в шкаф')}
   if(mode==='play'&&P.sit)tag(P.sit.tx*TS+8,P.sit.ty*TS-26,'E — встать');
   if(BR)drawBrawlWorld();
   if(DOOR){const k=Math.min(1,DOOR.t/.6),X=DOOR.x*TS,Y=DOOR.y*TS;g.fillStyle='#6a3a18';g.fillRect(X,Y,Math.max(3,Math.round(16*(1-k))),TS);g.fillStyle='#8a5a30';g.fillRect(X+1,Y+1,Math.max(1,Math.round(14*(1-k))),TS-2);if(k<1){g.fillStyle='#e0b030';g.fillRect(X+Math.round(10*(1-k)),Y+7,2,2)}}
