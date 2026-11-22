@@ -797,7 +797,7 @@ function updBrawl(dt){
     for(const f of alive('gang'))if(!pr.hit.has(f)&&Math.hypot(f.x-pr.x,f.y-8-pr.y)<14){pr.hit.add(f);dmgF(f,pr.k==='desk'?18:12,pr.vx*.6,pr.vy*.6);f.stun=1.2;snd(90,.25,'square',.08);flash=.15}
     if(solidAt(pr.x,pr.y+8)||pr.dist>140){pr.dead=1;const lx=pr.x-pr.vx*.03,ly=pr.y+8-pr.vy*.03;B.props.push({k:pr.k,x:lx,y:ly})}}
   B.proj=B.proj.filter(p=>!p.dead);
-  if(!alive('gang').length){B.end=1;fui.classList.remove('on');setTimeout(()=>{BR.f.filter(x=>x.team==='our').forEach(x=>BRUISE.add(x.id));BRUISE.add('dima');mode='dialog';talk([['brat','(уползая) Ладно… брат. Сегодня твоя взяла. Но мы ещё увидимся.'],['oreh','Господи… что это было?..'],['german','…'],['kamran','Я… я ничего не видел. Вообще ничего.'],['derz','(держится за голову) Кто-нибудь… запомнил, сколько их было?'],['sasha','……'],['dima','Они увели Рашиду Жавдатовну…'],['polina','(из шкафа) Всё? Можно выходить?'],['dima','Сиди там, Полина! Это ещё не всё — в коридоре их ещё больше.'],['dima','Надо вызвать полицию. Мой телефон остался в спортзале!']],()=>{BR=null;startEscape()})},900)}
+  if(!alive('gang').length){B.end=1;fui.classList.remove('on');setTimeout(()=>{BR.f.filter(x=>x.team==='our').forEach(x=>BRUISE.add(x.id));BRUISE.add('dima');mode='dialog';talk([['brat','(уползая) Ладно… брат. Сегодня твоя взяла. Но мы ещё увидимся.'],['oreh','Господи… что это было?..'],['german','…'],['kamran','Я… я ничего не видел. Вообще ничего.'],['derz','(держится за голову) Кто-нибудь… запомнил, сколько их было?'],['sasha','……'],['dima','Они увели Рашиду Жавдатовну…'],['polina','(из шкафа) Всё? Можно выходить?'],['dima','Сиди там, Полина! Это ещё не всё — в коридоре их ещё больше.'],['dima','Надо вызвать полицию. Мой телефон остался в спортзале!']],()=>{startEscape(1);BR=null})},900)}
   else if(m.hp<=0){B.end=1;fui.classList.remove('on');mode='card';show(`<div class="tag">НОКАУТ</div><h2>Банда победила</h2><p>Попробуй ещё раз: хватай парты и стулья (Q) и бросай их в бандитов — это бьёт сильнее всего.</p><button class="btn" id="b1">Ещё раз</button>`);$('b1').onclick=()=>{BR=null;card()}}
 }
 function drawProp(k,x,y,rot){g.save();g.translate(Math.round(x),Math.round(y));if(rot)g.rotate(rot);
@@ -897,9 +897,10 @@ function drawCall(){g.setTransform(1,0,0,1,0,0);hl.textContent='';hr.textContent
 }
 /* ===== ПОЛИЦИЯ ===== */
 let PS=null;
-const COPTALK=[['cop','Полиция! Николай Андреевич. Всем оставаться на местах!'],['cop','Бандитов мы задержали на выходе. Учительницу вашу нашли — живая, в безопасности.'],['dima','Фух… А что теперь со школой?'],['cop','А со школой всё. После такого погрома ученики этой школы больше не могут здесь учиться.'],['cop','Школу закрывают на проверку. Всё, ребята, по домам!']];
-function startPolice(){mode='police';guards=[];setTile(0,12,30);PS={t:0,cop:{x:-12,y:C(12)+4,dir:'right',fr:0},kick:0,talked:0}}
-function updPolice(dt){const s=PS;s.t+=dt;const t=s.t,c=s.cop;
+const COPTALK=[['cop','Полиция! Николай Андреевич. Всем оставаться на местах!'],['dir','(подбегает) Николай Андреевич! Слава богу, вы приехали…'],['cop','Бандитов мы задержали на выходе. Учительницу вашу нашли — живая, в безопасности.'],['dima','Фух… А что теперь со школой?'],['cop','А со школой всё. После такого погрома ученики этой школы больше не могут здесь учиться.'],['dir','Моя школа… Двадцать лет работы…'],['cop','Школу закрывают на проверку. Всё, ребята, по домам!']];
+function startPolice(){npcs.forEach(n=>{if(n.id==='dir')n.hid=1});mode='police';guards=[];setTile(0,12,30);PS={t:0,dr:{x:C(28),y:C(13)+4,dir:'left',fr:0},cop:{x:-12,y:C(12)+4,dir:'right',fr:0},kick:0,talked:0}}
+function updPolice(dt){const s=PS;s.t+=dt;const t=s.t,c=s.cop,d=s.dr;
+  if(t>2&&t<6.2){const k=(t-2)/4.2;d.x=C(28)+(C(6)-C(28))*k;d.y=C(13)+4;d.fr=Math.floor(t*6)%2;d.dir='left'}else if(t>=6.2){d.fr=0;d.dir='left'}
   if(t>3.4&&t<4.2){c.x=-12+(t-3.4)*10;c.fr=Math.floor(t*6)%2}
   if(t>4.2&&!s.kick){s.kick=1;setTile(0,12,35);flash=.5;snd(60,.5,'sine',.6);snd(110,.3,'square',.1)}
   if(t>4.6&&t<6){const k=(t-4.6)/1.4;c.x=-4+k*60;c.fr=Math.floor(t*6)%2}else if(t>=6)c.fr=0;
@@ -911,13 +912,15 @@ function goHome2(){PS=null;switchMap('home');P.x=C(32);P.y=C(12)+4;P.dir='left';
   mode='play';fadeT=1.6;updTask()}
 let fadeT=0,BS=null;
 function startBrother(){mode='bro';BS={t:0,x:C(8),y:C(17)+4};play('bro')}
-function updBro(dt){const b=BS;b.t+=dt;const k=Math.min(1,b.t/1.6);b.y=C(17)+4+(C(12)+4-(C(17)+4))*k;b.x=C(8)+(k>.75?(k-.75)/.25*16:0);
-  if(b.t>2&&!b.talked){b.talked=1;talk([['brat2','О, братишка. Ну привет ещё раз.'],['dima','Ты?!'],['mom','Дима, знакомься — это твой старший брат. Он сегодня к нам переехал.'],['dima','(про себя) Подожди… это же главарь той банды!'],['brat2','Тсс. Маме — ни слова.']],()=>{BS=null;finale()})}}
+const BRP=[[8,17],[8,12],[19,12],[19,9],[19,8]];
+function updBro(dt){const b=BS;b.t+=dt;const tot=3.4,k=Math.min(1,b.t/tot)*(BRP.length-1),i=Math.min(BRP.length-2,Math.floor(k)),q=k-i,a=BRP[i],c=BRP[i+1];b.x=C(a[0])+(C(c[0])-C(a[0]))*q;b.y=C(a[1])+4+(C(c[1])-C(a[1]))*q;b.dir=c[0]>a[0]?'right':c[1]<a[1]?'up':'down';if(b.t>=tot)b.dir='down';
+  if(b.t>3.6&&!b.talked){b.talked=1;talk([['brat2','О, братишка. Ну привет ещё раз.'],['dima','Ты?!'],['mom','Дима, знакомься — это твой старший брат. Он сегодня к нам переехал.'],['dima','(про себя) Подожди… это же главарь той банды!'],['brat2','Тсс. Маме — ни слова.']],()=>{BS=null;finale()})}}
 /* ===== ПОБЕГ ИЗ КЛАССА ===== */
 const OBST=[[4,11],[10,13],[14,12],[17,11],[21,13],[25,12],[30,11],[35,13]],SHARDS=[[7,12],[12,12],[16,13],[20,11],[24,11],[27,13],[31,12],[36,11],[22,12]];
-function startEscape(){
+function startEscape(fromBrawl){
   gangDone=1;mode='play';fui.classList.remove('on');escP=hasKey?'gym':'key';
-  P.x=C(7);P.y=C(9)+4;P.sit=null;P.kx=P.ky=0;inv=1.5;
+  if(!fromBrawl){P.x=C(7);P.y=C(9)+4}P.sit=null;P.kx=P.ky=0;inv=1.5;
+  if(fromBrawl&&BR)BR.f.filter(f=>f.team==='our').forEach(f=>{const n=npcs.find(q=>q.id===f.id);if(n){n.sit=0;n.tx=undefined;n.ty=undefined;n.x=f.x;n.y=f.y;n.hid=0;n.say=n.id==='derz'?'Голова гудит… Беги за телефоном, я в норме.':n.id==='sasha'?'……я в порядке. Наверное.':n.id==='oreh'?'Я больше в эту школу не приду. Никогда.':n.id==='german'?'Это было… очень страшно.':'Я ничего не видел. Понял?'}});
   DOOR=null;[[19,10],[32,10],[9,14],[23,14]].forEach(([x,y])=>setTile(x,y,30));if(hasKey&&gymOpen)setTile(9,14,34);
   OBST.forEach(([x,y])=>setTile(x,y,31));SHARDS.forEach(([x,y])=>setTile(x,y,32));
   const mk=(a,b,dl)=>({id:'thug',x:C(1),y:C(12)+4,dx:1,dy:0,st:'enter',ent:dl,pp:[a,b],pi:0,path:[],fr:0,ft:0,lost:0,rt:0,hid:1});
@@ -1031,8 +1034,8 @@ function render(){
     if(bub){const bw=bub.length*7+8,bx=Math.round(q.x-bw/2),by=Math.round(q.y-44);g.fillStyle='#fff';g.fillRect(bx,by,bw,13);g.fillRect(Math.round(q.x-2),by+13,4,3);g.fillStyle=q.st==='chase'?'#c0303a':'#333';g.font='7px "Press Start 2P",monospace';g.fillText(bub,bx+4,by+10)}}});
   if(S[lvl]&&S[lvl].geo&&geoPhase!=='dir'){g.save();drawWorldMap();g.restore()}
   if(SC){const [,dy]=derzPos(SC.t);ents.push({y:dy,d:drawScene})}
-  if(PS){const c=PS.cop;ents.push({y:c.y,d:()=>drawChar(g,Math.round(c.x-8),Math.round(c.y-24),'cop',c.dir,c.fr)})}
-  if(BS)ents.push({y:BS.y,d:()=>drawChar(g,Math.round(BS.x-8),Math.round(BS.y-24),'brat2','down',Math.floor(BS.t*6)%2)});
+  if(PS){const c=PS.cop,dr=PS.dr;ents.push({y:c.y,d:()=>drawChar(g,Math.round(c.x-8),Math.round(c.y-24),'cop',c.dir,c.fr)});ents.push({y:dr.y,d:()=>drawChar(g,Math.round(dr.x-8),Math.round(dr.y-24),'dir',dr.dir,dr.fr)})}
+  if(BS)ents.push({y:BS.y,d:()=>drawChar(g,Math.round(BS.x-8),Math.round(BS.y-24),'brat2',BS.dir||'down',BS.t<3.4?Math.floor(BS.t*6)%2:0)});
   if(GS)GS.ents.forEach(b=>ents.push({y:b.y,d:()=>{if(!b.hid)drawChar(g,Math.round(b.x-8),Math.round(b.y-24),b.id,b.dir||'down',b.fr||0)}}));
   if(P.sit){const X=P.sit.tx*TS,Y=P.sit.ty*TS;ents.push({y:Y+10,d:()=>drawChar(g,X,Y-4,'dima','up',0,1)})}
   else ents.push({y:P.y,d:()=>{if(inv>0&&Math.floor(t0*10)%2)return;drawChar(g,Math.round(P.x-8),Math.round(P.y-24),'dima',P.dir,P.fr)}});
@@ -1047,7 +1050,7 @@ function render(){
     if(gx!==null){const sx=gx-cam.x,sy=gy-cam.y;if(sx>8&&sx<VW-8&&sy>20&&sy<VH-8){const by=Math.round(gy-34+Math.sin(t0*5)*2);g.fillStyle='#ffd84d';g.beginPath();g.moveTo(gx-5,by);g.lineTo(gx+5,by);g.lineTo(gx,by+6);g.fill()}
       else{const cx=Math.max(14,Math.min(VW-14,sx)),cy=Math.max(28,Math.min(VH-14,sy)),a=Math.atan2(sy-cy,sx-cx);g.save();g.translate(cam.x+cx,cam.y+cy);g.rotate(a);g.fillStyle='#ffd84d';g.beginPath();g.moveTo(9,0);g.lineTo(-5,-6);g.lineTo(-5,6);g.fill();g.restore();tag(cam.x+cx,cam.y+cy-8,gl)}}}
   if(mode==='play'&&P.sit)tag(P.sit.tx*TS+8,P.sit.ty*TS-26,'E — встать');
-  if(mode==='brawl')drawBrawlWorld();
+  if(BR)drawBrawlWorld();
   if(DOOR){const k=Math.min(1,DOOR.t/.6),X=DOOR.x*TS,Y=DOOR.y*TS;g.fillStyle='#6a3a18';g.fillRect(X,Y,Math.max(3,Math.round(16*(1-k))),TS);g.fillStyle='#8a5a30';g.fillRect(X+1,Y+1,Math.max(1,Math.round(14*(1-k))),TS-2);if(k<1){g.fillStyle='#e0b030';g.fillRect(X+Math.round(10*(1-k)),Y+7,2,2)}}
   if(mode==='play'){const n=nearNpc();if(n){const bx=Math.round(n.x+6),by=Math.round(n.y-(n.sit?24:32));g.fillStyle='#000';g.fillRect(bx,by,9,9);g.fillStyle='#fff';g.fillRect(bx+1,by+1,7,7);g.fillStyle='#000';g.font='7px "Press Start 2P",monospace';g.fillText('E',bx+2,by+8)}}
   g.setTransform(1,0,0,1,0,0);
