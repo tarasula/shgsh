@@ -1461,7 +1461,15 @@ function drawCasino(){const c=CS,t=c.at;hl.textContent='Казино';hr.textCon
 let last=performance.now();
 let MUS=1,musW='';try{MUS=localStorage.getItem('shgshMus')!=='0'}catch(e){}
 function casRec(on){try{const a=AEL.casino||(AEL.casino=new Audio(AU.casino));a.loop=true;a.volume=CS&&CS.ph==='last'?.25:.9;if(CS&&CS.silent)on=false;if(on){if(a.paused){a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{})}}else if(!a.paused)a.pause()}catch(e){}}
-function musTick(){casRec(MUS&&!!CS);if(CS){if(CMU){casMusic(0);musW=''}return}const want=MUS&&mode!=='title'&&mode!=='rhythm'&&mode!=='act'&&mode!=='kiss'&&!(S[lvl]&&S[lvl].rhythm&&mode!=='end');const v=CS?.55:.17,k=want?'on'+v:'off';if(k===musW&&(!want||CMU))return;musW=k;if(want)casMusic(1,v);else casMusic(0)}
+let unl=0;
+function unlockAudio(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state!=='running'&&actx.resume)actx.resume();
+  const o=actx.createOscillator(),gn=actx.createGain();gn.gain.value=0;o.connect(gn);gn.connect(actx.destination);o.start();o.stop(actx.currentTime+.05)}catch(e){}
+  if(!unl){unl=1;try{const sil=new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=');sil.loop=true;sil.play().catch(()=>{})}catch(e){}
+    Object.keys(AU).forEach(k=>{try{const a=AEL[k]||(AEL[k]=new Audio(AU[k]));if(a.paused){a.muted=true;const p=a.play();const done=()=>{if(!(k==='casino'&&CS)){a.pause();try{a.currentTime=0}catch(e){}}a.muted=false};if(p&&p.then)p.then(done).catch(()=>{a.muted=false});else done()}}catch(e){}})}
+  if(CS&&MUS){const a=AEL.casino;if(a&&a.paused&&!CS.silent){a.play().catch(()=>{})}}
+  musW=''}
+['pointerdown','touchend','keydown','click'].forEach(ev=>addEventListener(ev,unlockAudio,{capture:true}));
+function musTick(){if(actx&&actx.state==='suspended'&&CMU){/* ждём жеста */}casRec(MUS&&!!CS);if(CS){if(CMU){casMusic(0);musW=''}return}const want=MUS&&mode!=='title'&&mode!=='rhythm'&&mode!=='act'&&mode!=='kiss'&&!(S[lvl]&&S[lvl].rhythm&&mode!=='end');const v=CS?.55:.17,k=want?'on'+v:'off';if(k===musW&&(!want||CMU))return;musW=k;if(want)casMusic(1,v);else casMusic(0)}
 $('mus').onclick=()=>{MUS=!MUS;try{localStorage.setItem('shgshMus',MUS?'1':'0')}catch(e){}$('mus').textContent=MUS?'Музыка: вкл':'Музыка: выкл';musW='';if(!MUS)casMusic(0)};$('mus').textContent=MUS?'Музыка: вкл':'Музыка: выкл';
 function loop(now){musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
