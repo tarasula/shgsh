@@ -69,7 +69,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
 .tbQ{right:108px;bottom:56px;width:58px;height:58px;background:#1d3250;font-size:13px}
 .tlanes{position:absolute;left:0;right:0;bottom:10px;display:none;justify-content:space-between;padding:0 14px;pointer-events:none}
 .tlanes div{display:flex;gap:10px}.tlanes button{pointer-events:auto;width:70px;height:70px;border-radius:14px;border:3px solid #fff;background:rgba(29,50,80,.85);color:#fff;font-size:22px;touch-action:none}
-.tc.rh .tz,.tc.rh .tb{display:none}.tc.rh .tlanes{display:flex}
+.tc.rh .tz,.tc.rh .tb{display:none}.tc.bh .tz,.tc.bh .tbQ{display:none}.tc.rh .tlanes{display:flex}
 .tmenu{position:absolute;right:8px;top:6px;display:flex;gap:6px}.tmenu button{width:40px;height:34px;border-radius:8px;border:2px solid #fff;background:rgba(29,50,80,.8);color:#fff;font-size:15px}
 .tlook{position:absolute;right:14px;top:50%;color:rgba(255,255,255,.35);font:400 8px "Press Start 2P",monospace;pointer-events:none;text-align:right}
 @media (orientation:landscape) and (pointer:coarse){
@@ -726,7 +726,8 @@ addEventListener('keydown',e=>{
   if(mode==='play'&&P.pull&&(e.code==='KeyE'||e.code==='Space')){e.preventDefault();P.pull.n++;P.pull.k=.35;snd(400+P.pull.n*20,.06,'square',.03);note=`Подтягиваний: ${P.pull.n}`;noteT=1.5;return}
   if(e.code==='KeyE'||e.code==='Space'||e.code==='Enter'){if(mode==='dialog'||mode==='play'){e.preventDefault();action()}}
 });
-addEventListener('keyup',e=>{if(KM[e.code])keys[KM[e.code]]=0});
+addEventListener('keyup',e=>{if(KM[e.code])keys[KM[e.code]]=0;if(BZ&&(e.code==='KeyE'||e.code==='Space'))BZ.eh=0});
+addEventListener('keydown',e=>{if(BZ&&mode==='band'&&(e.code==='KeyE'||e.code==='Space')){e.preventDefault();BZ.eh=1}});
 addEventListener('keydown',e=>{if((mode==='phone'||mode==='casino'||mode==='sport')&&(e.code==='KeyE'||e.code==='Space'||e.code==='Enter')){e.preventDefault();if(!e.repeat)action()}if(mode==='sport'&&e.code==='KeyQ'&&!e.repeat){e.preventDefault();sportQ()}});
 document.querySelectorAll('.pad button').forEach(b=>{
   const k=b.dataset.k,on=e=>{e.preventDefault();b.classList.add('dn');if(mode==='rhythm'){hitLane(LANES.indexOf(k));return}keys[k]=1},off=()=>{keys[k]=0;b.classList.remove('dn')};
@@ -1730,7 +1731,7 @@ const DCHART=[[0.836, 0], [1.324, 1], [1.788, 1], [2.264, 3], [2.74, 0], [3.228,
 function bandIntro(){const won=SPW!==false;mode='dialog';BZ={t:0,ph:'intro',notes:[],hit:0,miss:0,fx:[],enter:0};
   talk([['polina','Подождите! Не расходитесь!'],['dima',won?'Ребята! Мы выиграли спартакиаду — и хотим выступить для всех вас!':'Ребята, хоть мы и проиграли, мы всё равно хотим выступить для всех вас!'],['dima','Сейчас выступит группа ШГШ со своей самой знаменитой песней — «Я дерзкий»!'],['derz','Погнали!!!']],()=>startBand())}
 function startBand(){BZ={t:0,ph:'mic',notes:DCHART.map(([t,l])=>({t:t+2,l,st:0})),hit:0,miss:0,fx:[],started:0,end:2+32.4,beat:0,jt:0,sing:0,lv:0,base:.01,bs:[],win:DVOC.map(v=>({v,mx:0,st:0}))};mode='band';try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}
-  const z=BZ,fail=()=>{if(BZ!==z)return;z.sing=0;z.ph='play';z.t=0;note='Микрофон недоступен — лови ноты стрелками.';noteT=3};
+  const z=BZ,fail=()=>{if(BZ!==z||z.mic)return;z.sing=1;z.hold=1;z.ph='play';z.t=0;note='Микрофона нет — пой кнопкой: держи E на жёлтых полосах!';noteT=4};
   try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return fail();
     navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}).then(st=>{if(BZ!==z){st.getTracks().forEach(t=>t.stop());return}const src=actx.createMediaStreamSource(st),an=actx.createAnalyser();an.fftSize=1024;src.connect(an);z.mic={st,an,buf:new Float32Array(1024)};z.sing=1;z.ph='play';z.t=0}).catch(fail)}catch(e){fail()}
   setTimeout(()=>{if(BZ===z&&z.ph==='mic')fail()},12000)}
@@ -1740,6 +1741,7 @@ function bandHit(l){const z=BZ;if(!z||z.ph!=='play'||z.sing)return;let best=null
 function updBand(dt){const z=BZ;z.t+=dt;if(z.jt>0)z.jt-=dt;
   if(z.ph!=='play')return;
   if(z.mic){z.mic.an.getFloatTimeDomainData(z.mic.buf);let q=0;for(const v of z.mic.buf)q+=v*v;const lv=Math.sqrt(q/z.mic.buf.length);z.lv=z.lv*.6+lv*.4;if(!z.started){z.bs.push(lv);z.base=Math.max(.004,z.bs.reduce((a,b)=>a+b,0)/z.bs.length)}}
+  if(z.hold){z.base=.01;z.lv=z.eh?.2:0}
   const thr=Math.max(.02,z.base*3);
   if(z.sing&&z.started){const i=Math.floor((z.t-2)/.25),w=z.win[i];if(w){w.mx=Math.max(w.mx,z.lv);if(z.lv>thr)z.jt=.15}
     z.win.forEach((w,j)=>{if(!w.st&&z.t-2>(j+1)*.25){w.st=w.v?(w.mx>thr?1:2):3;if(w.st===1)z.hit++;if(w.st===2)z.miss++}})}
@@ -1776,7 +1778,7 @@ function drawBand(){const z=BZ,t=z.t,beat=Math.floor(t/.476),bob=beat%2,hop=z.jt
     g.fillStyle='#fff';g.fillRect(208,HITY,86,2);const now=z.win[Math.floor((t-2)/.25)],want=now&&now.v&&t>2;
     const thr=Math.max(.02,z.base*3),lvl=Math.min(1,z.lv/(thr*3));g.fillStyle='#222';g.fillRect(212,HITY+8,78,10);g.fillStyle=z.lv>thr?'#3fe07a':'#888';g.fillRect(212,HITY+8,78*lvl,10);g.fillStyle='#fff';g.fillRect(212+78/3,HITY+6,1,14);
     g.font='7px "Press Start 2P",monospace';g.fillStyle=want?(z.lv>thr?'#3fe07a':'#ffd84d'):'#888';g.fillText(want?(z.lv>thr?'ПОЁШЬ!':'ПОЙ!'):'пауза',want?(z.lv>thr?224:232):228,HITY+34);
-    g.font='5px "Press Start 2P",monospace';g.fillStyle='#ccc';g.fillText('🎤 ПОЙ НА',220,14);g.fillText('ЖЁЛТЫХ ПОЛОСАХ',212,22)}
+    g.font='5px "Press Start 2P",monospace';g.fillStyle='#ccc';g.fillText(z.hold?'ДЕРЖИ E НА':'🎤 ПОЙ НА',z.hold?214:220,14);g.fillText('ЖЁЛТЫХ ПОЛОСАХ',212,22)}
   else{
   g.fillStyle='rgba(0,0,0,.6)';g.fillRect(206,0,90,VH);LANES.forEach((l,i)=>{g.fillStyle='rgba(255,255,255,.07)';g.fillRect(LX[i]-9,0,18,VH)});g.fillStyle='#fff';g.fillRect(208,HITY,86,2);
   const col=['#e8483b','#3fe07a','#4a8ae8','#ffd84d'];
@@ -1820,7 +1822,7 @@ function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return
   $('tfs').onclick=()=>{const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else if(f){const p=f.call(d);const lk=()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};if(p&&p.then)p.then(lk).catch(()=>{});else lk()}};const canFS=!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen),standalone=matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone;if(standalone)$('tfs').style.display='none';else if(!canFS)$('tfs').onclick=()=>{show(`<div class="tag">ИГРА НА ВЕСЬ ЭКРАН</div><h2 style="font-size:14px">Убрать строку браузера</h2><p>Safari на iPhone не даёт сайтам прятать строку. Сделай так:<br>1. Открой игру в <b>Safari</b> (не внутри Телеграма).<br>2. Нажми «Поделиться» ⬆️ → <b>«На экран Домой»</b>.<br>3. Запускай игру с иконки ШГШ — она откроется на весь экран, без вкладок и строки.</p><button class="btn" id="b1">Понятно</button>`);$('b1').onclick=()=>{hide();if(mode==='title')titleScreen()}};
   $('tmus').onclick=()=>$('mus').click();$('trst').onclick=()=>$('reset').click();
   window.__joy={JOY,LOOK}})();
-function loop(now){$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
+function loop(now){$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));$('tc').classList.toggle('bh',mode==='band'&&!!BZ&&!!BZ.hold);musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
 }
 </script>
