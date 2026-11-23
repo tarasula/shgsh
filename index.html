@@ -116,7 +116,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
       <button class="act" id="act" aria-label="Действие">E</button>
     </div>
   </div>
-  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="mus" style="margin:0 0 10px">Музыка: вкл</button> <button class="btn alt" id="coop" style="margin:0 0 10px">Вдвоём: выкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
+  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="mus" style="margin:0 0 10px">Музыка: вкл</button> <button class="btn alt" id="coop" style="display:none">Вдвоём: выкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
 </div>
 <script>
 {
@@ -549,12 +549,12 @@ function hide(){ov.classList.remove('on')}
 function titleScreen(){
   mode='title';
   show(`<h2 style="font-size:clamp(15px,3.4vw,28px);color:#ffd84d;text-shadow:3px 3px 0 #000;margin-bottom:4px">Школа глазами школьника</h2><div class="tag" style="color:#fff;margin-bottom:8px">ИГРА · 4–6 СЕЗОН</div><canvas id="tcast" width="240" height="96" style="width:240px;height:96px;image-rendering:pixelated;margin-bottom:8px;flex:none"></canvas>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" id="b1">${lvl?'Продолжить: глава '+(lvl+1):'Играть'}</button>${lvl?'<button class="btn alt" id="b2">Сначала</button>':''}<button class="btn alt" id="b3">Выбрать главу</button><button class="btn alt" id="b4">${COOP?'Вдвоём: вкл ✓':'Вдвоём на 1 клавиатуре'}</button><button class="btn" id="b5">${NET.conn?'🌐 Друг подключён ✓':'🌐 Играть с другом по сети'}</button></div>${COOP?'<p style="color:#ffd84d;font-size:12px;margin-top:6px">Дима — WASD + E · Дерзкий — стрелки + Enter</p>':''}`);
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" id="b1">${lvl?'Продолжить: глава '+(lvl+1):'Играть'}</button>${lvl?'<button class="btn alt" id="b2">Сначала</button>':''}<button class="btn alt" id="b3">Выбрать главу</button><button class="btn" id="b5">${NET.conn?'🌐 Друг подключён ✓':'🌐 Играть с другом по сети'}</button></div>${COOP?'<p style="color:#ffd84d;font-size:12px;margin-top:6px">Дима — WASD + E · Дерзкий — стрелки + Enter</p>':''}`);
   castLine();
   $('b1').onclick=()=>card();
   const b2=$('b2');if(b2)b2.onclick=()=>{lvl=0;saveL();card()};
   $('b3').onclick=()=>chapterMenu();
-  $('b4').onclick=()=>{$('coop').click();titleScreen()};
+
   $('b5').onclick=()=>netMenu();
 }
 function chapterMenu(){mode='title';
@@ -1418,7 +1418,7 @@ function follow(m,dt){const k=TRAIL.length-12;if(k<0){m.mv=0;return}const T=TRAI
   if(d>1.5){const sp=Math.min(d/dt,95);m.x+=dx/d*sp*dt;m.y+=dy/d*sp*dt;m.mv=1;m.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');m.ft=(m.ft||0)+dt;if(m.ft>.15){m.ft=0;m.fr=1-(m.fr||0)}}else m.mv=0;
   if(TRAIL.length>40)TRAIL.splice(0,TRAIL.length-40)}
 const KMP2={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'},keys2={},P2={x:0,y:0,dir:'down',fr:0,ft:0,map:''};
-let COOP=0;try{COOP=localStorage.getItem('shgshCoop')==='1'?1:0}catch(e){}
+let COOP=0;try{localStorage.removeItem('shgshCoop')}catch(e){}
 function p2On(){return COOP&&curMap!=='casino'&&!CS&&!SP&&!BZ&&!BR&&(mode==='play'||mode==='dialog'||mode==='arrest')}
 function updP2(dt){if(P2.map!==curMap||Math.hypot(P2.x-P.x,P2.y-P.y)>300){P2.x=P.x+(free(P.x+16,P.y)?16:-16);P2.y=P.y;P2.map=curMap}
   let mx=(keys2.right?1:0)-(keys2.left?1:0),my=(keys2.down?1:0)-(keys2.up?1:0);
