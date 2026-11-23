@@ -755,7 +755,7 @@ function action(){
   if(homePhase==='bed3'&&nearBed()){startNight();return}
   if(homePhase==='bed4'&&nearBed()){startPhoneNight();return}
   if(S[lvl].homeCh&&homePhase==='bed'&&nearBed()){CUT={sc:'bed',t:0};mode='cut';return}
-  const n=nearNpc();if(!n&&postNpc())return;if(!n){const [px,py]=tileOf(P);let lk=0;for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(tile(x,y)===30)lk=1;
+  const n=nearNpc();if(n&&n.fol&&postNpc())return;if(!n&&postNpc())return;if(!n){const [px,py]=tileOf(P);let lk=0;for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(tile(x,y)===30)lk=1;
     if(lk){const nearGym=Math.abs(px-9)<=1&&Math.abs(py-14)<=1;
       if(nearGym&&hasKey){if(!DOOR){DOOR={x:9,y:14,t:0};snd(180,.5,'sawtooth',.03);snd(90,.3,'square',.04);note='Дима открывает дверь ключом…';noteT=1.5}return}
       note=nearGym?'Заперто! Ключ только у директора — его кабинет справа внизу.':escP==='gym'?'Эта дверь не нужна. Тебе в спортзал — подойди к его двери и нажми E.':'Заперто! Ключ только у директора — его кабинет справа внизу.';noteT=3;return}trySit();return}
