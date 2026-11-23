@@ -160,8 +160,8 @@ const L={
  oper:{hair:'#c8c8c8',style:'short',top:'shirtb',tc:'#6a6a70',pants:'#1a1a1a',cam:1},
  cheer1:{hair:'#d8b878',style:'long',top:'shirtb',pants:'#151515'},
  cheer2:{hair:'#8a6040',style:'long',top:'shirtb',pants:'#151515'},
- rott:{hair:'#5a3a22',style:'short',top:'bare',chubby:1,tall:1,pants:'#22242c'},
- orehW:{hair:'#6a4428',style:'short',top:'bare',chubby:1,pants:'#22242c'},
+ rott:{hair:'#1e140c',style:'short',top:'bare',tc:'#d89a72',chubby:1,tall:1,pants:'#b01818',skin:'#d89a72'},
+ orehW:{hair:'#8a5a30',style:'short',top:'bare',chubby:1,pants:'#e8c020'},
  opp1:{hair:'#3a2a1e',style:'short',top:'tee',pants:'#151515'},
  opp2:{hair:'#c8a060',style:'short',top:'tee',pants:'#151515'},
  opp3:{hair:'#5a3a22',style:'bangs',top:'tee',pants:'#151515'},
@@ -1662,14 +1662,15 @@ function updWr(p,dt){const w=p.wr,a=w.o,b=w.r;p.nd+=dt*3.2;
 function drawWrestler(id,q,f,t,sc){const X=q.x,Y=q.y;const jig=q.mv?Math.round(Math.sin(t*26)*1.2):0;
   g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.ellipse(X,Y,9*sc/1.8,3,0,0,7);g.fill();
   g.save();g.translate(X-8*sc,Y-24*sc);g.scale(sc,sc);drawChar(g,0,0,id,f>0?'right':'left',q.mv?Math.floor(t*6)%2:0);const T=look(id).tall?3:0;
-  g.fillStyle='#f0c7a4';g.fillRect(2,13-T+jig,12,4);g.fillStyle='#d8a888';g.fillRect(3,16-T+jig,10,1);g.fillRect(7,14-T+jig,2,1);g.restore()}
+  g.fillStyle=look(id).skin||'#f0c7a4';g.fillRect(2,13-T+jig,12,4);g.fillStyle='rgba(120,60,40,.35)';g.fillRect(3,16-T+jig,10,1);g.fillRect(7,14-T+jig,2,1);g.restore();
+  const nm=id==='rott'?'РОТВЕЙЛЕР':'ОРЕХ',c=id==='rott'?'#ff6060':'#6ab0ff';g.font='5px "Press Start 2P",monospace';const w=nm.length*5+4;g.fillStyle='rgba(0,0,0,.6)';g.fillRect(X-w/2,Y-24*sc-11,w,8);g.fillStyle=c;g.fillText(nm,X-w/2+2,Y-24*sc-5)}
 function drawWr(p,t){const w=p.wr;
   g.fillStyle='#9ab8d0';g.fillRect(0,0,160,96);
   g.fillStyle='#c8283b';g.fillRect(MAT.x0-6,MAT.y0-14,MAT.x1-MAT.x0+12,MAT.y1-MAT.y0+16);g.fillStyle='#2a5ac8';g.fillRect(MAT.x0,MAT.y0-8,MAT.x1-MAT.x0,MAT.y1-MAT.y0+8);
   g.strokeStyle='#fff';g.lineWidth=.8;g.beginPath();g.ellipse(80,75,44,14,0,0,7);g.stroke();g.fillStyle='#c8283b';g.beginPath();g.ellipse(80,75,10,3,0,0,7);g.fill();
   if(!w){return}const a=w.o,b=w.r;a.f=a.f||(b.x>a.x?1:-1);const fa=b.x>a.x?1:-1;
-  const L=[['orehW',a,fa],['rott',b,-fa]].sort((u,v)=>u[1].y-v[1].y);L.forEach(([id,q,f])=>drawWrestler(id,q,f,t,1.8));
-  if(p.ch>0){g.fillStyle='#e8283b';g.font='10px "Press Start 2P",monospace';g.fillText('!',b.x-3,b.y-48)}
+  const L=[['orehW',a,fa,1.7],['rott',b,-fa,2.15]].sort((u,v)=>u[1].y-v[1].y);L.forEach(([id,q,f,sc])=>drawWrestler(id,q,f,t,sc));
+  if(p.ch>0){g.fillStyle='#e8283b';g.font='10px "Press Start 2P",monospace';g.fillText('!',b.x-3,b.y-70)}
   if(w.st==='circle'&&p.t<3.5){g.fillStyle='#fff';g.font='5px "Press Start 2P",monospace';g.fillText('Ротвейлер ходит вокруг…',34,10)}}
 function operAI(o,dt){o.st=o.st||'pick';o.t=(o.t||0)-dt;o.mv=1;
   if(o.st==='pick'){const pool=[P,...npcs.filter(n=>n!==o&&!n.hid)];o.tg=Math.random()<.45?P:pool[Math.floor(Math.random()*pool.length)];o.st='come'}
@@ -1710,7 +1711,7 @@ function spHud(p,t){const ev=p.ev;hl.textContent='Спортзал · Спарт
   p.bub.forEach(b=>{const x=b.w==='kamran'?(ev==='tug'?90:250):(ev==='tug'?200:190),y=ev==='tug'?60:50;const w=b.txt.length*5+10;g.fillStyle='rgba(0,0,0,.8)';g.fillRect(Math.min(VW-w-4,x-w/2),y,w,14);g.fillStyle=b.w==='kamran'?'#9ab0ff':'#f08a30';g.font='6px "Press Start 2P",monospace';g.fillText((b.w==='kamran'?'Камран: ':'Гости: ')+'',Math.min(VW-w-4,x-w/2)+4,y-2);g.fillStyle='#fff';g.fillText(b.txt,Math.min(VW-w-4,x-w/2)+4,y+10)});
   if(p.ph==='go'){g.fillStyle='rgba(0,0,0,.6)';g.fillRect(0,174,VW,18);g.fillStyle='#ffd84d';g.font='6px "Press Start 2P",monospace';
     if(ev==='tug'){g.fillText('← НАЗАД — ТЯНУТЬ (жми быстро!)   E — УПЕРЕТЬСЯ',12,186);g.fillStyle='#333';g.fillRect(110,160,100,8);g.fillStyle='#e8e050';g.fillRect(110,160,100*p.pow,8)}
-    if(ev==='wr'){g.fillText(p.wr&&p.wr.cl?'E — ТОЛКНУТЬ (в зелёной зоне)   Q — УСТОЯТЬ':'←↑↓→ — ХОДИТЬ ПО МАТУ, ИДИ К НЕМУ',p.wr&&p.wr.cl?14:30,186);const bx=90,bw=140;if(p.wr&&p.wr.cl)g.fillStyle='#333';g.fillRect(bx,158,bw,10);g.fillStyle='#2fb04a';g.fillRect(bx+bw/2-bw*.11,158,bw*.22,10);const nx=bx+bw/2+Math.cos(p.nd)*bw/2;g.fillStyle='#fff';g.fillRect(nx-1,155,3,16)}
+    if(ev==='wr'){g.fillText(p.wr&&p.wr.cl?'E — ТОЛКНУТЬ (в зелёной зоне)   Q — УСТОЯТЬ':'←↑↓→ — ХОДИТЬ ПО МАТУ, ИДИ К НЕМУ',p.wr&&p.wr.cl?14:30,186);const bx=90,bw=140;if(p.wr&&p.wr.cl){g.fillStyle='#333';g.fillRect(bx,158,bw,10);g.fillStyle='#2fb04a';g.fillRect(bx+bw/2-bw*.11,158,bw*.22,10);const nx=bx+bw/2+Math.cos(p.nd)*bw/2;g.fillStyle='#fff';g.fillRect(nx-1,155,3,16)}}
     if(ev==='kar'){g.font='5px "Press Start 2P",monospace';g.fillText('←→ ход  E рука  Q нога  ↑ вертушка  ↓ блок',22,186)}}
   if(p.msgT>0&&p.msg){g.fillStyle='#fff';g.font='8px "Press Start 2P",monospace';g.fillText(p.msg,160-p.msg.length*4,140)}
   (p.parts||[]).forEach(q=>{g.fillStyle=q.c;g.fillRect(Math.round(q.x),Math.round(q.y),3,3)});
