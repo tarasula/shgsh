@@ -1733,7 +1733,7 @@ let MIC=null,LYR=null;
 function micAsk(){if(MIC)return Promise.resolve(MIC);try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return Promise.reject();
   return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}).then(st=>{const src=actx.createMediaStreamSource(st),an=actx.createAnalyser();an.fftSize=1024;src.connect(an);MIC={st,an,buf:new Float32Array(1024)};return MIC})}
-function loadLyrics(){const parse=t=>{const L=t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(\d+):(\d{1,2}(?:\.\d+)?)\s+(.*)$/);return m?{t:+m[1]*60+ +m[2],s:m[3]}:{t:null,s:x}});return L.length?L:null};
+function loadLyrics(){const parse=t=>{const L=t.split(/\r?\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith('#')).map(x=>{const m=x.match(/^(\d+):(\d{1,2}(?:\.\d+)?)\s+(.*)$/);return m?{t:+m[1]*60+ +m[2],s:m[3]}:{t:null,s:x}});return L.length?L:null};
   try{const ls=localStorage.getItem('shgshLyrics');if(ls){LYR=parse(ls)}}catch(e){}
   try{fetch('lyrics.txt',{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{if(t&&!/<html/i.test(t)){const p=parse(t);if(p)LYR=p}}).catch(()=>{})}catch(e){}}
 function bandIntro(){const won=SPW!==false;mode='dialog';BZ={t:0,ph:'intro',notes:[],hit:0,miss:0,fx:[],enter:0};micAsk().catch(()=>{});loadLyrics();
