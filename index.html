@@ -1119,10 +1119,11 @@ function preNpc(){
   if(P.hide){P.hide=null;note='Дима вылез из шкафа.';noteT=1.5;return true}
   if(P.climb){P.climb=null;return true}
   if(P.pull){P.pull=null;return true}
+  if(P.hold&&!gymMap()){P.hold=null}
   if(P.hold){const o=P.hold;P.hold=null;const [fx,fy]={right:[1,0],left:[-1,0],up:[0,-1],down:[0,1]}[P.dir];
     if(o.k==='rope'){o.x=P.x;o.y=P.y;GYM.push(o);startRope();return true}
     o.x=P.x+fx*8;o.y=P.y+fy*8;o.z=12;o.vx=fx*170;o.vy=fy*170;o.vz=110;GYM.push(o);snd(300,.08,'square',.04);return true}
-  let bi=-1,bd=22;GYM.forEach((o,i)=>{const d=Math.hypot(o.x-P.x,o.y-P.y);if(d<bd&&o.z<2){bd=d;bi=i}});
+  let bi=-1,bd=22;if(gymMap())GYM.forEach((o,i)=>{const d=Math.hypot(o.x-P.x,o.y-P.y);if(d<bd&&o.z<2){bd=d;bi=i}});
   if(bi>=0){P.hold=GYM.splice(bi,1)[0];note=P.hold.k==='ball'?'Мяч в руках. E — бросить.':'Скакалка в руках. E — начать прыгать.';noteT=2;return true}
   return false}
 function nearSweets(){const [px,py]=tileOf(P);for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(tile(x,y)===5&&R[y]&&R[y][x]===1)return true;return false}
@@ -1146,17 +1147,18 @@ function updRope(dt){const r=RP;if(r.fall){r.fall+=dt;if(r.fall>1.4){RP=null;mod
   r.vz-=480*dt;r.z+=r.vz*dt;if(r.z<0){r.z=0;r.vz=0}
   const T2=Math.PI*2,m1=r.a%T2;r.a+=r.sp*dt;const m2=r.a%T2;if(m1<Math.PI&&m2>=Math.PI){if(r.z<5){r.fall=.01;flash=.3;snd(90,.3,'sine',.4);note=`Упал! Прыжков: ${r.j}`;noteT=2.5}else{r.j++;r.sp+=.18;if(r.j>=20){note='20 прыжков! Вот это спортсмен!';noteT=2.5;RP=null;mode='play'}}}
   if(keys.left||keys.right||keys.up||keys.down){note=`Прыжков: ${r.j}`;noteT=1.5;RP=null;mode='play'}}
-function updGym(dt){BUB.forEach(b=>{b.t-=dt;if(b.e.ob>0)b.e.ob-=dt});BUB=BUB.filter(b=>b.t>0);for(const n of npcs)if(n.ob>0)n.ob-=dt;for(const o of GYM){if(!(o.vx||o.vy||o.vz||o.z>0))continue;ballHits(o);
+function updGym(dt){BUB.forEach(b=>{b.t-=dt;if(b.e.ob>0)b.e.ob-=dt});BUB=BUB.filter(b=>b.t>0);for(const n of npcs)if(n.ob>0)n.ob-=dt;if(gymMap())for(const o of GYM){if(!(o.vx||o.vy||o.vz||o.z>0))continue;ballHits(o);
     o.vz-=380*dt;o.z+=o.vz*dt;if(o.z<0){o.z=0;if(Math.abs(o.vz)>30){o.vz=-o.vz*.6;o.vx*=.8;o.vy*=.8;snd(200,.04,'sine',.08)}else o.vz=0}
     const nx=o.x+o.vx*dt,ny=o.y+o.vy*dt;if(solidAt(nx,o.y))o.vx=-o.vx*.7;else o.x=nx;if(solidAt(o.x,ny))o.vy=-o.vy*.7;else o.y=ny;
     if(o.z<=0){o.vx*=.985;o.vy*=.985;if(Math.hypot(o.vx,o.vy)<4){o.vx=o.vy=0}}}
-  if(mode==='play')for(const o of GYM)if(o.k==='ball'&&o.z<4&&Math.hypot(o.x-P.x,o.y-P.y)<9&&(keys.left||keys.right||keys.up||keys.down)){const [fx,fy]={right:[1,0],left:[-1,0],up:[0,-1],down:[0,1]}[P.dir];o.vx=fx*120;o.vy=fy*120;o.vz=60}}
+  if(mode==='play'&&gymMap())for(const o of GYM)if(o.k==='ball'&&o.z<4&&Math.hypot(o.x-P.x,o.y-P.y)<9&&(keys.left||keys.right||keys.up||keys.down)){const [fx,fy]={right:[1,0],left:[-1,0],up:[0,-1],down:[0,1]}[P.dir];o.vx=fx*120;o.vy=fy*120;o.vz=60}}
 function drawBubbles(){BUB.forEach(b=>{const e=b.e;g.globalAlpha=Math.min(1,b.t*2);tag(e.x,(e.y||0)-(e.sit?22:30),b.txt);g.globalAlpha=1})}
 function drawBall(x,y,t){const r=(a,b,w,h,c)=>{g.fillStyle=c;g.fillRect(x+a,y+b,w,h)};
   if(t==='bask'){r(-4,-5,8,10,'#e0701e');r(-5,-4,10,8,'#e0701e');r(-3,-4,2,2,'#f8a050');r(-5,0,10,1,'#2a1408');r(0,-5,1,10,'#2a1408');r(-3,-4,1,8,'#2a1408');r(3,-4,1,8,'#2a1408')}
   else if(t==='foot'){r(-3,-4,6,8,'#f4f4f4');r(-4,-3,8,6,'#f4f4f4');r(-1,-1,2,2,'#1a1a1a');r(-4,-2,1,2,'#1a1a1a');r(3,-2,1,2,'#1a1a1a');r(-1,-4,2,1,'#1a1a1a');r(-1,3,2,1,'#1a1a1a');r(-2,-3,1,1,'#c8c8c8')}
   else{r(-3,-3,6,6,'#e8483b');r(-4,-2,8,4,'#e8483b');r(-1,-3,2,6,'#fff');r(-2,-2,1,1,'#ff9a8a')}}
-function drawGym(){for(const o of GYM){g.fillStyle='rgba(0,0,0,.25)';g.fillRect(Math.round(o.x-4),Math.round(o.y-1),8,2);const y=Math.round(o.y-6-o.z),x=Math.round(o.x);
+const gymMap=()=>curMap==='school'||curMap==='gym8';
+function drawGym(){if(!gymMap())return;for(const o of GYM){g.fillStyle='rgba(0,0,0,.25)';g.fillRect(Math.round(o.x-4),Math.round(o.y-1),8,2);const y=Math.round(o.y-6-o.z),x=Math.round(o.x);
     if(o.k==='ball')drawBall(x,y,o.t)
     else{g.fillStyle='#3a6ad0';g.fillRect(x-6,y+2,12,1);g.fillRect(x-6,y-2,1,4);g.fillRect(x+5,y-2,1,4);g.fillStyle='#e0b030';g.fillRect(x-7,y-3,3,2);g.fillRect(x+4,y-3,3,2)}}}
 
