@@ -471,7 +471,7 @@ const S=[
  {t:'Глава 8: Спартакиада',sportCh:1,map:'gym8',items:[],noMath:1,
   intro:[['dimaT','Три урока пролетели незаметно. Весь класс собрался в спортзале.'],['dimaT','Долг — 1 550 000… Но сначала спартакиада. Если проиграем, школу завалят проверками.']],
   target:{id:'kuv',x:20,y:8},start:[20,19],
-  npcs:[{id:'derz',x:9,y:12,say:'Шестой класс — сила! Порвём их!'},{id:'oreh',x:8,y:14,say:'Я в канате тяну. Я тяжёлый — это плюс!'},{id:'kamran',x:11,y:13,say:'Пусть только кто-то на нас вякнет.'},{id:'roma',x:7,y:12,say:'Я с Орланом буду драться. Не переживай, я готов.'},{id:'sasha',x:10,y:15,say:'Шапку не сниму даже на спартакиаде.'},{id:'malya',x:17,y:17,say:'Половина моя, Дима. Не забывай.',mal8:1},{id:'cheer1',x:4,y:21,sit:1,say:'Ше-стой класс! Ше-стой класс!'},{id:'cheer2',x:5,y:21,sit:1,say:'Мы за вас болеем!'},{id:'oper',x:15,y:16,say:'Не мешай, я снимаю!'},{id:'rashida',x:23,y:8,say:'Дмитрий, на тебя вся надежда.'},{id:'opp1',x:30,y:12,say:'Шестиклашки, вы слабаки!'},{id:'opp2',x:31,y:14,say:'Канат будет наш.'},{id:'opp3',x:32,y:12,say:'Мы прошлый год всех порвали.'},{id:'orlan',x:29,y:15,say:'Ваш Рома — следующий.'},{id:'rott',x:33,y:16,say:'Я сегодня только болею за своих.'}],
+  npcs:[{id:'derz',x:9,y:12,say:'Шестой класс — сила! Порвём их!'},{id:'oreh',x:8,y:14,say:'Мне сказали, я в борьбе… против какого-то Ротвейлера. Это же собака?!'},{id:'kamran',x:11,y:13,say:'Пусть только кто-то на нас вякнет.'},{id:'roma',x:7,y:12,say:'Я с Орланом буду драться. Не переживай, я готов.'},{id:'sasha',x:10,y:15,say:'Шапку не сниму даже на спартакиаде.'},{id:'malya',x:17,y:17,say:'Половина моя, Дима. Не забывай.',mal8:1},{id:'cheer1',x:4,y:21,sit:1,say:'Ше-стой класс! Ше-стой класс!'},{id:'cheer2',x:5,y:21,sit:1,say:'Мы за вас болеем!'},{id:'oper',x:15,y:16,say:'Не мешай, я снимаю!'},{id:'rashida',x:23,y:8,say:'Дмитрий, на тебя вся надежда.'},{id:'opp1',x:30,y:12,say:'Шестиклашки, вы слабаки!'},{id:'opp2',x:31,y:14,say:'Канат будет наш.'},{id:'opp3',x:32,y:12,say:'Мы прошлый год всех порвали.'},{id:'orlan',x:29,y:15,say:'Ваш Рома — следующий.'},{id:'rott',x:33,y:16,say:'Р-р-р… Орех, ты следующий.'}],
   outro:[]}
 ];
 
@@ -1297,7 +1297,7 @@ function update(dt){
 const dirTo=(x,y)=>{if(mode!=='play'&&mode!=='dialog'&&mode!=='scene'&&mode!=='casino')return null;const dx=P.x-x,dy=P.y-y;if(Math.hypot(dx,dy)>96||Math.hypot(dx,dy)<1)return null;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')};
 const gdir=q=>Math.abs(q.dx)>Math.abs(q.dy)?(q.dx>0?'right':'left'):(q.dy>0?'down':'up');
 function render(){
-  if(BZ){drawBand();return}
+  if(BZ&&curMap!=='gym8'){drawBand();return}
   if(SP&&curMap!=='gym8'){drawSport();return}
   if(CS&&!['walk','walk2','after','vid','end','leave','msit','buzz2','chat'].includes(CS.ph)){drawCasino();return}
   if(PH){drawPhone();return}
@@ -1307,7 +1307,7 @@ function render(){
   if(KS){drawKiss();return}
   if(S[lvl]&&S[lvl].rhythm&&RZ){drawRhythm();return}
   pct.style.display='none';lyr.style.display='none';
-  const cp=PS?camPolice():AR?[C(19),C(10)]:(SP&&curMap==='gym8')?[C(20),C(12)]:null;
+  const cp=PS?camPolice():AR?[C(19),C(10)]:(BZ&&curMap==='gym8')?[C(20),C(10)]:(SP&&curMap==='gym8')?[C(20),C(12)]:null;
   const both=!cp&&!SC&&!GS&&p2On(),fx=cp?cp[0]:SC?C(6):GS?C(7):both?(P.x+P2.x)/2:P.x,fy=cp?cp[1]:SC?C(5):GS?C(5):both?(P.y+P2.y)/2:P.y,sh=SC&&SC.t>5.6&&SC.t<6.1?Math.round(Math.sin(SC.t*90)*3):0;
   cam.x=Math.max(0,Math.min(W*TS-VW,Math.round(fx-VW/2)))+sh;cam.y=Math.max(0,Math.min(H*TS-VH,Math.round(fy-VH/2)));
   g.setTransform(1,0,0,1,0,0);g.drawImage(bg,-cam.x,-cam.y);g.translate(-cam.x,-cam.y);
@@ -1318,7 +1318,7 @@ function render(){
   const ents=[];
   for(const it of items)if(it.on)ents.push({y:it.y,d:()=>drawItem(g,it.k,Math.round(it.x-4),Math.round(it.y-8),t0)});
   for(const n of npcs)ents.push({y:n.sit?n.y+6:n.y,d:()=>{
-    if(n.hid)return;if(SP&&curMap==='gym8'&&spUsed(n.id))return;
+    if(n.hid)return;if(SP&&curMap==='gym8'&&spUsed(n.id))return;if(BZ&&curMap==='gym8'&&n.id==='derz')return;
     const lk=dirTo(n.x,n.y);
     if(n.id==='dir'&&escP&&escP!=='done'){const sh=Math.round(Math.sin(t0*40)*1);drawChar(g,Math.round(n.x-8)+sh,Math.round(n.y-18),'dir',lk||'down',0,1);g.fillStyle='#22222a';g.fillRect(Math.round(n.x-7)+sh,Math.round(n.y-2),14,3);
       g.fillStyle='#8ac8ff';g.fillRect(Math.round(n.x+6),Math.round(n.y-18+(t0*20)%6),1,2);g.fillRect(Math.round(n.x-7),Math.round(n.y-16+(t0*16)%6),1,2);
@@ -1340,7 +1340,7 @@ function render(){
   if(BS)ents.push({y:BS.y,d:()=>drawChar(g,Math.round(BS.x-8),Math.round(BS.y-24),'brat2',BS.dir||'down',BS.t<3.4?Math.floor(BS.t*6)%2:0)});
   if(GS)GS.ents.forEach(b=>ents.push({y:b.y,d:()=>{if(!b.hid)drawChar(g,Math.round(b.x-8),Math.round(b.y-24),b.id,b.dir||'down',b.fr||0)}}));
   if(P.sit){const X=P.sit.tx*TS,Y=P.sit.ty*TS;ents.push({y:Y+10,d:()=>drawChar(g,X,Y-4,'dima',P.sitDir||'up',0,1)})}
-  else ents.push({y:P.y,d:()=>{if(NS)return;if(SP&&curMap==='gym8'&&SP.ev!=='kar')return;
+  else ents.push({y:P.y,d:()=>{if(NS)return;if(SP&&curMap==='gym8'&&SP.ev!=='kar'&&SP.ev!=='wr')return;if(BZ&&curMap==='gym8')return;
     if(P.hide){tag(C(P.hide.tx),P.hide.ty*TS-6,'Дима в шкафу');return}
     if(P.climb){const X=C(P.climb.tx),Y=C(P.climb.ty)+10-P.climb.h;drawChar(g,X-8,Y-24,'dima','up',Math.floor(P.climb.h/4)%2);return}
     if(P.pull){P.pull.k=Math.max(0,P.pull.k-1/60);const X=C(P.pull.tx),lift=Math.round(Math.sin(P.pull.k/.35*Math.PI)*6);drawChar(g,X-8,C(P.pull.ty)+6-lift-24,'dima','up',0);return}
@@ -1352,6 +1352,7 @@ function render(){
   if(GYM.length)ents.push({y:-1,d:drawGym});
   ents.push({y:99999,d:drawBubbles});
   if(SP&&curMap==='gym8')spWorld(ents);
+  if(BZ&&curMap==='gym8')bandWorld(ents);
   ents.sort((a,b)=>a.y-b.y).forEach(e=>e.d());
   if(mode==='play'&&!P.sit&&!nearNpc()){const fd=findDesk();if(fd){const lx=fd[0]*TS+8,ly=fd[1]*TS-6;tag(lx,ly,M[fd[1]][fd[0]]===16?'E — сесть на стул':'E — сесть за парту')}}
   if(mode==='wait'&&homePhase==='rec')tag(P.x,P.y-30,'♪ …');
@@ -1395,6 +1396,7 @@ function render(){
   hl.textContent=mode==='title'?'':`Глава ${lvl+1} · ${ri>=0?ROOMS[ri].n:''}`;
   hr.textContent=mode==='title'||!items.length?'':`${got}/${items.length}`;
   if(SP&&curMap==='gym8'){g.setTransform(1,0,0,1,0,0);spHud(SP,SP.at)}
+  if(BZ&&curMap==='gym8')drawBand(1);
 }
 
 /* ===== МАЛЯ, АРЕСТ, УГРОЗА, СКЛАД, КАЗИНО ===== */
@@ -1609,7 +1611,7 @@ function drawCasino(){const c=CS,t=c.at;hl.textContent='Казино';hr.textCon
 /* ===== ДОЛГ, ЧАТ «6 КЛАСС», СПАРТАКИАДА ===== */
 const DEBT=[['dima','(сидит перед погасшим экраном) Так… Считаем.'],['dima','1 000 000 — тем, кто грозит сжечь квартиру.'],['dima','50 000 — за ожерелье директора. Его же надо вернуть…'],['dima','И Мале половину выигрыша — 500 000. Он же своё потребует.'],['dimaT','Итого… 1 550 000 гривен. Что же мне теперь делать?']];
 let SP=null;
-function groupChat(){const ms=[['Рашида Жавдатовна','#e8a060','Ребята, добрый вечер! В связи с произошедшими недавно событиями наша школа снова открывается. Охрану мы усилили.'],['Рашида Жавдатовна','#e8a060','Но чтобы школу не закрыли, нам нужно выиграть <b>спартакиаду</b>! Если проиграем — школу завалят проверками.'],['Рашида Жавдатовна','#e8a060','Завтра 3 урока, а потом спартакиада в спортзале:<br>1 тур — перетягивание каната<br>2 тур — бои карате.<br>Явка обязательна!'],['Дерзкий','#ffd84d','Мы их порвём 💪'],['Орех','#8ad08a','Я в канате буду. Я тяжёлый!'],['Камран','#9ab0ff','Пусть только попробуют на нас вякнуть.']];
+function groupChat(){const ms=[['Рашида Жавдатовна','#e8a060','Ребята, добрый вечер! В связи с произошедшими недавно событиями наша школа снова открывается. Охрану мы усилили.'],['Рашида Жавдатовна','#e8a060','Но чтобы школу не закрыли, нам нужно выиграть <b>спартакиаду</b>! Если проиграем — школу завалят проверками.'],['Рашида Жавдатовна','#e8a060','Завтра 3 урока, а потом спартакиада в спортзале:<br>1 тур — перетягивание каната<br>2 тур — борьба<br>3 тур — бои карате.<br>Явка обязательна!'],['Дерзкий','#ffd84d','Мы их порвём 💪'],['Орех','#8ad08a','А борьба — это обязательно?..'],['Камран','#9ab0ff','Пусть только попробуют на нас вякнуть.']];
   show(`<div style="width:min(300px,78%);background:#101018;border:6px solid #2a2a33;border-radius:22px;overflow:hidden;text-align:left">
     <div style="display:flex;justify-content:space-between;padding:4px 12px;font:400 9px 'Press Start 2P',monospace;color:#cfd8e8"><span>23:59</span><span>▮▮▯ 3%</span></div>
     <div style="display:flex;gap:8px;align-items:center;padding:8px 10px;background:#2b2450;color:#fff"><span style="width:30px;height:30px;border-radius:50%;background:#e8483b;display:grid;place-items:center;font:700 15px 'PT Sans'">6</span><div><b style="display:block;font:700 15px 'PT Sans'">6 класс</b><small style="color:#b8b0e0;font-size:12px">27 участников</small></div></div>
@@ -1620,7 +1622,7 @@ function groupChat(){const ms=[['Рашида Жавдатовна','#e8a060','�
 function startSpart(){mode='sport';SP={ev:'rec',ph:'rec',t:0,at:0,us:0,them:0,bub:[],op:{x:-30,dir:1,t:0},R:0,W:0,nd:0,ch:0,ks:{us:0,them:0,st:'idle',t:1.5,blk:0,cw:0}};play('spart');snd(1200,.15,'square',.05)}
 const SRULES={tug:[['kuv','(в мегафон) Первый тур — перетягивание каната! Шестой класс против гостей!'],['kuv','Жми НАЗАД (← или джойстик влево) как можно быстрее — тянешь. Когда соперники рвут канат («ТЯНУТ!») — жми E, чтобы упереться! Второго шанса не будет.']],
   wr:[['kuv','Второй тур — борьба! Орех против… Ротвейлера!'],['orehW','Мама…'],['kuv','E — толкать, когда стрелка в зелёной зоне. Когда он разгоняется («!») — Q, чтобы устоять. Вытолкни его за мат!']],
-  kar:[['kuv','Второй тур — бои карате! Рома против Орлана!'],['orlan','Я тебя за три секунды уложу.'],['romaG','Посмотрим.'],['kuv','Бой до нокаута! ← → — двигаться. E — удар рукой, Q — удар ногой, ↑ — вертушка, ↓ — блок.']]};
+  kar:[['kuv','Третий тур — бои карате! Рома против Орлана!'],['orlan','Я тебя за три секунды уложу.'],['romaG','Посмотрим.'],['kuv','Бой до нокаута! ← → — двигаться. E — удар рукой, Q — удар ногой, ↑ — вертушка, ↓ — блок.']]};
 const SWIN={tug:[['kuv','Канат у шестого класса! Счёт 1:0!']],wr:[['kuv','Ротвейлер за кругом! Орех побеждает! 2:0!'],['orehW','Я… я победил? Мама, я победил!']],kar:[['kuv','Ипон! Рома побеждает Орлана! 3:0!'],['kuv','Шестой класс выигрывает спартакиаду!'],['rashida','Ребята, вы спасли нашу школу! Никаких проверок!'],['derz','ДА-А-А! Шестой класс — сила!'],['dimaT','Школу спасли… Но 1 550 000 гривен никуда не делись.']]};
 const SLOSE={tug:'Гости перетянули канат! Тур за гостями.',wr:'Орех вылетел за мат! Тур за гостями.',kar:'Орлан нокаутировал Рому! Тур за гостями.'};
 const SWIN1={tug:'Канат у шестого класса!',wr:'Ротвейлер за матом! Орех побеждает!',kar:'Нокаут! Рома побеждает Орлана!'};
@@ -1646,7 +1648,7 @@ function updSport(dt){const p=SP;p.t+=dt;if(p.msgT>0)p.msgT-=dt;if(p.fl>0)p.fl-=
   (p.parts||[]).forEach(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=100*dt;q.t-=dt});if(p.parts)p.parts=p.parts.filter(q=>q.t>0);
   p.bub=p.bub.filter(b=>(b.t-=dt)>0);
   if(p.ph==='rec'){if(p.t>4.2){spEv('tug')}return}
-  if(p.ph==='won'||p.ph==='lost'){if(p.t>1.6){const ev=p.ev,won=p.ph==='won';p.ph='talk';const L=[['kuv',(won?SWIN1:SLOSE)[ev]+` Счёт ${p.us}:${p.them}.`]];if(ev==='kar'){const ok=p.us>=p.them;SPW=ok;L.push(...(ok?SWINEND:SLOSEEND))}talk(L,()=>{mode='sport';if(ev==='tug')spEv('kar');else{SP=null;bandIntro()}})}return}
+  if(p.ph==='won'||p.ph==='lost'){if(p.t>1.6){const ev=p.ev,won=p.ph==='won';p.ph='talk';const L=[['kuv',(won?SWIN1:SLOSE)[ev]+` Счёт ${p.us}:${p.them}.`]];if(ev==='kar'){const ok=p.us>p.them;SPW=ok;L.push(...(ok?SWINEND:SLOSEEND))}talk(L,()=>{mode='sport';if(ev==='tug')spEv('wr');else if(ev==='wr')spEv('kar');else{SP=null;bandIntro()}})}return}
   if(p.ph!=='go')return;
   if(!p.ins&&p.t>2.5){p.ins=1;const [a,b]=SINS[p.ev];p.bub.push({w:a[0],txt:a[1],t:2.4});setTimeout(()=>{if(SP)SP.bub.push({w:b[0],txt:b[1],t:2.6})},1300)}
   if(p.ev==='tug'){if(keys.left&&!p.lk){p.R-=.05;p.pow=Math.min(1,p.pow+.2);snd(180+Math.random()*60,.04,'square',.03)}p.lk=keys.left;p.pow=Math.max(0,p.pow-dt*.9);p.bcd-=dt;if(p.brace>0)p.brace-=dt;p.nextS-=dt;if(p.nextS<=0&&p.surge<=0){p.surge=1.1;p.nextS=2.4+Math.random()*1.8}
@@ -1709,7 +1711,7 @@ function operAI(o,dt){o.st=o.st||'pick';o.t=(o.t||0)-dt;o.mv=1;
   if(o.st==='come'){if(d>22){o.x+=dx/d*34*dt;o.y+=dy/d*34*dt;o.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}else{o.st='film';o.t=3.2;o.a=Math.atan2(-dy,-dx);BUB.push({e:o,txt:tg===P?'Дима, улыбочку! Снимаю!':'Снимаю, снимаю!',t:2.4})}}
   else if(o.st==='film'){o.a+=dt*1.7;o.x=tg.x+Math.cos(o.a)*20;o.y=tg.y+Math.sin(o.a)*12;const fx=tg.x-o.x,fy=tg.y-o.y;o.dir=Math.abs(fx)>Math.abs(fy)?(fx>0?'right':'left'):(fy>0?'down':'up');if(Math.random()<dt*1.5){flash=.12;snd(1800,.03,'square',.03)}if(o.t<=0){o.st='leave';o.t=2+Math.random()*2;o.lx=C(3+Math.floor(Math.random()*34));o.ly=C(6+Math.floor(Math.random()*13))}}
   else if(o.st==='leave'){const ex=o.lx-o.x,ey=o.ly-o.y,e=Math.hypot(ex,ey);if(e>4){o.x+=ex/e*30*dt;o.y+=ey/e*30*dt;o.dir=Math.abs(ex)>Math.abs(ey)?(ex>0?'right':'left'):(ey>0?'down':'up')}else o.mv=0;if(o.t<=0)o.st='pick'}}
-function spUsed(id){const e=SP.ev;if(id==='kuv')return true;if(e==='rec'||e==='tug')return ['derz','oreh','kamran','roma','opp1','opp2','opp3','opp4','opp5'].includes(id);if(e==='kar')return id==='roma'||id==='orlan';return false}
+function spUsed(id){const e=SP.ev;if(id==='kuv')return true;if(e==='rec'||e==='tug')return ['derz','oreh','kamran','roma','opp1','opp2','opp3','opp4','opp5'].includes(id);if(e==='kar')return id==='roma'||id==='orlan';if(e==='wr')return id==='oreh'||id==='rott';return false}
 function spWorld(ents){const p=SP,t=p.at,CX=C(20),CY=C(12);
   ents.push({y:CY-40,d:()=>drawChar(g,CX-8,CY-62,'kuv','down',0)});
   if(p.ev==='rec'||p.ev==='tug'){const sh=Math.round(p.R*40),lean=p.ph==='go'?Math.floor(t*8)%2:0;
@@ -1719,16 +1721,28 @@ function spWorld(ents){const p=SP,t=p.at,CX=C(20),CY=C(12);
     if(p.ev==='rec')ents.push({y:99990,d:()=>{const x=CX-28;g.fillStyle='#fff';g.fillRect(x-12,CY-42,24,10);g.fillStyle='#222';g.font='6px "Press Start 2P",monospace';g.fillText('…'.repeat(1+Math.floor(t*3)%3),x-10,CY-34)}});
     if(p.ph==='go'&&p.surge>0)ents.push({y:99991,d:()=>{g.fillStyle='#e8283b';g.font='7px "Press Start 2P",monospace';g.fillText('ТЯНУТ!',CX+40,CY-36)}});
     if(p.brace>0)ents.push({y:99991,d:()=>{g.fillStyle='#40e0ff';g.font='7px "Press Start 2P",monospace';g.fillText('УПЁРЛИСЬ!',CX-110,CY-36)}})}
+  if(p.ev==='wr'){const mx=x=>CX+(x-80)*1.6,my=y=>CY+(y-75)*1.6;
+    ents.push({y:CY-60,d:()=>{g.fillStyle='#c8283b';g.fillRect(mx(MAT.x0)-10,my(MAT.y0)-12,mx(MAT.x1)-mx(MAT.x0)+20,my(MAT.y1)-my(MAT.y0)+20);g.fillStyle='#2a5ac8';g.fillRect(mx(MAT.x0),my(MAT.y0)-4,mx(MAT.x1)-mx(MAT.x0),my(MAT.y1)-my(MAT.y0)+6);g.strokeStyle='#fff';g.lineWidth=1;g.beginPath();g.ellipse(CX,CY,60,22,0,0,7);g.stroke()}});
+    const w=p.wr;if(w){const a=w.o,b=w.r,fa=b.x>a.x?1:-1;[['orehW',a,fa,1.15],['rott',b,-fa,1.4]].forEach(([id,q,f,sc])=>ents.push({y:my(q.y),d:()=>drawWrestler(id,{...q,x:mx(q.x),y:my(q.y)},f,t,sc)}));
+      if(p.ch>0)ents.push({y:99992,d:()=>{g.fillStyle='#e8283b';g.font='9px "Press Start 2P",monospace';g.fillText('!',mx(b.x)-3,my(b.y)-48)}})}}
   if(p.ev==='kar'){const kf=p.kf||{r:{x:58,hp:100,id:'romaG',f:1},o:{x:102,hp:100,id:'orlan',f:-1}};
     ents.push({y:CY-30,d:()=>{g.fillStyle='#c8283b';g.fillRect(CX-100,CY-30,200,52);g.fillStyle='#2a5ac8';g.fillRect(CX-92,CY-24,184,40);g.strokeStyle='#fff';g.lineWidth=1;g.strokeRect(CX-92,CY-24,184,40)}});
     const mx=x=>CX-80+(x-30)*1.6;
     [kf.r,kf.o].forEach(f=>ents.push({y:CY+10,d:()=>{g.save();g.translate(0,CY+10-24-46);drawFighter({...f,x:mx(f.x)},t);g.restore()}}));
     ents.push({y:99992,d:()=>{[[kf.r,CX-110,'РОМА','#ffd84d'],[kf.o,CX+30,'ОРЛАН','#ff8090']].forEach(([f,x,n,c])=>{g.fillStyle='#111';g.fillRect(x,CY-58,80,7);g.fillStyle=c;g.fillRect(x+1,CY-57,78*f.hp/100,5);g.fillStyle='#fff';g.font='5px "Press Start 2P",monospace';g.fillText(n,x,CY-61)})}})}
   (p.parts||[]).forEach(q=>ents.push({y:99993,d:()=>{g.fillStyle=q.c;g.fillRect(Math.round(cam.x+q.x),Math.round(cam.y+q.y),3,3)}}))}
+function bandWorld(ents){const z=BZ,t=z.t,bob=Math.floor(t/.476)%2,hop=z.jt>0?-2:0,SX=C(20)-48,SY=C(7);
+  ents.push({y:SY-40,d:()=>{g.fillStyle='#4a3020';g.fillRect(SX-100,SY-30,200,44);g.fillStyle='#6a4428';g.fillRect(SX-100,SY+12,200,4);for(let x=SX-96;x<SX+100;x+=16){g.fillStyle='#5a3a24';g.fillRect(x,SY-28,1,40)}
+    for(let i=0;i<3;i++){const a=t*1.2+i*2.1,x=SX-60+i*60+Math.sin(a)*30;g.fillStyle=['rgba(255,80,200,.16)','rgba(80,200,255,.16)','rgba(255,220,80,.16)'][i];g.beginPath();g.ellipse(x,SY+30+Math.cos(a)*10,26,12,0,0,7);g.fill()}}});
+  ents.push({y:SY-6,d:()=>{drawChar(g,SX-8,SY-30,'dima','down',0);g.fillStyle='#d8283b';g.beginPath();g.arc(SX,SY-2,8,0,7);g.fill();g.fillStyle='#f2f2f2';g.beginPath();g.arc(SX,SY-2,6,0,7);g.fill();g.fillStyle='#c8c8d0';g.beginPath();g.arc(SX-13,SY-6,4,0,7);g.fill();g.beginPath();g.arc(SX+13,SY-6,4,0,7);g.fill();g.fillStyle='#e0b030';g.beginPath();g.arc(SX-18,SY-16+bob,5,0,7);g.fill();g.beginPath();g.arc(SX+18,SY-16+(1-bob),5,0,7);g.fill();
+    const st=z.jt>0?1:bob;g.fillStyle='#e8d8a0';g.fillRect(SX-7,SY-16-st*3,2,7);g.fillRect(SX+5,SY-16-(1-st)*3,2,7)}});
+  ents.push({y:SY,d:()=>{const x=SX-56;drawChar(g,x-8,SY-24+bob,'polina','down',0);g.fillStyle='#8a4a1a';g.beginPath();g.ellipse(x+3,SY-9,5,4,0,0,7);g.fill();g.fillStyle='#2a1408';g.fillRect(x+2,SY-10,2,2);g.fillStyle='#5a3418';g.fillRect(x+6,SY-14,12,2)}});
+  const dx=SX+52+Math.sin(t*2.1)*16;ents.push({y:SY+2,d:()=>{drawChar(g,dx-8,SY-22+hop+bob,'derz','down',bob);g.fillStyle='#aaa';g.fillRect(dx+3,SY-12+hop+bob,3,3);g.fillStyle='#222';g.fillRect(dx+4,SY-9+hop+bob,1,5);if(Math.floor(t*2)%2){g.fillStyle='#ffd84d';g.font='7px "Press Start 2P",monospace';g.fillText('♪',dx+10,SY-26+hop);g.fillText('♫',dx-14,SY-32+hop)}}});
+  ents.push({y:SY-34,d:()=>{g.fillStyle='#ffd84d';g.font='6px "Press Start 2P",monospace';g.fillText('ГРУППА ШГШ',SX-30,SY-34)}})}
 function spStar(x,y,r){g.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;g.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr)}g.closePath();g.fill()}
 function bib(x,y,col,id){const T=look(id).tall?3:0;g.fillStyle=col;g.fillRect(x+4,y+11-T,8,6);g.fillStyle='rgba(0,0,0,.35)';g.fillRect(x+4,y+11-T,8,1)}
 function drawSport(){const p=SP,t=p.at;hl.textContent='Спортзал · Спартакиада';hr.textContent=`${p.us} : ${p.them}`;g.setTransform(2,0,0,2,0,0);
-  if(p.ev==='wr'){drawWr(p,t);g.setTransform(1,0,0,1,0,0);spHud(p,t);return}
+  if(p.ev==='wr'&&curMap!=='gym8'){drawWr(p,t);g.setTransform(1,0,0,1,0,0);spHud(p,t);return}
   g.fillStyle='#b8d4ea';g.fillRect(0,0,160,50);g.fillStyle='#2a4a9a';g.fillRect(0,46,160,4);g.fillStyle='#9ab8d0';g.fillRect(0,50,160,46);
   g.fillStyle='#f2f2f2';g.fillRect(14,24,9,22);g.fillRect(138,24,9,22);
   g.strokeStyle='#6a7a8a';g.lineWidth=.8;g.beginPath();g.moveTo(124,14);g.lineTo(160,14);g.moveTo(124,20);g.lineTo(160,20);for(let x=126;x<160;x+=4){g.moveTo(x,14);g.lineTo(x,20)}g.stroke();
@@ -1778,7 +1792,7 @@ function micAsk(){if(MIC)return Promise.resolve(MIC);try{actx=actx||new (window.
 function loadLyrics(){const parse=t=>{const L=t.split(/\r?\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith('#')).map(x=>{const m=x.match(/^(\d+):(\d{1,2}(?:\.\d+)?)\s+(.*)$/);return m?{t:+m[1]*60+ +m[2],s:m[3]}:{t:null,s:x}});return L.length?L:null};
   try{const ls=localStorage.getItem('shgshLyrics');if(ls){LYR=parse(ls)}}catch(e){}
   try{fetch('lyrics.txt',{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{if(t&&!/<html/i.test(t)){const p=parse(t);if(p)LYR=p}}).catch(()=>{})}catch(e){}}
-function bandIntro(){const won=SPW!==false;mode='dialog';BZ={t:0,ph:'intro',notes:[],hit:0,miss:0,fx:[],enter:0};micAsk().catch(()=>{});loadLyrics();
+function bandIntro(){const won=SPW!==false;if(curMap==='gym8'){let i=0;npcs.forEach(n=>{if(n.id==='derz')return;n.sit=0;n.mv=0;n.pts=null;n.st='';n.oper=0;if(n.id==='kuv'){n.x=C(24);n.y=C(9)+4;return}n.x=C(12+(i%7)*2);n.y=C(12+Math.floor(i/7)*2)+4;i++});P.x=C(17);P.y=C(6)}mode='dialog';BZ={t:0,ph:'intro',notes:[],hit:0,miss:0,fx:[],enter:0};micAsk().catch(()=>{});loadLyrics();
   talk([['polina','Подождите! Не расходитесь!'],['dima',won?'Ребята! Мы выиграли спартакиаду — и хотим выступить для всех вас!':'Ребята, хоть мы и проиграли, мы всё равно хотим выступить для всех вас!'],['dima','Сейчас выступит группа ШГШ со своей самой знаменитой песней — «Я дерзкий»!'],['derz','Погнали!!!']],()=>startBand())}
 function startBand(){BZ={t:0,ph:'mic',notes:DCHART.map(([t,l])=>({t:t+2,l,st:0})),hit:0,miss:0,fx:[],started:0,end:2+32.4,beat:0,jt:0,sing:0,lv:0,base:.01,bs:[],win:DVOC.map(v=>({v,mx:0,st:0}))};mode='band';try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}
   const z=BZ,fail=()=>{if(BZ!==z||z.mic)return;z.sing=1;z.hold=1;z.ph='play';z.t=0;note='Микрофона нет — пой кнопкой: держи E на жёлтых полосах!';noteT=4};
@@ -1810,8 +1824,8 @@ function updBand(dt){const z=BZ;z.t+=dt;if(z.jt>0)z.jt-=dt;
   if(z.t>z.end||(z.started&&a&&a.ended)){z.ph='done';const tot=z.sing?z.win.filter(w=>w.v).length:z.notes.length,pp=z.sing?singScore(z):Math.round(z.hit/tot*100);z.pp=pp;micStop();pct.style.display='none';lyr.style.display='none';
     show(`<div class="tag">ГРУППА ШГШ</div><h2>«Я дерзкий» — ${pp}%</h2><p>${pp>=80?'Зал взорвался! Даже гости хлопают, а оператор снимает всё до последней секунды.':pp>=50?'Зал качает! Болельщицы визжат, Кувалдович пританцовывает с мегафоном.':'Сбились пару раз, но зал всё равно хлопает — это же ШГШ!'}</p><button class="btn" id="b1">Дальше</button>`);
     $('b1').onclick=()=>{hide();try{a&&a.pause()}catch(e){}talk([['derz','Спасибо, шестой класс!!!'],['dimaT','Классно выступили… Но завтра снова думать про долг.']],()=>{BZ=null;finale()})}}}
-function drawBand(){const z=BZ,t=z.t,beat=Math.floor(t/.476),bob=beat%2,hop=z.jt>0?-3:0;g.setTransform(1,0,0,1,0,0);
-  g.fillStyle='#b8d4ea';g.fillRect(0,0,VW,100);g.fillStyle='#2a4a9a';g.fillRect(0,92,VW,8);g.fillStyle='#9ab8d0';g.fillRect(0,100,VW,92);
+function drawBand(top){const z=BZ,t=z.t,beat=Math.floor(t/.476),bob=beat%2,hop=z.jt>0?-3:0;g.setTransform(1,0,0,1,0,0);
+  if(!top){g.fillStyle='#b8d4ea';g.fillRect(0,0,VW,100);g.fillStyle='#2a4a9a';g.fillRect(0,92,VW,8);g.fillStyle='#9ab8d0';g.fillRect(0,100,VW,92);
   for(let i=0;i<10;i++){const bx=6+i*10,by=10+(i%3)*7+Math.sin(t*2+i)*2;g.fillStyle=i%2?'#f2d43a':'#6ab0e0';g.beginPath();g.ellipse(bx,by,5,6,0,0,7);g.fill()}
   [[150,22]].forEach(([x,y])=>{g.fillStyle='#fff';g.beginPath();g.arc(x,y,13,0,7);g.fill();g.fillStyle='#2a3a8a';g.beginPath();g.arc(x,y,12,0,7);g.fill();g.fillStyle='#d8283b';spStar(x,y,9)});
   g.fillStyle='#4a3020';g.fillRect(0,118,204,10);g.fillStyle='#6a4428';g.fillRect(0,116,204,3);
@@ -1828,7 +1842,7 @@ function drawBand(){const z=BZ,t=z.t,beat=Math.floor(t/.476),bob=beat%2,hop=z.jt
   const dx=150+Math.sin(t*2.1)*18,ddir=Math.cos(t*2.1)>0?'right':'left';A('derz',dx,44+hop+bob,ddir,bob);g.fillStyle='#222';g.fillRect(dx+(ddir==='right'?22:6),62+hop+bob,2,7);g.fillStyle='#aaa';g.fillRect(dx+(ddir==='right'?21:5),59+hop+bob,4,4);
   if(Math.floor(t*2)%2){g.fillStyle='#ffd84d';g.font='7px "Press Start 2P",monospace';g.fillText('♪',dx+30,48+hop);g.fillText('♫',dx-4,40+hop)}
   // зрители
-  ['sasha','oreh','kamran','roma','german','malya','cheer1','cheer2','kuv','rashida','opp1','orlan','rott','oper'].forEach((id,i)=>{const jb=Math.floor(t/.476+i)%2;g.save();g.translate(-4+i*15,148+jb*2);g.scale(1.6,1.6);drawChar(g,0,0,id,'up',0,1);g.restore()});
+  ['sasha','oreh','kamran','roma','german','malya','cheer1','cheer2','kuv','rashida','opp1','orlan','rott','oper'].forEach((id,i)=>{const jb=Math.floor(t/.476+i)%2;g.save();g.translate(-4+i*15,148+jb*2);g.scale(1.6,1.6);drawChar(g,0,0,id,'up',0,1);g.restore()})}
   if(z.ph==='mic'&&!z.lb){z.lb=1;show(`<div class="tag">КОНЦЕРТ «Я ДЕРЗКИЙ»</div><h2 style="font-size:13px">🎤 Разреши доступ к микрофону</h2><p>Ты поёшь сам. Игра слушает твой голос: поёшь ли ты вовремя, молчишь ли в паузах и попадаешь ли в ритм.</p><button class="btn alt" id="bly">${LYR?'✎ Текст песни загружен':'✎ Вставить текст песни'}</button>`);$('bly').onclick=()=>lyrEdit()}
   if(z.ph==='mic'){g.fillStyle='rgba(0,0,0,.7)';g.fillRect(40,60,240,50);g.fillStyle='#ffd84d';g.font='7px "Press Start 2P",monospace';g.fillText('🎤 Разреши доступ к микрофону —',58,80);g.fillText('ты будешь петь сам!',96,96);g.fillStyle='#ccc';g.font='5px "Press Start 2P",monospace';g.fillText('(лучше в наушниках)',110,106);pct.style.display='none';lyr.style.display='none';return}
   if(z.ph==='intro'){hl.textContent='Спортзал · концерт';hr.textContent='';pct.style.display='none';lyr.style.display='none';return}
