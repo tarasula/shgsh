@@ -116,7 +116,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
       <button class="act" id="act" aria-label="Действие">E</button>
     </div>
   </div>
-  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="mus" style="margin:0 0 10px">Музыка: вкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
+  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="mus" style="margin:0 0 10px">Музыка: вкл</button> <button class="btn alt" id="coop" style="margin:0 0 10px">Вдвоём: выкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
 </div>
 <script>
 {
@@ -496,6 +496,7 @@ function setup(){
   sitAsked=0;geoPhase=s.geo?'dir':'';guards=s.noMath?[]:[{id:'math',x:C(BOARD[0]),y:C(BOARD[1])+4,dx:0,dy:1,st:'teach',t:9+Math.random()*4,path:[],fr:0,ft:0,w:0,rp:0,lost:0,rt:0,ct:0}];heard=0;met=0;
   npcs=[...s.npcs.map(n=>({...n,tx:n.x,ty:n.y,x:C(n.x),y:C(n.y)+4})),{...s.target,x:C(s.target.x),y:C(s.target.y)+4,target:1}];
   malP=s.malCh?'find':'';mal8=0;hasNeck=0;VST=null;crN=0;
+  if(COOP&&!(s.target&&s.target.id==='derz'))npcs=npcs.filter(n=>n.id!=='derz');P2.x=P.x+16;P2.y=P.y;P2.map=curMap;
   if(lvl===0)npcs.push({id:'malya',x:C(24),y:C(12)+4,say:'Я Маля. Если что-то понадобится — обращайся. Я по деньгам решаю.'});
   if(lvl===0&&scDone)npcs.push({id:'derz',tx:3,ty:8,x:C(3),y:C(8)+4,sit:1,say:'Колено болит. Но мы всё равно против матеши!'});
   if(curMap==='school'&&!s.rhythm)npcs.push({id:'bufet',x:C(19),y:C(2)+4,say:rnd(['Пирожки, булочки, тортик «Наполеон»! Подходи, не стесняйся.','Эклеры свежие, только сегодня привезли!','Без очереди не лезь! А, это ты… Ну бери пирожное.'])});
@@ -547,11 +548,12 @@ function hide(){ov.classList.remove('on')}
 function titleScreen(){
   mode='title';
   show(`<h2 style="font-size:clamp(15px,3.4vw,28px);color:#ffd84d;text-shadow:3px 3px 0 #000;margin-bottom:4px">Школа глазами школьника</h2><div class="tag" style="color:#fff;margin-bottom:8px">ИГРА · 4–6 СЕЗОН</div><canvas id="tcast" width="240" height="96" style="width:240px;height:96px;image-rendering:pixelated;margin-bottom:8px;flex:none"></canvas>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" id="b1">${lvl?'Продолжить: глава '+(lvl+1):'Играть'}</button>${lvl?'<button class="btn alt" id="b2">Сначала</button>':''}<button class="btn alt" id="b3">Выбрать главу</button></div>`);
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" id="b1">${lvl?'Продолжить: глава '+(lvl+1):'Играть'}</button>${lvl?'<button class="btn alt" id="b2">Сначала</button>':''}<button class="btn alt" id="b3">Выбрать главу</button><button class="btn alt" id="b4">${COOP?'Вдвоём: вкл ✓':'Играть вдвоём'}</button></div>${COOP?'<p style="color:#ffd84d;font-size:12px;margin-top:6px">Дима — WASD + E · Дерзкий — стрелки + Enter</p>':''}`);
   castLine();
   $('b1').onclick=()=>card();
   const b2=$('b2');if(b2)b2.onclick=()=>{lvl=0;saveL();card()};
   $('b3').onclick=()=>chapterMenu();
+  $('b4').onclick=()=>{$('coop').click();titleScreen()};
 }
 function chapterMenu(){mode='title';
   const sc=[['Арест отчима',5,()=>startArrest()],['Сообщение ночью',5,()=>startPhoneNight()],['Казино',6,()=>startCasino()],['Спартакиада',7,()=>{mal8=1;startSpart()}],['Концерт «Я дерзкий»',7,()=>{SPW=true;bandIntro()}]];
@@ -718,6 +720,8 @@ function heart(x,y,c){g.fillStyle=c;x=Math.round(x);y=Math.round(y);g.fillRect(x
 /* ===== ВВОД ===== */
 const KM={ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'};
 addEventListener('keydown',e=>{
+  if(COOP&&KMP2[e.code]&&(mode==='play'||mode==='dialog')){e.preventDefault();keys2[KMP2[e.code]]=1;return}
+  if(COOP&&e.code==='Enter'&&mode==='play'){e.preventDefault();if(!e.repeat)p2Act();return}
   if(KM[e.code]){if(mode==='rhythm'||mode==='band'){e.preventDefault();if(!e.repeat)(mode==='band'?bandHit:hitLane)(LANES.indexOf(KM[e.code]));return}
     keys[KM[e.code]]=1;if(mode==='play'||mode==='dialog'||mode==='brawl')e.preventDefault()}
   if(mode==='brawl'){if(e.code==='KeyE'||e.code==='Space'||e.code==='Enter'){e.preventDefault();punch();return}if(e.code==='KeyQ'){e.preventDefault();grab();return}}
@@ -726,7 +730,7 @@ addEventListener('keydown',e=>{
   if(mode==='play'&&P.pull&&(e.code==='KeyE'||e.code==='Space')){e.preventDefault();P.pull.n++;P.pull.k=.35;snd(400+P.pull.n*20,.06,'square',.03);note=`Подтягиваний: ${P.pull.n}`;noteT=1.5;return}
   if(e.code==='KeyE'||e.code==='Space'||e.code==='Enter'){if(mode==='dialog'||mode==='play'){e.preventDefault();action()}}
 });
-addEventListener('keyup',e=>{if(KM[e.code])keys[KM[e.code]]=0;if(BZ&&(e.code==='KeyE'||e.code==='Space'))BZ.eh=0});
+addEventListener('keyup',e=>{if(KMP2[e.code])keys2[KMP2[e.code]]=0;if(COOP&&KMP2[e.code])return;if(KM[e.code])keys[KM[e.code]]=0;if(BZ&&(e.code==='KeyE'||e.code==='Space'))BZ.eh=0});
 addEventListener('keydown',e=>{if(BZ&&mode==='band'&&(e.code==='KeyE'||e.code==='Space')){e.preventDefault();BZ.eh=1}});
 addEventListener('keydown',e=>{if((mode==='phone'||mode==='casino'||mode==='sport')&&(e.code==='KeyE'||e.code==='Space'||e.code==='Enter')){e.preventDefault();if(!e.repeat)action()}if(mode==='sport'&&e.code==='KeyQ'&&!e.repeat){e.preventDefault();sportQ()}});
 document.querySelectorAll('.pad button').forEach(b=>{
@@ -1236,7 +1240,7 @@ function mathAI(m,dt){
     note='ДМИТРИЙ! Стоять!';noteT=2}
   return false}
 function update(dt){
-  t0+=dt;if(flash>0)flash-=dt;if(CS)CS.at+=dt;if(PH)PH.at=(PH.at||0)+dt;
+  t0+=dt;if(flash>0)flash-=dt;if(p2On()&&mode==='play')updP2(dt);if(CS)CS.at+=dt;if(PH)PH.at=(PH.at||0)+dt;
   if(mode==='casino'){updCas(dt);return}
   if(mode==='band'){updBand(dt);return}
   if(mode==='sport'){updSport(dt);return}
@@ -1303,7 +1307,7 @@ function render(){
   if(S[lvl]&&S[lvl].rhythm&&RZ){drawRhythm();return}
   pct.style.display='none';lyr.style.display='none';
   const cp=PS?camPolice():AR?[C(19),C(10)]:null;
-  const fx=cp?cp[0]:SC?C(6):GS?C(7):P.x,fy=cp?cp[1]:SC?C(5):GS?C(5):P.y,sh=SC&&SC.t>5.6&&SC.t<6.1?Math.round(Math.sin(SC.t*90)*3):0;
+  const both=!cp&&!SC&&!GS&&p2On(),fx=cp?cp[0]:SC?C(6):GS?C(7):both?(P.x+P2.x)/2:P.x,fy=cp?cp[1]:SC?C(5):GS?C(5):both?(P.y+P2.y)/2:P.y,sh=SC&&SC.t>5.6&&SC.t<6.1?Math.round(Math.sin(SC.t*90)*3):0;
   cam.x=Math.max(0,Math.min(W*TS-VW,Math.round(fx-VW/2)))+sh;cam.y=Math.max(0,Math.min(H*TS-VH,Math.round(fy-VH/2)));
   g.setTransform(1,0,0,1,0,0);g.drawImage(bg,-cam.x,-cam.y);g.translate(-cam.x,-cam.y);
   for(const q of guards){if(q.st==='complain'||q.hid)continue;
@@ -1329,6 +1333,7 @@ function render(){
   if(PS){const c=PS.cop,dr=PS.dr;ents.push({y:c.y,d:()=>drawChar(g,Math.round(c.x-8),Math.round(c.y-24),'cop',c.dir,c.fr)});ents.push({y:dr.y,d:()=>drawChar(g,Math.round(dr.x-8),Math.round(dr.y-24),'dir',dr.dir,dr.fr)})}
   if(BW&&!BW.hid&&!NS)ents.push({y:BW.y,d:()=>drawChar(g,Math.round(BW.x-8),Math.round(BW.y-24),'brat2',BW.dir,BW.fr)});
   if(NS)ents.push({y:9999,d:drawNightWorld});
+  if(p2On())ents.push({y:P2.y,d:()=>{drawChar(g,Math.round(P2.x-8),Math.round(P2.y-24),'derz',P2.dir,P2.fr);g.fillStyle='#ff6b5e';g.font='5px "Press Start 2P",monospace';g.fillText('P2',Math.round(P2.x-5),Math.round(P2.y-29))}});
   if(AR)['cop','oc','br'].forEach(k=>{const e=AR[k];if(!e.hid)ents.push({y:e.y,d:()=>{drawChar(g,Math.round(e.x-8),Math.round(e.y-24),k==='cop'?'cop':k==='oc'?'otchim':'brat2',e.dir,e.mv?e.fr:0);if(e.cuff&&e.dir!=='up'){g.fillStyle='#c8c8d0';g.fillRect(Math.round(e.x-2),Math.round(e.y-8),5,2)}}})});
   if(curMap==='vault'&&!hasNeck)ents.push({y:99998,d:()=>{const k=Math.floor(t0*3)%4;g.fillStyle='#fff';[[C(20)-4,C(10)-6],[C(20)+3,C(10)-3],[C(20),C(10)-8],[C(20)-2,C(10)-1]].forEach(([x,y],i)=>{if(i===k){g.fillRect(x,y,1,3);g.fillRect(x-1,y+1,3,1)}})}});
   if(BS)ents.push({y:BS.y,d:()=>drawChar(g,Math.round(BS.x-8),Math.round(BS.y-24),'brat2',BS.dir||'down',BS.t<3.4?Math.floor(BS.t*6)%2:0)});
@@ -1399,6 +1404,19 @@ let TRAIL=[];
 function follow(m,dt){const k=TRAIL.length-12;if(k<0){m.mv=0;return}const T=TRAIL[k],dx=T.x-m.x,dy=T.y-m.y,d=Math.hypot(dx,dy);
   if(d>1.5){const sp=Math.min(d/dt,95);m.x+=dx/d*sp*dt;m.y+=dy/d*sp*dt;m.mv=1;m.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');m.ft=(m.ft||0)+dt;if(m.ft>.15){m.ft=0;m.fr=1-(m.fr||0)}}else m.mv=0;
   if(TRAIL.length>40)TRAIL.splice(0,TRAIL.length-40)}
+const KMP2={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'},keys2={},P2={x:0,y:0,dir:'down',fr:0,ft:0,map:''};
+let COOP=0;try{COOP=localStorage.getItem('shgshCoop')==='1'?1:0}catch(e){}
+function p2On(){return COOP&&curMap!=='casino'&&!CS&&!SP&&!BZ&&!BR&&(mode==='play'||mode==='dialog'||mode==='arrest')}
+function updP2(dt){if(P2.map!==curMap||Math.hypot(P2.x-P.x,P2.y-P.y)>300){P2.x=P.x+(free(P.x+16,P.y)?16:-16);P2.y=P.y;P2.map=curMap}
+  let mx=(keys2.right?1:0)-(keys2.left?1:0),my=(keys2.down?1:0)-(keys2.up?1:0);
+  if(mx||my){const l=Math.hypot(mx,my),sp=74*dt;mx/=l;my/=l;const nx=P2.x+mx*sp,ny=P2.y+my*sp;
+    if(free(nx,P2.y)&&Math.abs(nx-P.x)<VW*.8)P2.x=nx;if(free(P2.x,ny)&&Math.abs(ny-P.y)<VH*.8)P2.y=ny;
+    P2.dir=Math.abs(mx)>Math.abs(my)?(mx>0?'right':'left'):(my>0?'down':'up');P2.ft+=dt;if(P2.ft>.15){P2.ft=0;P2.fr^=1}}else P2.fr=0}
+const P2SAY=['Я дерзкий!','Мы против матеши!','Дима, не тормози!','Погнали!','Шестой класс — сила!'];
+function p2Act(){let best=null,bd=28;for(const n of npcs){if(n.hid)continue;const d=Math.hypot(n.x-P2.x,n.y-P2.y);if(d<bd){bd=d;best=n}}
+  if(best){talk([['derz',rnd(['Слышь, '+(N[best.id]||'')+', как дела?','Привет! Я Дерзкий.','Как жизнь?'])],[best.id,best.say||'…']]);return}
+  BUB.push({e:P2,txt:rnd(P2SAY),t:1.8})}
+function coopUI(){const b=$('coop');if(b)b.textContent=COOP?'Вдвоём: вкл':'Вдвоём: выкл'}
 function enterVault(){VST={npcs,GYM};const mm=npcs.find(n=>n.fol);if(mm)VST.npcs=VST.npcs.filter(n=>n!==mm);npcs=mm?[mm]:[];GYM=[];TRAIL=[];switchMap('vault');P.x=C(20);P.y=C(15)+4;P.dir='up';P.hide=null;flash=.3;snd(160,.4,'sawtooth',.04);note='За шкафом — потайная дверь! Секретный склад директора…';noteT=3.5;updTask()}
 function exitVault(){const mm=npcs.find(n=>n.fol);switchMap('school');if(VST){npcs=VST.npcs;GYM=VST.GYM;VST=null}if(mm){npcs.push(mm);mm.x=C(30);mm.y=C(18)+4;mm.mv=0}TRAIL=[];P.x=C(29);P.y=C(17)+4;P.dir='right';note=hasNeck?'Ожерелье у тебя! Неси его Мале.':'Ты вышел из склада.';noteT=3;updTask()}
 
@@ -1843,7 +1861,8 @@ function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return
   const key=(c,t)=>dispatchEvent(new KeyboardEvent(t,{code:c,key:c==='KeyE'?'e':c==='KeyQ'?'q':c,bubbles:true}));
   tc.querySelectorAll('[data-c]').forEach(b=>{const c=b.dataset.c;b.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();b.style.filter='brightness(1.5)';key(c,'keydown')},{passive:false});b.addEventListener('touchend',e=>{e.preventDefault();b.style.filter='';key(c,'keyup')});b.addEventListener('mousedown',()=>key(c,'keydown'));b.addEventListener('mouseup',()=>key(c,'keyup'))});
   $('tfs').onclick=()=>{const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else if(f){const p=f.call(d);const lk=()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};if(p&&p.then)p.then(lk).catch(()=>{});else lk()}};const canFS=!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen),standalone=matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone;if(standalone)$('tfs').style.display='none';else if(!canFS)$('tfs').onclick=()=>{show(`<div class="tag">ИГРА НА ВЕСЬ ЭКРАН</div><h2 style="font-size:14px">Убрать строку браузера</h2><p>Safari на iPhone не даёт сайтам прятать строку. Сделай так:<br>1. Открой игру в <b>Safari</b> (не внутри Телеграма).<br>2. Нажми «Поделиться» ⬆️ → <b>«На экран Домой»</b>.<br>3. Запускай игру с иконки ШГШ — она откроется на весь экран, без вкладок и строки.</p><button class="btn" id="b1">Понятно</button>`);$('b1').onclick=()=>{hide();if(mode==='title')titleScreen()}};
-  $('tmus').onclick=()=>$('mus').click();$('trst').onclick=()=>$('reset').click();
+  $('tmus').onclick=()=>$('mus').click();
+  $('coop').onclick=()=>{COOP=COOP?0:1;try{localStorage.setItem('shgshCoop',COOP?'1':'0')}catch(e){}coopUI();P2.map='';if(COOP){note='Игра вдвоём: Дима — WASD + E, Дерзкий — стрелки + Enter';noteT=5;if(!(S[lvl].target&&S[lvl].target.id==='derz'))npcs=npcs.filter(n=>n.id!=='derz')}};coopUI();$('trst').onclick=()=>$('reset').click();
   window.__joy={JOY,LOOK}})();
 function loop(now){$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));$('tc').classList.toggle('bh',mode==='band'&&!!BZ&&!!BZ.hold);musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
