@@ -760,7 +760,7 @@ function action(){
   if(n.target&&S[lvl].homeCh&&homePhase==='mom'){mode='wait';homePhase='rec';play('otchim');const a=AEL.otchim;let done=0;const go2=()=>{if(done)return;done=1;talk(HOME,()=>{homePhase='bed';updTask()})};if(a){a.onended=go2}setTimeout(go2,6300);return}
   if(S[lvl].sportCh&&n.id==='malya'&&!mal8){mal8=1;talk(MAL8,()=>updTask());return}
   if(S[lvl].sportCh&&n.target){if(!mal8){talk([['kuv','Подожди, Дима. Тебя там Маля ищет — сначала с ним разберись.']]);return}startSpart();return}
-  if(S[lvl].malCh&&n.target){if(malP==='find'){talk(MALASK,()=>{malP='key';updTask();note='Ключ от шкафа директора — у буфетчицы.';noteT=3})}else if(malP==='back'){talk(MALGIVE,()=>startCasino())}else talk([['malya',malP==='key'?'Ну что, достал полтинник? Нет? Тогда чего стоишь?':'Без 50 тысяч не приходи, Дима.']]);return}
+  if(S[lvl].malCh&&n.target){if(malP==='find'){talk(MALASK,()=>{malP='key';n.fol=1;TRAIL=[];updTask();note='Ключ от шкафа директора — у буфетчицы. Маля идёт с тобой.';noteT=3})}else if(malP==='back'){talk(MALGIVE,()=>startCasino())}else talk([['malya',malP==='key'?'Ну что, достал полтинник? Нет? Тогда чего стоишь?':'Без 50 тысяч не приходи, Дима.']]);return}
   if(S[lvl].malCh&&n.id==='bufet'&&malP==='key'){talk(BUFKEY,()=>{malP='vault';updTask();note='Ключ у тебя! Иди в кабинет директора к шкафу.';noteT=3.5;snd(700,.1,'square',.05)});return}
   if(escP==='key'&&n.id==='dir'){talk([['dir','(стоит на коленях и дрожит) Н-не бейте! А, это ты, Дима… Они везде!'],['dima','Мне срочно нужен ключ от спортзала! Там мой телефон — надо вызвать полицию!'],['dir','В-вот, держи ключ… Подойди к двери спортзала и открой. И беги, они и сюда заходят!']],()=>{hasKey=1;escP='gym';items=[{k:'phone',n:'телефон',x:C(1),y:C(22),on:1}];got=0;updTask();note='Ключ у тебя! Подойди к двери спортзала и нажми E.';noteT=3.5});return}
   if(n.target&&S[lvl].fightCh&&curMap==='school'){talk([['rashida','Дмитрий, садись на место, урок начинается!']]);return}
@@ -1282,6 +1282,7 @@ function update(dt){
   if(S[lvl].geo&&geoPhase==='chalk'&&!items.some(i=>i.on)){geoAsk();return}
   {const m=npcs.find(n=>n.meet);if(m&&!malMet&&Math.hypot(m.x-P.x,m.y-P.y)<40){malMet=1;talk(MALMEET,()=>{npcs=npcs.filter(q=>q!==m);inv=1.5;note='Маля свернул за угол и пропал. А бандиты всё ещё в школе!';noteT=3});return}}
   if(curMap==='vault'&&Math.floor(P.y/TS)>=16){exitVault();return}
+  if(S[lvl].malCh){const L=TRAIL[TRAIL.length-1];if(!L||Math.hypot(L.x-P.x,L.y-P.y)>2)TRAIL.push({x:P.x,y:P.y});const m=npcs.find(n=>n.fol);if(m&&!P.hide)follow(m,dt)}
   if(S[lvl].sportCh){const o=npcs.find(n=>n.id==='oper');if(o)operAI(o,dt)}
   if(lvl===0&&!scDone){const [px,py]=tileOf(P);if((px>=1&&px<=12&&py<=10&&py>=1))startProtest()}
   for(const q of guards){if(mathAI(q,dt))return}
@@ -1394,8 +1395,12 @@ const MALASK=[['dima','Маля! Слушай… можно мне разбог�
 const BUFKEY=[['dima','Здравствуйте! Директор попросил кое-что достать со склада. Дайте, пожалуйста, ключ от шкафа.'],['bufet','Директор? Сам попросил? Хм… Ну ладно, держи. Только верни сразу — и ничего там не трогай!'],['dima','Конечно-конечно. Спасибо!']];
 const MALGIVE=[['dima','Вот. Ожерелье. Тысяч на пятьдесят.'],['malya','Ого… Вот это вещь! Ну всё, Дима, погнали. Я знаю одно место — там из пятидесяти делают миллион.'],['dima','Куда?'],['malya','Увидишь.']];
 const CRATE=['Конфискованные телефоны. Штук сорок, не меньше.','Плакат «МЫ ПРОТИВ МАТЕШИ!!». Сохранили, значит…','Гирлянда с новогоднего концерта.','Старые дневники. Ой, тут и мой есть…','Пустой ящик. Только пыль.','Коробка мела. Целый склад мела.'];
-function enterVault(){VST={npcs,GYM};npcs=[];GYM=[];switchMap('vault');P.x=C(20);P.y=C(15)+4;P.dir='up';P.hide=null;flash=.3;snd(160,.4,'sawtooth',.04);note='За шкафом — потайная дверь! Секретный склад директора…';noteT=3.5;updTask()}
-function exitVault(){switchMap('school');if(VST){npcs=VST.npcs;GYM=VST.GYM;VST=null}P.x=C(29);P.y=C(17)+4;P.dir='right';note=hasNeck?'Ожерелье у тебя! Неси его Мале.':'Ты вышел из склада.';noteT=3;updTask()}
+let TRAIL=[];
+function follow(m,dt){const k=TRAIL.length-12;if(k<0){m.mv=0;return}const T=TRAIL[k],dx=T.x-m.x,dy=T.y-m.y,d=Math.hypot(dx,dy);
+  if(d>1.5){const sp=Math.min(d/dt,95);m.x+=dx/d*sp*dt;m.y+=dy/d*sp*dt;m.mv=1;m.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');m.ft=(m.ft||0)+dt;if(m.ft>.15){m.ft=0;m.fr=1-(m.fr||0)}}else m.mv=0;
+  if(TRAIL.length>40)TRAIL.splice(0,TRAIL.length-40)}
+function enterVault(){VST={npcs,GYM};const mm=npcs.find(n=>n.fol);if(mm)VST.npcs=VST.npcs.filter(n=>n!==mm);npcs=mm?[mm]:[];GYM=[];TRAIL=[];switchMap('vault');P.x=C(20);P.y=C(15)+4;P.dir='up';P.hide=null;flash=.3;snd(160,.4,'sawtooth',.04);note='За шкафом — потайная дверь! Секретный склад директора…';noteT=3.5;updTask()}
+function exitVault(){const mm=npcs.find(n=>n.fol);switchMap('school');if(VST){npcs=VST.npcs;GYM=VST.GYM;VST=null}if(mm){npcs.push(mm);mm.x=C(30);mm.y=C(18)+4;mm.mv=0}TRAIL=[];P.x=C(29);P.y=C(17)+4;P.dir='right';note=hasNeck?'Ожерелье у тебя! Неси его Мале.':'Ты вышел из склада.';noteT=3;updTask()}
 
 const ARREST=[['cop','Полиция! Николай Андреевич. Опять ты, Дима… Ну, показывай, кто тут руки распускает.'],['dima','Вот он! Он избил маму. А это его сын — главарь той банды, что напала на школу!'],['cop','Так. Гражданин, вы задержаны. И вы, молодой человек, тоже. Руки за спину!'],['otchim','Да вы чего, начальник… Это семейное дело!'],['cop','Семейное — в отделении расскажете. На выход, оба!'],['brat2','Ну, братишка… удружил.']];
 function startArrest(){switchMap('home');PS=null;guards=[];items=[];BW=null;NS=null;homePhase='arrest';
