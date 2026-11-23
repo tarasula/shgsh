@@ -471,7 +471,7 @@ const S=[
  {t:'Глава 8: Спартакиада',sportCh:1,map:'gym8',items:[],noMath:1,
   intro:[['dimaT','Три урока пролетели незаметно. Весь класс собрался в спортзале.'],['dimaT','Долг — 1 550 000… Но сначала спартакиада. Если проиграем, школу завалят проверками.']],
   target:{id:'kuv',x:20,y:8},start:[20,19],
-  npcs:[{id:'derz',x:9,y:12,say:'Шестой класс — сила! Порвём их!'},{id:'oreh',x:8,y:14,say:'Мне сказали, я в борьбе… против какого-то Ротвейлера. Это же собака?!'},{id:'kamran',x:11,y:13,say:'Пусть только кто-то на нас вякнет.'},{id:'roma',x:7,y:12,say:'Я с Орланом буду драться. Не переживай, я готов.'},{id:'sasha',x:10,y:15,say:'Шапку не сниму даже на спартакиаде.'},{id:'malya',x:5,y:15,say:'Дима, про долг не забыл? Половина моя.'},{id:'cheer1',x:4,y:21,sit:1,say:'Ше-стой класс! Ше-стой класс!'},{id:'cheer2',x:5,y:21,sit:1,say:'Мы за вас болеем!'},{id:'oper',x:15,y:16,say:'Не мешай, я снимаю!'},{id:'rashida',x:23,y:8,say:'Дмитрий, на тебя вся надежда.'},{id:'opp1',x:30,y:12,say:'Шестиклашки, вы слабаки!'},{id:'opp2',x:31,y:14,say:'Канат будет наш.'},{id:'opp3',x:32,y:12,say:'Мы прошлый год всех порвали.'},{id:'orlan',x:29,y:15,say:'Ваш Рома — следующий.'},{id:'rott',x:33,y:16,say:'Р-р-р…'}],
+  npcs:[{id:'derz',x:9,y:12,say:'Шестой класс — сила! Порвём их!'},{id:'oreh',x:8,y:14,say:'Мне сказали, я в борьбе… против какого-то Ротвейлера. Это же собака?!'},{id:'kamran',x:11,y:13,say:'Пусть только кто-то на нас вякнет.'},{id:'roma',x:7,y:12,say:'Я с Орланом буду драться. Не переживай, я готов.'},{id:'sasha',x:10,y:15,say:'Шапку не сниму даже на спартакиаде.'},{id:'malya',x:17,y:17,say:'Половина моя, Дима. Не забывай.',mal8:1},{id:'cheer1',x:4,y:21,sit:1,say:'Ше-стой класс! Ше-стой класс!'},{id:'cheer2',x:5,y:21,sit:1,say:'Мы за вас болеем!'},{id:'oper',x:15,y:16,say:'Не мешай, я снимаю!'},{id:'rashida',x:23,y:8,say:'Дмитрий, на тебя вся надежда.'},{id:'opp1',x:30,y:12,say:'Шестиклашки, вы слабаки!'},{id:'opp2',x:31,y:14,say:'Канат будет наш.'},{id:'opp3',x:32,y:12,say:'Мы прошлый год всех порвали.'},{id:'orlan',x:29,y:15,say:'Ваш Рома — следующий.'},{id:'rott',x:33,y:16,say:'Р-р-р…'}],
   outro:[]}
 ];
 
@@ -495,7 +495,7 @@ function setup(){
   items=s.items.map(([k,x,y,n])=>({k,n,x:C(x),y:C(y),on:1}));
   sitAsked=0;geoPhase=s.geo?'dir':'';guards=s.noMath?[]:[{id:'math',x:C(BOARD[0]),y:C(BOARD[1])+4,dx:0,dy:1,st:'teach',t:9+Math.random()*4,path:[],fr:0,ft:0,w:0,rp:0,lost:0,rt:0,ct:0}];heard=0;met=0;
   npcs=[...s.npcs.map(n=>({...n,tx:n.x,ty:n.y,x:C(n.x),y:C(n.y)+4})),{...s.target,x:C(s.target.x),y:C(s.target.y)+4,target:1}];
-  malP=s.malCh?'find':'';hasNeck=0;VST=null;crN=0;
+  malP=s.malCh?'find':'';mal8=0;hasNeck=0;VST=null;crN=0;
   if(lvl===0)npcs.push({id:'malya',x:C(24),y:C(12)+4,say:'Я Маля. Если что-то понадобится — обращайся. Я по деньгам решаю.'});
   if(lvl===0&&scDone)npcs.push({id:'derz',tx:3,ty:8,x:C(3),y:C(8)+4,sit:1,say:'Колено болит. Но мы всё равно против матеши!'});
   if(curMap==='school'&&!s.rhythm)npcs.push({id:'bufet',x:C(19),y:C(2)+4,say:rnd(['Пирожки, булочки, тортик «Наполеон»! Подходи, не стесняйся.','Эклеры свежие, только сегодня привезли!','Без очереди не лезь! А, это ты… Ну бери пирожное.'])});
@@ -509,7 +509,7 @@ function updTask(){
   if(homePhase==='run'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Кто-то кричит! Беги в зал к маме и нажми E.</span>`;return}
   if(homePhase==='sneak'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Телефон в ванной. Проберись туда тихо: отчим ходит по коридору — жди, пока он отвернётся.</span>`;return}
   if(homePhase==='mom2'||homePhase==='bro'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Ты дома. Найди маму в зале и расскажи, как прошёл день (E).</span>`;return}
-  if(s.sportCh){task.innerHTML=`<b>${esc2(s.t)}</b><span>Спортзал. Подойди к Анатолию Кувалдовичу (с мегафоном) и нажми E, чтобы начать спартакиаду.</span>`;return}
+  if(s.sportCh){task.innerHTML=`<b>${esc2(s.t)}</b><span>${mal8?'Подойди к Анатолию Кувалдовичу (с мегафоном) и нажми E, чтобы начать спартакиаду.':'Маля ждёт тебя у входа. Подойди к нему и нажми E.'}</span>`;return}
   if(homePhase==='bed4'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Отчима и брата увезли. Иди в свою комнату и ляг спать (E рядом с кроватью).</span>`;return}
   if(homePhase==='arrest'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Полиция приехала.</span>`;return}
   if(s.malCh){const tx=curMap==='casino'?'Казино. Подойди к любому автомату, сядь на стул (E), потом E — Играть. С игроками тоже можно поговорить.':curMap==='vault'?(hasNeck?'Ожерелье у тебя! Выходи через дверь внизу.':'Секретный склад директора. Обыщи ящики и полки (E) — где-то здесь должно быть что-то ценное.'):
@@ -554,7 +554,7 @@ function titleScreen(){
   $('b3').onclick=()=>chapterMenu();
 }
 function chapterMenu(){mode='title';
-  const sc=[['Арест отчима',5,()=>startArrest()],['Сообщение ночью',5,()=>startPhoneNight()],['Казино',6,()=>startCasino()]];
+  const sc=[['Арест отчима',5,()=>startArrest()],['Сообщение ночью',5,()=>startPhoneNight()],['Казино',6,()=>startCasino()],['Спартакиада',7,()=>{mal8=1;startSpart()}]];
   const bs='font-size:clamp(8px,1.3vw,11px);padding:9px 10px;min-height:40px';
   show(`<div class="tag">ВЫБОР ГЛАВЫ</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,46%),1fr));gap:8px;width:min(640px,100%);max-height:72%;overflow:auto;padding:2px">
     ${S.map((c,i)=>`<button class="btn alt" data-ch="${i}" style="${bs}">${esc(c.t)}</button>`).join('')}
@@ -757,7 +757,8 @@ function action(){
   if(n.target&&homePhase==='mom2'){homePhase='bro';talk([['mom','Дима! Господи, ты весь в синяках… Как прошёл день?'],['dima','Мам, сегодня к нам в школу ворвались…']],()=>startBrother());return}
   if(n.target&&curMap==='home'&&!S[lvl].homeCh&&homePhase!=='mom2'&&homePhase!=='run'){talk([[n.id,homePhase==='bed3'?'Дима, поздно уже. Иди спать.':'(шёпотом) Дима, тише…']]);return}
   if(n.target&&S[lvl].homeCh&&homePhase==='mom'){mode='wait';homePhase='rec';play('otchim');const a=AEL.otchim;let done=0;const go2=()=>{if(done)return;done=1;talk(HOME,()=>{homePhase='bed';updTask()})};if(a){a.onended=go2}setTimeout(go2,6300);return}
-  if(S[lvl].sportCh&&n.target){startSpart();return}
+  if(S[lvl].sportCh&&n.id==='malya'&&!mal8){mal8=1;talk(MAL8,()=>updTask());return}
+  if(S[lvl].sportCh&&n.target){if(!mal8){talk([['kuv','Подожди, Дима. Тебя там Маля ищет — сначала с ним разберись.']]);return}startSpart();return}
   if(S[lvl].malCh&&n.target){if(malP==='find'){talk(MALASK,()=>{malP='key';updTask();note='Ключ от шкафа директора — у буфетчицы.';noteT=3})}else if(malP==='back'){talk(MALGIVE,()=>startCasino())}else talk([['malya',malP==='key'?'Ну что, достал полтинник? Нет? Тогда чего стоишь?':'Без 50 тысяч не приходи, Дима.']]);return}
   if(S[lvl].malCh&&n.id==='bufet'&&malP==='key'){talk(BUFKEY,()=>{malP='vault';updTask();note='Ключ у тебя! Иди в кабинет директора к шкафу.';noteT=3.5;snd(700,.1,'square',.05)});return}
   if(escP==='key'&&n.id==='dir'){talk([['dir','(стоит на коленях и дрожит) Н-не бейте! А, это ты, Дима… Они везде!'],['dima','Мне срочно нужен ключ от спортзала! Там мой телефон — надо вызвать полицию!'],['dir','В-вот, держи ключ… Подойди к двери спортзала и открой. И беги, они и сюда заходят!']],()=>{hasKey=1;escP='gym';items=[{k:'phone',n:'телефон',x:C(1),y:C(22),on:1}];got=0;updTask();note='Ключ у тебя! Подойди к двери спортзала и нажми E.';noteT=3.5});return}
@@ -1277,7 +1278,7 @@ function update(dt){
   if(S[lvl].geo&&geoPhase==='chalk'&&!items.some(i=>i.on)){geoAsk();return}
   {const m=npcs.find(n=>n.meet);if(m&&!malMet&&Math.hypot(m.x-P.x,m.y-P.y)<40){malMet=1;talk(MALMEET,()=>{npcs=npcs.filter(q=>q!==m);inv=1.5;note='Маля свернул за угол и пропал. А бандиты всё ещё в школе!';noteT=3});return}}
   if(curMap==='vault'&&Math.floor(P.y/TS)>=16){exitVault();return}
-  if(S[lvl].sportCh){const o=npcs.find(n=>n.id==='oper');if(o){if(!o.pts||!o.pts.length)o.pts=[[3+Math.floor(Math.random()*34),6+Math.floor(Math.random()*13)]];o.mv=1;walkPts(o,26,dt);o.cd=(o.cd||0)-dt;if(o.cd<=0&&Math.hypot(o.x-P.x,o.y-P.y)<28){o.cd=6;BUB.push({e:o,txt:'Не мешай, я снимаю!',t:2.2})}}}
+  if(S[lvl].sportCh){const o=npcs.find(n=>n.id==='oper');if(o)operAI(o,dt)}
   if(lvl===0&&!scDone){const [px,py]=tileOf(P);if((px>=1&&px<=12&&py<=10&&py>=1))startProtest()}
   for(const q of guards){if(mathAI(q,dt))return}
 }
@@ -1347,7 +1348,7 @@ function render(){
     if(escP==='key'){gx=C(33);gy=C(18);gl='Директор'}else if(escP==='gym'){const it=items.find(i=>i.on);if(it){gx=it.x;gy=it.y;gl='Телефон'}}
     else if(homePhase==='mom2'||homePhase==='run'){gx=C(18);gy=C(6);gl='Мама'}
     else if(homePhase==='bed3'||homePhase==='bed4'){gx=C(32);gy=C(7);gl='Кровать'}
-    else if(S[lvl].sportCh){gx=C(20);gy=C(8);gl='Кувалдович'}
+    else if(S[lvl].sportCh){if(mal8){gx=C(20);gy=C(8);gl='Кувалдович'}else{gx=C(17);gy=C(17);gl='Маля'}}
     else if(S[lvl].malCh){if(curMap==='casino'){if(!P.sit){gx=C(13);gy=C(8);gl='Автомат'}}else if(curMap==='vault'){if(hasNeck){gx=C(20);gy=C(16);gl='Выход'}else{gx=C(20);gy=C(10);gl='?'}}else if(malP==='find'||malP==='back'){gx=C(21);gy=C(12);gl='Маля'}else if(malP==='key'){gx=C(19);gy=C(2);gl='Буфетчица'}else if(malP==='vault'){gx=C(28);gy=C(17);gl='Шкаф'}}
     else if(homePhase==='sneak'){gx=C(9);gy=C(18);gl='Телефон'}
     else if(S[lvl].homeCh){if(homePhase==='mom'){gx=C(18);gy=C(6);gl='Мама'}else{gx=C(32);gy=C(7);gl='Кровать'}}
@@ -1594,18 +1595,20 @@ const SLOSE={tug:'Гости перетянули канат! Тур за гос
 const SWIN1={tug:'Канат у шестого класса!',wr:'Ротвейлер за матом! Орех побеждает!',kar:'Нокаут! Рома побеждает Орлана!'};
 const SWINEND=[['kuv','Шестой класс выигрывает спартакиаду!'],['rashida','Ребята, вы спасли нашу школу! Никаких проверок!'],['derz','ДА-А-А! Шестой класс — сила!'],['dimaT','Школу спасли… Но 1 550 000 гривен никуда не делись.']];
 const SLOSEEND=[['kuv','Спартакиаду выигрывают гости…'],['rashida','Ребята… Теперь нашу школу завалят проверками.'],['kamran','Да они просто повезло им!'],['dimaT','Школу не спасли. А долг 1 550 000 никуда не делся…']];
-let SPW=null;
+let SPW=null,mal8=0;
+const MAL8=[['malya','Да ты что, издеваешься?! Ты просрал наш миллион! Заложил всё — и просрал!'],['dima','Маля, я… я хотел два ляма…'],['malya','Мне плевать. Теперь ты должен мне половину — 500 тысяч.'],['malya','И не дай бог ты не вернёшь. Тебе конец, понял?'],['dimaT','Теперь ещё и Маля…']];
 const SINS={tug:[['opp','Шестиклашки, вы слабаки!'],['kamran','Слышь, за базаром следи!']],wr:[['opp','Орех, ты булка! Сдавайся!'],['kamran','Сам ты булка! Орех, вали его!']],kar:[['opp','Орлан, сделай его!'],['kamran','Рома, не слушай этих клоунов!']]};
 function spEv(ev){const p=SP;p.ev=ev;p.ph='pre';p.R=0;p.W=0;p.ch=0;p.ks={us:0,them:0,st:'idle',t:1.5,blk:0,cw:0};talk(SRULES[ev],()=>{mode='sport';spGo()})}
-function spGo(){const p=SP;p.ph='go';p.t=0;p.lk=1;p.lu=1;p.kf={r:{x:58,hp:100,act:null,at:0,cd:0,blk:0,hit:0,id:'romaG',f:1},o:{x:102,hp:100,act:null,at:0,cd:1,blk:0,hit:0,id:'orlan',f:-1,ai:.8}};p.R=0;p.W=0;p.surge=0;p.nextS=2.5;p.brace=0;p.bcd=0;p.ins=0;p.pow=0;p.nd=0;p.ch=0;p.chT=2.2;p.ks={us:0,them:0,st:'idle',t:1.5,blk:0,cw:0};p.fl=0}
+function spGo(){const p=SP;p.ph='go';p.t=0;p.wr={o:{x:34,y:76,vx:0,vy:0,mv:0},r:{x:126,y:70,vx:0,vy:0,mv:0},st:'circle',st0:0,ang:0,cl:0};p.lk=1;p.lu=1;p.kf={r:{x:58,hp:100,act:null,at:0,cd:0,blk:0,hit:0,id:'romaG',f:1},o:{x:102,hp:100,act:null,at:0,cd:1,blk:0,hit:0,id:'orlan',f:-1,ai:.8}};p.R=0;p.W=0;p.surge=0;p.nextS=2.5;p.brace=0;p.bcd=0;p.ins=0;p.pow=0;p.nd=0;p.ch=0;p.chT=2.2;p.ks={us:0,them:0,st:'idle',t:1.5,blk:0,cw:0};p.fl=0}
 function spWin(){const p=SP;p.ph='won';p.t=0;p.us++;jingle();flash=.4;for(let i=0;i<50;i++){const a=Math.random()*6.3,v=40+Math.random()*90;(p.parts=p.parts||[]).push({x:160,y:90,vx:Math.cos(a)*v,vy:Math.sin(a)*v-40,t:1.6,c:['#ffd84d','#ff60d0','#40e0ff'][i%3]})}}
 function spLose(){const p=SP;p.ph='lost';p.t=0;p.them++;[392,370,349].forEach((f,i)=>setTimeout(()=>snd(f,.25,'sawtooth',.06),i*250))}
 function sportE(){const p=SP;if(!p||p.ph!=='go')return;
   if(p.ev==='tug'){if(p.bcd<=0){p.brace=.9;p.bcd=1.6;snd(120,.12,'square',.06)}}
-  if(p.ev==='wr'){const z=Math.abs(Math.sin(p.nd));if(z>.78){p.W-=.24;flash=.15;snd(140,.12,'square',.08);p.fl=.3}else{p.W+=.08;snd(90,.08,'sawtooth',.05)}}
+  if(p.ev==='wr'&&p.wr&&p.wr.cl){const z=Math.abs(Math.sin(p.nd));if(z>.78){wrPush(p,1);flash=.15;snd(140,.12,'square',.08);p.fl=.3}else snd(90,.08,'sawtooth',.05)}
+  if(0){const z=Math.abs(Math.sin(p.nd));if(z>.78){p.W-=.24;flash=.15;snd(140,.12,'square',.08);p.fl=.3}else{p.W+=.08;snd(90,.08,'sawtooth',.05)}}
   if(p.ev==='kar')kAtk(p.kf.r,'punch')}
 function sportQ(){const p=SP;if(!p||p.ph!=='go')return;
-  if(p.ev==='wr'){if(p.ch>0&&p.ch<.7){p.ch=0;p.chT=1.6+Math.random()*1.4;p.msg='Устоял!';p.msgT=.8;snd(160,.1,'square',.07)}}
+  if(p.ev==='wr'&&p.wr){if(p.ch>0&&p.ch<.7){p.ch=0;p.chT=1.6+Math.random()*1.4;p.msg='Устоял!';p.msgT=.8;snd(160,.1,'square',.07)}}
   if(p.ev==='kar')kAtk(p.kf.r,'kick')}
 function updSport(dt){const p=SP;p.t+=dt;if(p.msgT>0)p.msgT-=dt;if(p.fl>0)p.fl-=dt;
   const o=p.op;o.t+=dt;o.x+=o.dir*22*dt;if(o.x>190||o.x<-30){o.dir*=-1;o.flashT=0}if(Math.random()<dt*.5&&o.x>20&&o.x<140){o.flash=.15;snd(1800,.03,'square',.03)}if(o.flash>0)o.flash-=dt;
@@ -1618,8 +1621,7 @@ function updSport(dt){const p=SP;p.t+=dt;if(p.msgT>0)p.msgT-=dt;if(p.fl>0)p.fl-=
   if(p.ev==='tug'){if(keys.left&&!p.lk){p.R-=.05;p.pow=Math.min(1,p.pow+.2);snd(180+Math.random()*60,.04,'square',.03)}p.lk=keys.left;p.pow=Math.max(0,p.pow-dt*.9);p.bcd-=dt;if(p.brace>0)p.brace-=dt;p.nextS-=dt;if(p.nextS<=0&&p.surge<=0){p.surge=1.1;p.nextS=2.4+Math.random()*1.8}
     let f=.16;if(p.surge>0){p.surge-=dt;f=p.brace>0?.05:.55}p.R+=f*dt;
     if(p.R<=-1)spWin();else if(p.R>=1)spLose()}
-  if(p.ev==='wr'){p.nd+=dt*3.2;p.W+=dt*.07;p.chT-=dt;if(p.ch>0){p.ch+=dt;if(p.ch>=.7){p.ch=0;p.W+=.32;p.chT=1.8+Math.random()*1.4;p.msg='Ротвейлер толкнул!';p.msgT=.9;snd(70,.2,'sawtooth',.1);flash=.2}}else if(p.chT<=0){p.ch=.001}
-    if(p.W<=-1)spWin();else if(p.W>=1)spLose()}
+  if(p.ev==='wr')updWr(p,dt);
   if(p.ev==='kar')updKar(p,dt)}
 const KM2={punch:{w:.12,a:.12,r:.25,dmg:9,rng:20,n:'Рука!'},kick:{w:.22,a:.14,r:.35,dmg:15,rng:26,n:'Нога!'},spin:{w:.38,a:.2,r:.45,dmg:26,rng:28,n:'ВЕРТУШКА!'}};
 function kAtk(f,a){if(!SP||SP.ph!=='go'||f.act||f.cd>0||f.blk)return;f.act=a;f.at=0;f.done=0;snd(a==='spin'?300:500,.05,'square',.04)}
@@ -1643,9 +1645,42 @@ function drawFighter(f,t){const m=f.act?KM2[f.act]:null,ph=f.act?f.at/m.w:0,ext=
   if(f.act==='kick'||(f.act==='spin'&&ext)){g.fillStyle='#f2f2ee';g.fillRect(f.f>0?X+11:X-(ext?11:5),Y+16,ext?12:6,3);g.fillStyle='#f0c7a4';g.fillRect(f.f>0?X+11+(ext?12:6):X-(ext?13:7),Y+16,2,3)}
   if(f.blk){g.fillStyle='#f2f2ee';g.fillRect(f.f>0?X+11:X+1,Y+9,4,8)}
   g.restore();if(f.act&&f.at<m.w&&f.id==='orlan'){g.fillStyle='#e8283b';g.font='7px "Press Start 2P",monospace';g.fillText('!',f.x-2,Y-4)}}
+const MAT={x0:10,x1:150,y0:54,y1:95};
+function wrPush(p,who){const w=p.wr,a=w.o,b=w.r,dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1;if(who===1){b.vx+=dx/l*90;b.vy+=dy/l*40;p.msg='ТОЛЧОК!';p.msgT=.7}else{a.vx-=dx/l*90;a.vy-=dy/l*40;p.msg='Ротвейлер толкнул!';p.msgT=.9;flash=.2;snd(70,.2,'sawtooth',.1)}w.cl=0;w.st='circle';w.st0=1.2}
+function updWr(p,dt){const w=p.wr,a=w.o,b=w.r;p.nd+=dt*3.2;
+  let mx=(keys.right?1:0)-(keys.left?1:0),my=(keys.down?1:0)-(keys.up?1:0);if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25){mx=JOY.x;my=JOY.y}
+  if(!w.cl){a.x+=mx*34*dt;a.y+=my*18*dt;a.mv=mx||my?1:0;if(mx)a.f=mx>0?1:-1}
+  [a,b].forEach(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=Math.pow(.02,dt);q.vy*=Math.pow(.02,dt)});
+  w.st0-=dt;const dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
+  if(w.st==='circle'){w.ang+=dt*1.4;const cx=96,cy=75,R0=30;const tx=cx+Math.cos(w.ang)*R0,ty=Math.max(MAT.y0+6,Math.min(MAT.y1-4,cy+Math.sin(w.ang)*14));b.x+=(tx-b.x)*dt*1.3;b.y+=(ty-b.y)*dt*1.3;b.mv=1;if(w.st0<=0&&p.t>3.5){w.st='go'}}
+  else if(w.st==='go'&&!w.cl){b.x+=dx/(d||1)*26*dt;b.y+=dy/(d||1)*14*dt;b.mv=1}
+  if(!w.cl&&d<15&&w.st==='go'){w.cl=1;p.chT=1.4+Math.random();p.ch=0;p.msg='ЗАХВАТ! E — толкать, Q — на «!»';p.msgT=1.2}
+  if(w.cl){b.mv=1;a.mv=1;const l=d||1;a.x-=dx/l*4*dt;b.x+=0;a.x+=(-dx/l)*0;b.x+= -dx/l*0;a.x+= (dx/l)*-6*dt;b.x+=(dx/l)*-0*dt;p.chT-=dt;if(p.ch>0){p.ch+=dt;if(p.ch>=.7){p.ch=0;wrPush(p,2)}}else if(p.chT<=0){p.ch=.001}}
+  const cl=q=>{if(Math.hypot(q.vx,q.vy)<8){q.x=Math.max(MAT.x0+4,Math.min(MAT.x1-4,q.x));q.y=Math.max(MAT.y0+2,Math.min(MAT.y1-2,q.y))}};cl(a);cl(b);
+  const out=q=>q.x<MAT.x0||q.x>MAT.x1||q.y<MAT.y0||q.y>MAT.y1;a.y=Math.max(MAT.y0-8,a.y);b.y=Math.max(MAT.y0-8,b.y);
+  if(out(b))spWin();else if(out(a))spLose()}
+function drawWrestler(id,q,f,t,sc){const X=q.x,Y=q.y;const jig=q.mv?Math.round(Math.sin(t*26)*1.2):0;
+  g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.ellipse(X,Y,9*sc/1.8,3,0,0,7);g.fill();
+  g.save();g.translate(X-8*sc,Y-24*sc);g.scale(sc,sc);drawChar(g,0,0,id,f>0?'right':'left',q.mv?Math.floor(t*6)%2:0);const T=look(id).tall?3:0;
+  g.fillStyle='#f0c7a4';g.fillRect(2,13-T+jig,12,4);g.fillStyle='#d8a888';g.fillRect(3,16-T+jig,10,1);g.fillRect(7,14-T+jig,2,1);g.restore()}
+function drawWr(p,t){const w=p.wr;
+  g.fillStyle='#9ab8d0';g.fillRect(0,0,160,96);
+  g.fillStyle='#c8283b';g.fillRect(MAT.x0-6,MAT.y0-14,MAT.x1-MAT.x0+12,MAT.y1-MAT.y0+16);g.fillStyle='#2a5ac8';g.fillRect(MAT.x0,MAT.y0-8,MAT.x1-MAT.x0,MAT.y1-MAT.y0+8);
+  g.strokeStyle='#fff';g.lineWidth=.8;g.beginPath();g.ellipse(80,75,44,14,0,0,7);g.stroke();g.fillStyle='#c8283b';g.beginPath();g.ellipse(80,75,10,3,0,0,7);g.fill();
+  if(!w){return}const a=w.o,b=w.r;a.f=a.f||(b.x>a.x?1:-1);const fa=b.x>a.x?1:-1;
+  const L=[['orehW',a,fa],['rott',b,-fa]].sort((u,v)=>u[1].y-v[1].y);L.forEach(([id,q,f])=>drawWrestler(id,q,f,t,1.8));
+  if(p.ch>0){g.fillStyle='#e8283b';g.font='10px "Press Start 2P",monospace';g.fillText('!',b.x-3,b.y-48)}
+  if(w.st==='circle'&&p.t<3.5){g.fillStyle='#fff';g.font='5px "Press Start 2P",monospace';g.fillText('Ротвейлер ходит вокруг…',34,10)}}
+function operAI(o,dt){o.st=o.st||'pick';o.t=(o.t||0)-dt;o.mv=1;
+  if(o.st==='pick'){const pool=[P,...npcs.filter(n=>n!==o&&!n.hid)];o.tg=Math.random()<.45?P:pool[Math.floor(Math.random()*pool.length)];o.st='come'}
+  const tg=o.tg||P,dx=tg.x-o.x,dy=tg.y-o.y,d=Math.hypot(dx,dy);
+  if(o.st==='come'){if(d>22){o.x+=dx/d*34*dt;o.y+=dy/d*34*dt;o.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}else{o.st='film';o.t=3.2;o.a=Math.atan2(-dy,-dx);BUB.push({e:o,txt:tg===P?'Дима, улыбочку! Снимаю!':'Снимаю, снимаю!',t:2.4})}}
+  else if(o.st==='film'){o.a+=dt*1.7;o.x=tg.x+Math.cos(o.a)*20;o.y=tg.y+Math.sin(o.a)*12;const fx=tg.x-o.x,fy=tg.y-o.y;o.dir=Math.abs(fx)>Math.abs(fy)?(fx>0?'right':'left'):(fy>0?'down':'up');if(Math.random()<dt*1.5){flash=.12;snd(1800,.03,'square',.03)}if(o.t<=0){o.st='leave';o.t=2+Math.random()*2;o.lx=C(3+Math.floor(Math.random()*34));o.ly=C(6+Math.floor(Math.random()*13))}}
+  else if(o.st==='leave'){const ex=o.lx-o.x,ey=o.ly-o.y,e=Math.hypot(ex,ey);if(e>4){o.x+=ex/e*30*dt;o.y+=ey/e*30*dt;o.dir=Math.abs(ex)>Math.abs(ey)?(ex>0?'right':'left'):(ey>0?'down':'up')}else o.mv=0;if(o.t<=0)o.st='pick'}}
 function spStar(x,y,r){g.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;g.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr)}g.closePath();g.fill()}
 function bib(x,y,col,id){const T=look(id).tall?3:0;g.fillStyle=col;g.fillRect(x+4,y+11-T,8,6);g.fillStyle='rgba(0,0,0,.35)';g.fillRect(x+4,y+11-T,8,1)}
 function drawSport(){const p=SP,t=p.at;hl.textContent='Спортзал · Спартакиада';hr.textContent=`${p.us} : ${p.them}`;g.setTransform(2,0,0,2,0,0);
+  if(p.ev==='wr'){drawWr(p,t);g.setTransform(1,0,0,1,0,0);spHud(p,t);return}
   g.fillStyle='#b8d4ea';g.fillRect(0,0,160,50);g.fillStyle='#2a4a9a';g.fillRect(0,46,160,4);g.fillStyle='#9ab8d0';g.fillRect(0,50,160,46);
   g.fillStyle='#f2f2f2';g.fillRect(14,24,9,22);g.fillRect(138,24,9,22);
   g.strokeStyle='#6a7a8a';g.lineWidth=.8;g.beginPath();g.moveTo(124,14);g.lineTo(160,14);g.moveTo(124,20);g.lineTo(160,20);for(let x=126;x<160;x+=4){g.moveTo(x,14);g.lineTo(x,20)}g.stroke();
@@ -1663,21 +1698,19 @@ function drawSport(){const p=SP,t=p.at;hl.textContent='Спортзал · Сп�
     ['opp1','opp2','opp3','opp4','opp5'].forEach((id,i)=>{const x=84+i*10+sh;drawChar(g,x,44,id,'left',lean^(i%2));bib(x,44,'#f08a30',id)});
     if(p.ph==='go'&&p.surge>0){g.fillStyle='#e8283b';g.font='5px "Press Start 2P",monospace';g.fillText('ТЯНУТ!',96,40)}
     if(p.brace>0){g.fillStyle='#40e0ff';g.font='5px "Press Start 2P",monospace';g.fillText('УПЁРЛИСЬ!',22,40)}}
-  if(ev==='wr'){const sh=Math.round(p.W*30);g.fillStyle='#c8283b';g.fillRect(12,56,136,40);g.fillStyle='#2a5ac8';g.fillRect(22,60,116,36);g.strokeStyle='#fff';g.lineWidth=1;g.beginPath();g.ellipse(80,80,40,12,0,0,7);g.stroke();g.fillStyle='#c8283b';g.beginPath();g.ellipse(80,80,10,3,0,0,7);g.fill();
-    g.save();g.translate(52+sh,30);g.scale(2,2);drawChar(g,0,0,'orehW','right',p.fl>0?1:0);g.restore();g.save();g.translate(78+sh,24);g.scale(2,2);drawChar(g,0,0,'rott','left',p.ch>0?Math.floor(t*10)%2:0);g.restore();
-    if(p.ch>0){g.fillStyle='#e8283b';g.font='10px "Press Start 2P",monospace';g.fillText('!',104+sh,22)}
-    drawChar(g,140,8,'kamran','down',0);drawChar(g,150,8,'dima','down',0);drawChar(g,2,8,'derz','down',0)}
+  if(ev==='wr')drawWr(p,t);
   if(ev==='kar'){g.fillStyle='#c8283b';g.fillRect(20,64,120,30);g.fillStyle='#2a5ac8';g.fillRect(28,67,104,24);g.strokeStyle='#fff';g.lineWidth=.6;g.strokeRect(28,67,104,24);
     const kf=p.kf||{r:{x:58,hp:100,id:'romaG',f:1},o:{x:102,hp:100,id:'orlan',f:-1}};drawFighter(kf.r,t);drawFighter(kf.o,t);
     [[kf.r,8,'РОМА','#ffd84d'],[kf.o,92,'ОРЛАН','#ff8090']].forEach(([f,x,n,c])=>{g.fillStyle='#111';g.fillRect(x,14,60,6);g.fillStyle=c;g.fillRect(x+1,15,58*f.hp/100,4);g.fillStyle='#fff';g.font='4px "Press Start 2P",monospace';g.fillText(n,x,12)});
     drawChar(g,124,30,'kamran','down',0);drawChar(g,136,30,'dima','down',0);drawChar(g,10,30,'derz','down',0)}
   if(ev==='rec'){g.fillStyle='#fff';g.fillRect(62,32,22,8);g.fillStyle='#222';g.font='5px "Press Start 2P",monospace';g.fillText('…'.repeat(1+Math.floor(t*3)%3),64,38)}
   const o=p.op;drawChar(g,Math.round(o.x),60,'oper',o.dir>0?'right':'left',Math.floor(o.t*5)%2);if(o.flash>0){g.fillStyle='rgba(255,255,255,.8)';g.fillRect(0,0,160,96)}
-  g.setTransform(1,0,0,1,0,0);
+  g.setTransform(1,0,0,1,0,0);spHud(p,t)}
+function spHud(p,t){const ev=p.ev;hl.textContent='Спортзал · Спартакиада';hr.textContent=`${p.us} : ${p.them}`;
   p.bub.forEach(b=>{const x=b.w==='kamran'?(ev==='tug'?90:250):(ev==='tug'?200:190),y=ev==='tug'?60:50;const w=b.txt.length*5+10;g.fillStyle='rgba(0,0,0,.8)';g.fillRect(Math.min(VW-w-4,x-w/2),y,w,14);g.fillStyle=b.w==='kamran'?'#9ab0ff':'#f08a30';g.font='6px "Press Start 2P",monospace';g.fillText((b.w==='kamran'?'Камран: ':'Гости: ')+'',Math.min(VW-w-4,x-w/2)+4,y-2);g.fillStyle='#fff';g.fillText(b.txt,Math.min(VW-w-4,x-w/2)+4,y+10)});
   if(p.ph==='go'){g.fillStyle='rgba(0,0,0,.6)';g.fillRect(0,174,VW,18);g.fillStyle='#ffd84d';g.font='6px "Press Start 2P",monospace';
     if(ev==='tug'){g.fillText('← НАЗАД — ТЯНУТЬ (жми быстро!)   E — УПЕРЕТЬСЯ',12,186);g.fillStyle='#333';g.fillRect(110,160,100,8);g.fillStyle='#e8e050';g.fillRect(110,160,100*p.pow,8)}
-    if(ev==='wr'){g.fillText('E — ТОЛКНУТЬ (в зелёной зоне)   Q — УСТОЯТЬ',14,186);const bx=90,bw=140;g.fillStyle='#333';g.fillRect(bx,158,bw,10);g.fillStyle='#2fb04a';g.fillRect(bx+bw/2-bw*.11,158,bw*.22,10);const nx=bx+bw/2+Math.cos(p.nd)*bw/2;g.fillStyle='#fff';g.fillRect(nx-1,155,3,16)}
+    if(ev==='wr'){g.fillText(p.wr&&p.wr.cl?'E — ТОЛКНУТЬ (в зелёной зоне)   Q — УСТОЯТЬ':'←↑↓→ — ХОДИТЬ ПО МАТУ, ИДИ К НЕМУ',p.wr&&p.wr.cl?14:30,186);const bx=90,bw=140;if(p.wr&&p.wr.cl)g.fillStyle='#333';g.fillRect(bx,158,bw,10);g.fillStyle='#2fb04a';g.fillRect(bx+bw/2-bw*.11,158,bw*.22,10);const nx=bx+bw/2+Math.cos(p.nd)*bw/2;g.fillStyle='#fff';g.fillRect(nx-1,155,3,16)}
     if(ev==='kar'){g.font='5px "Press Start 2P",monospace';g.fillText('←→ ход  E рука  Q нога  ↑ вертушка  ↓ блок',22,186)}}
   if(p.msgT>0&&p.msg){g.fillStyle='#fff';g.font='8px "Press Start 2P",monospace';g.fillText(p.msg,160-p.msg.length*4,140)}
   (p.parts||[]).forEach(q=>{g.fillStyle=q.c;g.fillRect(Math.round(q.x),Math.round(q.y),3,3)});
