@@ -548,12 +548,13 @@ function hide(){ov.classList.remove('on')}
 function titleScreen(){
   mode='title';
   show(`<h2 style="font-size:clamp(15px,3.4vw,28px);color:#ffd84d;text-shadow:3px 3px 0 #000;margin-bottom:4px">Школа глазами школьника</h2><div class="tag" style="color:#fff;margin-bottom:8px">ИГРА · 4–6 СЕЗОН</div><canvas id="tcast" width="240" height="96" style="width:240px;height:96px;image-rendering:pixelated;margin-bottom:8px;flex:none"></canvas>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" id="b1">${lvl?'Продолжить: глава '+(lvl+1):'Играть'}</button>${lvl?'<button class="btn alt" id="b2">Сначала</button>':''}<button class="btn alt" id="b3">Выбрать главу</button><button class="btn alt" id="b4">${COOP?'Вдвоём: вкл ✓':'Играть вдвоём'}</button></div>${COOP?'<p style="color:#ffd84d;font-size:12px;margin-top:6px">Дима — WASD + E · Дерзкий — стрелки + Enter</p>':''}`);
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" id="b1">${lvl?'Продолжить: глава '+(lvl+1):'Играть'}</button>${lvl?'<button class="btn alt" id="b2">Сначала</button>':''}<button class="btn alt" id="b3">Выбрать главу</button><button class="btn alt" id="b4">${COOP?'Вдвоём: вкл ✓':'Вдвоём на 1 клавиатуре'}</button><button class="btn" id="b5">${NET.conn?'🌐 Друг подключён ✓':'🌐 Играть с другом по сети'}</button></div>${COOP?'<p style="color:#ffd84d;font-size:12px;margin-top:6px">Дима — WASD + E · Дерзкий — стрелки + Enter</p>':''}`);
   castLine();
   $('b1').onclick=()=>card();
   const b2=$('b2');if(b2)b2.onclick=()=>{lvl=0;saveL();card()};
   $('b3').onclick=()=>chapterMenu();
   $('b4').onclick=()=>{$('coop').click();titleScreen()};
+  $('b5').onclick=()=>netMenu();
 }
 function chapterMenu(){mode='title';
   const sc=[['Арест отчима',5,()=>startArrest()],['Сообщение ночью',5,()=>startPhoneNight()],['Казино',6,()=>startCasino()],['Спартакиада',7,()=>{mal8=1;startSpart()}],['Концерт «Я дерзкий»',7,()=>{SPW=true;bandIntro()}]];
@@ -1832,6 +1833,57 @@ function drawBand(){const z=BZ,t=z.t,beat=Math.floor(t/.476),bob=beat%2,hop=z.jt
   const sec=Math.max(0,Math.floor(t-2));let cap=t<2?'Приготовься…':`♪ Группа ШГШ — «Я дерзкий»  0:${String(sec).padStart(2,'0')} / 0:32`;if(LYR&&t>=2)cap='🎤 '+lyrLine(t-2);lyr.style.display='block';if(lyr.textContent!==cap)lyr.textContent=cap;
   hl.textContent='Концерт группы ШГШ';hr.textContent=`${z.hit} попаданий`}
 
+
+/* ===== ИГРА ПО СЕТИ (PeerJS / WebRTC) ===== */
+const NET={host:0,guest:0,peer:null,conn:null,code:'',last:'',lastOv:'',ui:0,ks:''};
+function peerLib(){return new Promise((ok,no)=>{if(window.Peer)return ok();const urls=['https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js'];let i=0;
+  const next=()=>{if(i>=urls.length)return no();const sc=document.createElement('script');sc.src=urls[i++];sc.onload=()=>window.Peer?ok():next();sc.onerror=next;document.head.appendChild(sc)};next()})}
+function netMenu(){mode='title';
+  show(`<div class="tag">ИГРА ПО СЕТИ</div><h2 style="font-size:14px">Дима + Дерзкий через интернет</h2><p style="font-size:13px">Один создаёт комнату и играет за Диму. Второй заходит по коду с любого устройства и играет за Дерзкого — видит экран игры и диалоги.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn" id="nh">Создать комнату</button></div>
+  <div style="display:flex;gap:6px;justify-content:center;margin-top:10px"><input id="nc" inputmode="numeric" maxlength="6" placeholder="код" style="width:110px;font:16px 'Press Start 2P',monospace;padding:8px;border-radius:8px;text-align:center"><button class="btn alt" id="nj">Войти</button></div>
+  <p id="ns" style="font-size:12px;color:#ffd84d;min-height:16px"></p><button class="btn alt" id="nb">Назад</button>`);
+  const ni=$('nc');ni.addEventListener('keydown',e=>e.stopPropagation());
+  $('nh').onclick=()=>netHost();$('nj').onclick=()=>netJoin(ni.value.trim());$('nb').onclick=()=>titleScreen()}
+function nsay(t){const e=$('ns');if(e)e.textContent=t}
+function netHost(){nsay('Создаю комнату…');peerLib().then(()=>{const code=String(Math.floor(1000+Math.random()*9000));NET.code=code;
+  const peer=new Peer('shgsh-'+code);NET.peer=peer;
+  peer.on('open',()=>{const link=location.origin+location.pathname+'?join='+code;show(`<div class="tag">КОМНАТА СОЗДАНА</div><h2 style="font-size:26px;letter-spacing:4px">${code}</h2><p style="font-size:13px">Скажи другу этот код или скинь ссылку:<br><b style="word-break:break-all">${link}</b></p><p id="ns" style="font-size:12px;color:#ffd84d">Ждём второго игрока…</p><button class="btn alt" id="nk">Копировать ссылку</button> <button class="btn alt" id="nb">На главный экран</button>`);
+    $('nk').onclick=()=>{try{navigator.clipboard.writeText(link);nsay('Ссылка скопирована!')}catch(e){}};$('nb').onclick=()=>titleScreen()});
+  peer.on('error',e=>nsay('Ошибка сети: '+(e.type||e)));
+  peer.on('connection',conn=>{NET.conn=conn;NET.host=1;conn.on('open',()=>{COOP=1;coopUI();P2.map='';
+      try{const st=$('c').captureStream(30);peer.call(conn.peer,st)}catch(e){}
+      note='Друг подключился! Он играет за Дерзкого.';noteT=4;nsay('Друг подключился!');snd(880,.15,'square',.05);setTimeout(()=>{if(mode==='title')titleScreen()},900);netSend({t:'hi'})});
+    conn.on('data',d=>netHostData(d));conn.on('close',()=>{NET.conn=null;note='Друг отключился.';noteT=3})})}).catch(()=>nsay('Не получилось загрузить сеть. Открой игру на tarasula.github.io/shgsh'))}
+function netSend(o){try{NET.conn&&NET.conn.open&&NET.conn.send(o)}catch(e){}}
+function netHostData(d){if(!d)return;
+  if(d.t==='k'){['up','down','left','right'].forEach((k,i)=>keys2[k]=d.k[i]==='1'?1:0)}
+  if(d.t==='e'){if(mode==='dialog'||mode==='casino'||mode==='phone')action();else if(mode==='play')p2Act();else if(mode==='rhythm'||mode==='band'){}}
+  if(d.t==='lane'){if(mode==='rhythm')hitLane(d.l);if(mode==='band')bandHit(d.l)}}
+function netHostTick(){if(!NET.host||!NET.conn)return;const now=performance.now();if(now-NET.ui<150)return;NET.ui=now;
+  const ui={t:'ui',dl:dlg.classList.contains('on')?1:0,dn:dn.textContent,dt:dt.textContent,task:task.innerHTML,hl:hl.textContent,hr:hr.textContent,ovOn:ov.classList.contains('on')?1:0,pct:pct.style.display==='block'?pv.textContent:'',lyr:lyr.style.display==='block'?lyr.textContent:''};
+  const oh=ov.innerHTML;if(oh!==NET.lastOv){NET.lastOv=oh;ui.ov=oh}netSend(ui)}
+function netJoin(code){if(!/^\d{4}$/.test(code)){nsay('Введи 4 цифры кода');return}nsay('Подключаюсь…');
+  peerLib().then(()=>{const peer=new Peer();NET.peer=peer;
+    peer.on('open',()=>{const conn=peer.connect('shgsh-'+code,{reliable:true});NET.conn=conn;
+      conn.on('open',()=>{NET.guest=1;mode='guest';hide();netGuestUI();note='';snd(880,.15,'square',.05)});
+      conn.on('data',d=>netGuestData(d));conn.on('close',()=>{NET.guest=0;location.href=location.pathname})});
+    peer.on('call',call=>{call.answer();call.on('stream',st=>{const v=$('nv');if(v){v.srcObject=st;v.play().catch(()=>{})}})});
+    peer.on('error',e=>nsay(e.type==='peer-unavailable'?'Комната не найдена — проверь код':'Ошибка сети: '+(e.type||e)))}).catch(()=>nsay('Не получилось загрузить сеть.'))}
+function netGuestUI(){const sc=$('c');sc.style.visibility='hidden';let v=$('nv');if(!v){v=document.createElement('video');v.id='nv';v.autoplay=true;v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.style.cssText='position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;background:#000;z-index:1';sc.parentNode.insertBefore(v,sc.nextSibling)}
+  task.innerHTML='<b>Ты — Дерзкий</b><span>Стрелки или WASD — ходить, E — говорить и листать диалоги. Игру ведёт друг за Диму.</span>';hl.textContent='Подключено — ждём картинку…'}
+function netGuestData(d){if(!d)return;
+  if(d.t==='ui'){dlg.classList.toggle('on',!!d.dl);if(dn.textContent!==d.dn)dn.textContent=d.dn;if(dt.textContent!==d.dt)dt.textContent=d.dt;if(d.task&&task.innerHTML!==d.task)task.innerHTML='<b>Ты — Дерзкий (P2)</b>'+d.task.replace(/^<b>[^<]*<\/b>/,'');hl.textContent=d.hl;hr.textContent=d.hr;
+    if(d.ov!==undefined)ov.innerHTML=d.ov;ov.classList.toggle('on',!!d.ovOn);
+    pct.style.display=d.pct?'block':'none';if(d.pct)pv.textContent=d.pct;lyr.style.display=d.lyr?'block':'none';if(d.lyr)lyr.textContent=d.lyr}
+  if(d.t==='play'){try{const a=AEL[d.k]||(AEL[d.k]=new Audio(AU[d.k]));a.currentTime=0;a.play().catch(()=>{})}catch(e){}}}
+function netGuestTick(){const ks=['up','down','left','right'].map(k=>keys[k]?'1':'0').join('');if(ks!==NET.ks){NET.ks=ks;netSend({t:'k',k:ks})}}
+addEventListener('keydown',e=>{if(!NET.guest)return;if(e.code==='KeyE'||e.code==='Space'||e.code==='Enter'){e.preventDefault();e.stopImmediatePropagation();if(!e.repeat)netSend({t:'e'})}
+  const L={ArrowLeft:0,ArrowDown:1,ArrowUp:2,ArrowRight:3}[e.code];if(L!==undefined&&!e.repeat)netSend({t:'lane',l:L})},{capture:true});
+document.addEventListener('click',e=>{if(NET.guest&&e.target.closest&&e.target.closest('#dlg')){netSend({t:'e'})}},{capture:true});
+{const o=play;play=function(k){if(NET.host&&NET.conn)netSend({t:'play',k});return o.apply(this,arguments)}}
+(()=>{const m=location.search.match(/join=(\d{4})/);if(m)setTimeout(()=>{netMenu();const i=$('nc');if(i)i.value=m[1];netJoin(m[1])},400)})();
+
 let last=performance.now();
 let MUS=1,musW='';try{MUS=localStorage.getItem('shgshMus')!=='0'}catch(e){}
 function casRec(on){try{const a=AEL.casino||(AEL.casino=new Audio(AU.casino));a.loop=true;const vol=SP?0:!CS?.9:(CS.ph==='vid'||CS.ph==='end')?.12:CS.ph==='last'?.45:CS.ph==='lose'?Math.max(0,.45*(1-CS.lt/5)):.9;if(!a._g&&actx&&!a._gf){try{const src=actx.createMediaElementSource(a),gn=actx.createGain();src.connect(gn);gn.connect(actx.destination);a._g=gn}catch(e){a._gf=1}}if(a._g){a._g.gain.value=vol;a.volume=1}else a.volume=vol;if(CS&&((CS.ph==='lose'&&CS.lt>=5)||['after','buzz2','chat'].includes(CS.ph)))on=false;if(on){if(a.paused){a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{})}}else if(!a.paused)a.pause()}catch(e){}}
@@ -1864,7 +1916,7 @@ function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return
   $('tmus').onclick=()=>$('mus').click();
   $('coop').onclick=()=>{COOP=COOP?0:1;try{localStorage.setItem('shgshCoop',COOP?'1':'0')}catch(e){}coopUI();P2.map='';if(COOP){note='Игра вдвоём: Дима — WASD + E, Дерзкий — стрелки + Enter';noteT=5;if(!(S[lvl].target&&S[lvl].target.id==='derz'))npcs=npcs.filter(n=>n.id!=='derz')}};coopUI();$('trst').onclick=()=>$('reset').click();
   window.__joy={JOY,LOOK}})();
-function loop(now){$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));$('tc').classList.toggle('bh',mode==='band'&&!!BZ&&!!BZ.hold);musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
+function loop(now){if(NET.guest){netGuestTick();requestAnimationFrame(loop);return}$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));$('tc').classList.toggle('bh',mode==='band'&&!!BZ&&!!BZ.hold);musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);netHostTick();if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
 }
 </script>
