@@ -160,7 +160,7 @@ const L={
  oper:{hair:'#c8c8c8',style:'short',top:'shirtb',tc:'#6a6a70',pants:'#1a1a1a',cam:1},
  cheer1:{hair:'#d8b878',style:'long',top:'shirtb',pants:'#151515'},
  cheer2:{hair:'#8a6040',style:'long',top:'shirtb',pants:'#151515'},
- rott:{hair:'#1e140c',style:'short',top:'bare',tc:'#d89a72',chubby:1,tall:1,pants:'#b01818',skin:'#d89a72'},
+ rott:{hair:'#6a4428',style:'short',top:'bare',chubby:1,tall:1,pants:'#b01818'},
  orehW:{hair:'#8a5a30',style:'short',top:'bare',chubby:1,pants:'#e8c020'},
  opp1:{hair:'#3a2a1e',style:'short',top:'tee',pants:'#151515'},
  opp2:{hair:'#c8a060',style:'short',top:'tee',pants:'#151515'},
@@ -1692,9 +1692,9 @@ function updWr(p,dt){const w=p.wr,a=w.o,b=w.r;p.nd+=dt*3.2;
   const cl=q=>{if(Math.hypot(q.vx,q.vy)<8){q.x=Math.max(MAT.x0+4,Math.min(MAT.x1-4,q.x));q.y=Math.max(MAT.y0+2,Math.min(MAT.y1-2,q.y))}};cl(a);cl(b);
   const out=q=>q.x<MAT.x0||q.x>MAT.x1||q.y<MAT.y0||q.y>MAT.y1;a.y=Math.max(MAT.y0-8,a.y);b.y=Math.max(MAT.y0-8,b.y);
   if(out(b))spWin();else if(out(a))spLose()}
-function drawWrestler(id,q,f,t,sc){const X=q.x,Y=q.y;const jig=q.mv?Math.round(Math.sin(t*26)*1.2):0;
+function drawWrestler(id,q,f,t,sc){const X=q.x,Y=q.y,fx=id==='rott'?1.35:1;const jig=q.mv?Math.round(Math.sin(t*26)*1.2):0;
   g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.ellipse(X,Y,9*sc/1.8,3,0,0,7);g.fill();
-  g.save();g.translate(X-8*sc,Y-24*sc);g.scale(sc,sc);drawChar(g,0,0,id,f>0?'right':'left',q.mv?Math.floor(t*6)%2:0);const T=look(id).tall?3:0;
+  g.save();g.translate(X-8*sc*fx,Y-24*sc);g.scale(sc*fx,sc);drawChar(g,0,0,id,f>0?'right':'left',q.mv?Math.floor(t*6)%2:0);const T=look(id).tall?3:0;
   g.fillStyle=look(id).skin||'#f0c7a4';g.fillRect(2,13-T+jig,12,4);g.fillStyle='rgba(120,60,40,.35)';g.fillRect(3,16-T+jig,10,1);g.fillRect(7,14-T+jig,2,1);g.restore();
   const nm=id==='rott'?'РОТВЕЙЛЕР':'ОРЕХ',c=id==='rott'?'#ff6060':'#6ab0ff';g.font='5px "Press Start 2P",monospace';const w=nm.length*5+4;g.fillStyle='rgba(0,0,0,.6)';g.fillRect(X-w/2,Y-24*sc-11,w,8);g.fillStyle=c;g.fillText(nm,X-w/2+2,Y-24*sc-5)}
 function drawWr(p,t){const w=p.wr;
