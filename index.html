@@ -764,6 +764,8 @@ function action(){
   if(n.target&&homePhase==='mom2'){homePhase='bro';talk([['mom','Дима! Господи, ты весь в синяках… Как прошёл день?'],['dima','Мам, сегодня к нам в школу ворвались…']],()=>startBrother());return}
   if(n.target&&curMap==='home'&&!S[lvl].homeCh&&homePhase!=='mom2'&&homePhase!=='run'){talk([[n.id,homePhase==='bed3'?'Дима, поздно уже. Иди спать.':'(шёпотом) Дима, тише…']]);return}
   if(n.target&&S[lvl].homeCh&&homePhase==='mom'){mode='wait';homePhase='rec';play('otchim');const a=AEL.otchim;let done=0;const go2=()=>{if(done)return;done=1;talk(HOME,()=>{homePhase='bed';updTask()})};if(a){a.onended=go2}setTimeout(go2,6300);return}
+  if(S[lvl].sportCh&&n.id==='malya'&&(mal8||POST)){talk([['malya','Я не хочу больше с тобой общаться.']]);return}
+  if(POST&&n.target){talk([[n.id,n.say]]);return}
   if(S[lvl].sportCh&&n.id==='malya'&&!mal8){mal8=1;talk(MAL8,()=>updTask());return}
   if(S[lvl].sportCh&&n.target){if(!mal8){talk([['kuv','Подожди, Дима. Тебя там Маля ищет — сначала с ним разберись.']]);return}startSpart();return}
   if(S[lvl].malCh&&n.target){if(malP==='find'){talk(MALASK,()=>{malP='key';n.fol=1;TRAIL=[];updTask();note='Ключ от шкафа директора — у буфетчицы. Маля идёт с тобой.';noteT=3})}else if(malP==='back'){talk(MALGIVE,()=>startCasino())}else talk([['malya',malP==='key'?'Ну что, достал полтинник? Нет? Тогда чего стоишь?':'Без 50 тысяч не приходи, Дима.']]);return}
