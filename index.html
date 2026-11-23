@@ -1118,7 +1118,7 @@ let NS=null,BW=null,GYM=[],RP=null,BUB=[],ATE=0,malMet=0,malP='',hasNeck=0,VST=n
 const OUCH={math:'Ай! Ты что делаешь, Дмитрий?!',derz:'Ай! Ну больно же!',polina:'Ай! Дима, ну ты чего?!',sasha:'Эй! Шапку чуть не сбил!',oreh:'Ой! Я же ничего не сделал!',german:'Ай! За что?!',kamran:'Ты чё, совсем?!',milkis:'Ай! Дима, ну ты даёшь!',natasha:'Ай! Больно!',bufet:'Ай! Ещё раз — и без пирожных останешься!',malya:'Ты чё, Дима? Я ж свой!',roma:'Эй! Я же каратист, осторожнее!',kuv:'Так! Жёлтая карточка, Дмитрий!',oper:'Камеру разобьёшь!',cheer1:'Ай! Мы же за вас болеем!',cheer2:'Ай!',orlan:'Ну всё, после турнира поговорим.',rott:'…',dir:'Дмитрий! Это что ещё такое?!',rashida:'Дмитрий! Немедленно прекрати!',geo:'Ай! Глобус чуть не уронил!',mom:'Ай! Дима!',otchim:'Ну всё, щенок…',thug:'Ты чё, бессмертный?!'};
 const SWEETS=['эклер','кусок торта «Наполеон»','пончик с глазурью','пирожное «Картошка»','корзиночку с кремом','кусок шоколадного торта'];
 function ouch(e,id){if(e.ob>0)return;e.ob=1.2;BUB.push({e,txt:OUCH[id]||'Ай!',t:2.2});snd(260,.12,'square',.05);if(id==='math'&&e.st&&(e.st==='teach'||e.st==='roam')){e.dx=P.x-e.x;e.dy=P.y-e.y;const d=Math.hypot(e.dx,e.dy)||1;e.dx/=d;e.dy/=d}}
-function ballHits(o){const sp=Math.hypot(o.vx,o.vy);if(sp<40)return;
+function ballHits(o){const sp=Math.hypot(o.vx,o.vy);if(sp<40||o.post)return;
   for(const n of npcs){if(n.hid)continue;const d=Math.hypot(n.x-o.x,n.y-6-(o.y-o.z*.3));if(d<11){ouch(n,n.id);o.vx=-o.vx*.5;o.vy=-o.vy*.5;o.vz=Math.max(o.vz,50);return}}
   for(const q of guards){if(q.hid)continue;const d=Math.hypot(q.x-o.x,q.y-6-o.y);if(d<11){ouch(q,q.id);o.vx=-o.vx*.5;o.vy=-o.vy*.5;o.vz=Math.max(o.vz,50);return}}}
 function nearTile(set){const [px,py]=tileOf(P);for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(set.includes(tile(x,y)))return[x,y];return null}
@@ -1290,7 +1290,7 @@ function update(dt){
   if(curMap==='vault'&&Math.floor(P.y/TS)>=16){exitVault();return}
   if(S[lvl].malCh){const L=TRAIL[TRAIL.length-1];if(!L||Math.hypot(L.x-P.x,L.y-P.y)>2)TRAIL.push({x:P.x,y:P.y});const m=npcs.find(n=>n.fol);if(m&&!P.hide)follow(m,dt)}
   if(S[lvl].sportCh){const o=npcs.find(n=>n.id==='oper');if(o)operAI(o,dt)}
-  if(POST===1){if(npcs.some(n=>n.post&&Math.hypot(n.x-P.x,n.y-P.y)<34)){POST=2;talk(SPW===false?POSTL:POSTW,()=>{POST=0;finale()});return}}
+  if(POST===1){updPost(dt);if(npcs.some(n=>n.post&&Math.hypot(n.x-P.x,n.y-P.y)<34)){POST=2;talk(SPW===false?POSTL:POSTW,()=>{POST=0;finale()});return}}
   if(lvl===0&&!scDone){const [px,py]=tileOf(P);if((px>=1&&px<=12&&py<=10&&py>=1))startProtest()}
   for(const q of guards){if(mathAI(q,dt))return}
 }
@@ -1329,7 +1329,7 @@ function render(){
     else if(BZ&&n.dance){const bt=Math.floor(BZ.t/.476+n.di),j=Math.round(-Math.abs(Math.sin(BZ.t*6.6+n.di))*3);drawChar(g,Math.round(n.x-8),Math.round(n.y-24+j),n.id,bt%4<2?'left':'right',bt%2)}
     else if(n.post&&POST===1){drawChar(g,Math.round(n.x-8),Math.round(n.y-24),n.id,n.id==='polina'?'right':'left',0);if(Math.floor(t0*1.5+(n.id==='derz'?1:0))%2){g.fillStyle='#fff';g.fillRect(Math.round(n.x-7),Math.round(n.y-36),14,8);g.fillStyle='#222';g.font='5px "Press Start 2P",monospace';g.fillText('…',Math.round(n.x-5),Math.round(n.y-30))}}
     else if(BZ&&n.id==='rashida'&&curMap==='gym8'){drawChar(g,Math.round(n.x-8),Math.round(n.y-24),n.id,'down',0);const X=Math.round(n.x-8),Y=Math.round(n.y-24);g.fillStyle='#3a6ad0';g.fillRect(X+3,Y+13,10,2);g.fillStyle='#f0c7a4';g.fillRect(X+3,Y+13,2,2);g.fillRect(X+11,Y+13,2,2);g.fillStyle='#2a4a9a';g.fillRect(X+5,Y+12,6,1)}
-    else{drawChar(g,Math.round(n.x-8),Math.round(n.y-24),n.id,n.mv?n.dir:(lk||'down'),n.mv?n.fr:0);if(n.globe){const gx=Math.round(n.x-4),gy=Math.round(n.y-14);g.fillStyle='#3a8ad0';g.fillRect(gx,gy+1,8,6);g.fillRect(gx+1,gy,6,8);g.fillStyle='#5ab05a';g.fillRect(gx+2,gy+2,3,2);g.fillRect(gx+5,gy+4,2,2);g.fillStyle='#fff';g.fillRect(gx+1,gy+1,1,1)}}
+    else{drawChar(g,Math.round(n.x-8),Math.round(n.y-24),n.id,n.mv?n.dir:(n.face||lk||'down'),n.mv?n.fr:0);if(n.globe){const gx=Math.round(n.x-4),gy=Math.round(n.y-14);g.fillStyle='#3a8ad0';g.fillRect(gx,gy+1,8,6);g.fillRect(gx+1,gy,6,8);g.fillStyle='#5ab05a';g.fillRect(gx+2,gy+2,3,2);g.fillRect(gx+5,gy+4,2,2);g.fillStyle='#fff';g.fillRect(gx+1,gy+1,1,1)}}
     if(n.target){const ok=!items.some(i=>i.on);g.fillStyle=ok?'#3fe07a':'#ffd84d';const yy=Math.round(n.y-(look(n.id).tall?38:35)+Math.sin(t0*4)*1.5);g.fillRect(Math.round(n.x-1),yy,2,5);g.fillRect(Math.round(n.x-1),yy+7,2,2)}}});
   for(const q of guards)ents.push({y:q.y,d:()=>{if(q.hid)return;const chs=q.id==='thug'&&q.st==='chase';NB=chs;drawChar(g,Math.round(q.x-8),Math.round(q.y-24),q.id,gdir(q),q.fr);NB=false;if(chs)drawSwing(q.x,q.y-12,gdir(q),.3-((t0*2)%.6>.3?(t0*2)%.3:.3-(t0*2)%.3));
     const bub=q.id==='thug'?(q.st==='chase'?'СТОЯТЬ!':''):q.st==='chase'?'ДМИТРИЙ!':q.st==='complain'&&!q.path.length?'бу-бу-бу…':q.st==='teach'&&!q.path.length?'x + 5 = 12':'';
@@ -1357,7 +1357,7 @@ function render(){
   if(GYM.length)ents.push({y:-1,d:drawGym});
   ents.push({y:99999,d:drawBubbles});
   if(SP&&curMap==='gym8')spWorld(ents);
-  if(BZ&&curMap==='gym8')bandWorld(ents);
+  if(BZ&&curMap==='gym8')bandWorld(ents);postGoals(ents);
   ents.sort((a,b)=>a.y-b.y).forEach(e=>e.d());
   if(mode==='play'&&!P.sit&&!nearNpc()){const fd=findDesk();if(fd){const lx=fd[0]*TS+8,ly=fd[1]*TS-6;tag(lx,ly,M[fd[1]][fd[0]]===16?'E — сесть на стул':'E — сесть за парту')}}
   if(mode==='wait'&&homePhase==='rec')tag(P.x,P.y-30,'♪ …');
@@ -1800,10 +1800,39 @@ function micAsk(){if(MIC)return Promise.resolve(MIC);try{actx=actx||new (window.
 function loadLyrics(){const parse=t=>{const L=t.split(/\r?\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith('#')).map(x=>{const m=x.match(/^(\d+):(\d{1,2}(?:\.\d+)?)\s+(.*)$/);return m?{t:+m[1]*60+ +m[2],s:m[3]}:{t:null,s:x}});return L.length?L:null};
   try{const ls=localStorage.getItem('shgshLyrics');if(ls){LYR=parse(ls)}}catch(e){}
   try{fetch('lyrics.txt',{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{if(t&&!/<html/i.test(t)){const p=parse(t);if(p)LYR=p}}).catch(()=>{})}catch(e){}}
-let POST=0;
+let POST=0,PB=null,PSC=[0,0];
+const PSAY=['Это было круто!','Дерзкий — легенда!','Я дерзкий! Я дерзкий!','Полина на гитаре — огонь!','Дима так стучал по барабанам!','Лучший концерт в школе!','Видели лицо Рашиды Жавдатовны?','Хочу ещё раз!','У меня до сих пор в ушах звенит!','Я снял всё на телефон!'];
+const PFOOT=['Пас! Пас!','Мне давай!','Мимо!','Бей!','Защита, куда смотрим?!','Ну ты мазила!'];
+const PTCH={rashida:[['Ну… признаю, пели неплохо.','Рашида Жавдатовна, а вы же танцевали!'],['Ничего я не танцевала!','Мы всё видели!'],['Но в ухо петь — это перебор.','Это была часть шоу!']],
+ kuv:[['Молодцы, шестой класс! Энергия есть!','Анатолий Кувалдович, вам понравилось?'],['На пятёрку. С плюсом!','А можно нам ещё концерт?'],['Сначала зарядка, потом концерты.','Ну Анатолий Кувалдович!']]};
+function postSetup(){if(curMap!=='gym8')return;PSC=[0,0];const T={rashida:[C(8),C(6)+4],kuv:[C(19),C(5)+4]};
+  const st=npcs.filter(n=>!n.post&&n.id!=='oper'&&!T[n.id]);
+  npcs.forEach(n=>{n.mv=0;n.pts=null;n.face=null;n.pr=null;if(T[n.id]){n.x=T[n.id][0];n.y=T[n.id][1];n.pr='tch';n.say=n.id==='rashida'?'Ну… пели вы неплохо. Но в следующий раз — без пения мне в ухо!':'Молодцы! Вот это я понимаю — командный дух!';n.ct=1+Math.random()*2;n.ci=0}});
+  const tids=Object.keys(T).filter(id=>npcs.some(n=>n.id===id));let k=0;
+  st.forEach((n,i)=>{n.dance=0;n.bt=1+Math.random()*4;n.say=PSAY[i%PSAY.length];
+    if(i<6){n.pr='foot';n.tm=i%2;n.x=C(n.tm?24:14)+(i%3)*6;n.y=C(13+(i%3)*2)+4}
+    else if(k<tids.length*2&&tids.length){const tt=npcs.find(q=>q.id===tids[k%tids.length]);n.pr='chat';n.tch=tt;n.cx=tt.x+(k<tids.length?14:-14);n.cy=tt.y+4;tt.pal=tt.pal||n;k++}
+    else{n.pr='wan';n.wt=0}});
+  PB={k:'ball',t:'foot',x:C(20),y:C(15)+4,z:0,vx:0,vy:0,vz:0,ign:0,post:1};GYM.push(PB)}
+function pMove(n,tx,ty,sp,dt){const dx=tx-n.x,dy=ty-n.y,d=Math.hypot(dx,dy);if(d<2){n.mv=0;return true}const s=Math.min(d,sp*dt);n.x+=dx/d*s;n.y+=dy/d*s;n.mv=1;n.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');n.ft=(n.ft||0)+dt;if(n.ft>.15){n.ft=0;n.fr^=1}return false}
+function updPost(dt){if(curMap!=='gym8')return;const b=PB;if(b&&b.ign>0)b.ign-=dt;
+  if(b){const gy=b.y>C(13)&&b.y<C(18);if((b.x<C(2)||b.x>C(38))&&gy){const t=b.x<C(2)?1:0;PSC[t]++;BUB.push({e:{x:b.x<C(2)?C(4):C(36),y:b.y},txt:'ГОЛ! '+PSC[0]+':'+PSC[1],t:2});snd(880,.2,'square',.06);b.x=C(20);b.y=C(15)+4;b.vx=b.vy=b.vz=0;b.z=0}
+    if(b.y<C(11)){b.vy=Math.abs(b.vy)+20}}
+  for(const n of npcs){if(n.hid||n.post)continue;if(Math.hypot(n.x-P.x,n.y-P.y)<14&&n.pr!=='foot'){n.mv=0;n.face=null;continue}
+    if(n.pr==='foot'&&b){const gx=n.tm?C(1):C(39);const ox=(n.tm?10:-10),oy=((n.di||0)%3-1)*6;
+      const near=npcs.filter(q=>q.pr==='foot').sort((a,c)=>Math.hypot(a.x-b.x,a.y-b.y)-Math.hypot(c.x-b.x,c.y-b.y));
+      const chase=near.indexOf(n)<2;const tx=chase?b.x+ox*.6:Math.max(C(3),Math.min(C(37),b.x+ox*3)),ty=Math.max(C(11)+4,Math.min(C(20),(chase?b.y:b.y+oy*2)));
+      pMove(n,tx,ty,chase?48:30,dt);
+      if(Math.hypot(n.x-b.x,n.y-b.y)<9&&b.ign<=0&&b.z<3){const a=Math.atan2(C(15)+4-b.y,gx-b.x)+(Math.random()-.5)*.9,v=85+Math.random()*50;b.vx=Math.cos(a)*v;b.vy=Math.sin(a)*v;b.vz=20;b.ign=.4;snd(180,.05,'sine',.07);if(Math.random()<.25)BUB.push({e:n,txt:rnd(PFOOT),t:1.4})}}
+    else if(n.pr==='chat'){if(pMove(n,n.cx,n.cy,32,dt)){n.face=n.tch.x>n.x?'right':'left'}else n.face=null}
+    else if(n.pr==='tch'){const p=n.pal;if(p&&p.face){n.face=p.x>n.x?'right':'left';n.ct-=dt;if(n.ct<=0){const L=PTCH[n.id]||PTCH.kuv,ln=L[Math.floor(n.ci/2)%L.length];const who=n.ci%2?p:n;BUB.push({e:who,txt:ln[n.ci%2],t:2.6});n.ci++;n.ct=2.9}}}
+    else if(n.pr==='wan'){n.wt-=dt;if(n.wt<=0||n.wx==null){n.wx=C(3+Math.floor(Math.random()*34));n.wy=C(4+Math.floor(Math.random()*6))+4;n.wt=3+Math.random()*4;n.sp=Math.random()<.35?70:32}
+      if(pMove(n,n.wx,n.wy,n.sp,dt))n.face=null}
+    if(n.pr!=='tch'&&n.pr!=='foot'){n.bt-=dt;if(n.bt<=0){n.bt=5+Math.random()*6;if(!BUB.some(q=>q.e===n))BUB.push({e:n,txt:rnd(PSAY),t:2.2})}}}}
+function postGoals(ents){if(curMap!=='gym8'||POST!==1)return;ents.push({y:-999,d:()=>{g.fillStyle='rgba(255,255,255,.85)';[[C(1),1],[C(39)-3,-1]].forEach(([x])=>{g.fillRect(x,C(13),3,1);g.fillRect(x,C(18),3,1);g.fillRect(x+1,C(13),1,C(5))});g.font='6px "Press Start 2P",monospace';g.fillStyle='#fff';g.fillText(PSC[0]+' : '+PSC[1],C(20)-12,C(11)-3)}})}
 function afterBand(){mode='play';POST=1;micStop();if(curMap==='gym8'){P.x=C(17);P.y=C(9)+4;P.dir='down'}
   npcs.forEach(n=>n.dance=0);npcs=npcs.filter(n=>n.id!=='polina'&&n.id!=='derz');
-  npcs.push({id:'polina',x:C(30),y:C(17)+4,say:'…',post:1},{id:'derz',x:C(32),y:C(17)+4,say:'…',post:1});
+  npcs.push({id:'polina',x:C(31),y:C(6)+4,say:'…',post:1},{id:'derz',x:C(33),y:C(6)+4,say:'…',post:1});postSetup();
   note='Полина и Дерзкий о чём-то болтают. Подойди к ним.';noteT=4;updTask()}
 const POSTW=[['derz','О, привет, Дим! Слушай, хочешь пойти на концерт Милкис? Там от всего отдохнём.'],['derz','Мы выгнали Беду из школы, выиграли спартакиаду — можно и отдохнуть!'],['polina','Пойдём втроём! Будет классно.'],['dima','Ну да, давай.']];
 const POSTL=[['derz','О, привет, Дим! Слушай, хочешь пойти на концерт Милкис? Там от всего отдохнём.'],['derz','Ну, спартакиаду не выиграли… Зато участвовали! Давай просто передохнём.'],['polina','Пойдём втроём! Будет классно.'],['dima','Ну да, давай.']];
