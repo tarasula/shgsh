@@ -564,7 +564,7 @@ function chapterMenu(){mode='title';
   ov.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{const c=sc[+b.dataset.sc];try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}lvl=c[1];saveL();card();hide();c[2]()});
   $('bk').onclick=()=>titleScreen()}
 function card(){
-  RP=null;NS=null;BW=null;SNK=null;AR=null;PH=null;CS=null;SP=null;if(BZ){try{AEL.derzsong&&AEL.derzsong.pause()}catch(e){}}BZ=null;casMusic(0);BRUISE.clear();PS=null;BS=null;fadeT=0;
+  RP=null;NS=null;BW=null;SNK=null;AR=null;PH=null;CS=null;SP=null;micStop();if(BZ){try{AEL.derzsong&&AEL.derzsong.pause()}catch(e){}}BZ=null;casMusic(0);BRUISE.clear();PS=null;BS=null;fadeT=0;
   dlg.classList.remove('on');queue=[];after=null;gymOpen=0;DOOR=null;CALL=null;try{VEL.pause();VEL.style.display='none'}catch(e){}gangDone=0;hasKey=0;escP='';BR=null;restoreDesks();CUT=null;GS=null;FT=null;fui.classList.remove('on');P.sit=null;stopDiss();scDone=0;SC=null;mode='card';KS=null;ACT=null;cast='duo';RZ=S[lvl].rhythm?{time:0,notes:[],hit:0,miss:0,end:1e9,fx:[],beat:-1,idle:1}:null;setup();
   const [a,b]=S[lvl].t.split(': ');
   show(`<div class="tag">${esc(a.toUpperCase())} ИЗ ${S.length}</div><h2>${esc(b)}</h2><button class="btn" id="b1">Начать</button>`);
@@ -1725,19 +1725,29 @@ function spHud(p,t){const ev=p.ev;hl.textContent='Спортзал · Спарт
 
 
 /* ===== КОНЦЕРТ ГРУППЫ ШГШ «Я ДЕРЗКИЙ» ===== */
+const DVOC=[1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1];
 const DCHART=[[0.836, 0], [1.324, 1], [1.788, 1], [2.264, 3], [2.74, 0], [3.228, 2], [3.692, 3], [4.168, 1], [4.644, 3], [5.12, 1], [5.608, 1], [6.084, 2], [6.56, 0], [7.036, 2], [7.419, 3], [7.744, 2], [8.22, 0], [8.696, 3], [9.172, 1], [9.648, 3], [10.124, 0], [10.6, 2], [11.076, 3], [11.552, 1], [12.04, 2], [12.504, 3], [12.98, 0], [13.386, 2], [13.944, 0], [14.28, 1], [14.652, 0], [15.128, 1], [15.604, 2], [16.08, 3], [16.556, 1], [16.916, 2], [17.276, 1], [17.752, 2], [18.216, 2], [18.692, 0], [19.168, 2], [19.656, 2], [20.132, 1], [20.48, 2], [20.84, 3], [21.316, 1], [21.792, 2], [22.268, 0], [22.744, 1], [23.417, 3], [24.172, 1], [24.648, 2], [25.124, 3], [25.6, 0], [26.076, 3], [26.552, 3], [27.028, 1], [27.504, 0], [27.98, 1], [28.34, 1], [28.7, 0], [29.408, 1], [29.896, 2], [30.36, 1]];let BZ=null;
 function bandIntro(){const won=SPW!==false;mode='dialog';BZ={t:0,ph:'intro',notes:[],hit:0,miss:0,fx:[],enter:0};
   talk([['polina','Подождите! Не расходитесь!'],['dima',won?'Ребята! Мы выиграли спартакиаду — и хотим выступить для всех вас!':'Ребята, хоть мы и проиграли, мы всё равно хотим выступить для всех вас!'],['dima','Сейчас выступит группа ШГШ со своей самой знаменитой песней — «Я дерзкий»!'],['derz','Погнали!!!']],()=>startBand())}
-function startBand(){BZ={t:0,ph:'play',notes:DCHART.map(([t,l])=>({t:t+2,l,st:0})),hit:0,miss:0,fx:[],started:0,end:2+32.4,beat:0,jt:0};mode='band';try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}}
-function bandHit(l){const z=BZ;if(!z||z.ph!=='play')return;let best=null,bd=.12;for(const n of z.notes)if(!n.st&&n.l===l){const d=Math.abs(n.t-z.t);if(d<bd){bd=d;best=n}}
+function startBand(){BZ={t:0,ph:'mic',notes:DCHART.map(([t,l])=>({t:t+2,l,st:0})),hit:0,miss:0,fx:[],started:0,end:2+32.4,beat:0,jt:0,sing:0,lv:0,base:.01,bs:[],win:DVOC.map(v=>({v,mx:0,st:0}))};mode='band';try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}
+  const z=BZ,fail=()=>{if(BZ!==z)return;z.sing=0;z.ph='play';z.t=0;note='Микрофон недоступен — лови ноты стрелками.';noteT=3};
+  try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return fail();
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}).then(st=>{if(BZ!==z){st.getTracks().forEach(t=>t.stop());return}const src=actx.createMediaStreamSource(st),an=actx.createAnalyser();an.fftSize=1024;src.connect(an);z.mic={st,an,buf:new Float32Array(1024)};z.sing=1;z.ph='play';z.t=0}).catch(fail)}catch(e){fail()}
+  setTimeout(()=>{if(BZ===z&&z.ph==='mic')fail()},12000)}
+function micStop(){try{BZ&&BZ.mic&&BZ.mic.st.getTracks().forEach(t=>t.stop())}catch(e){}}
+function bandHit(l){const z=BZ;if(!z||z.ph!=='play'||z.sing)return;let best=null,bd=.12;for(const n of z.notes)if(!n.st&&n.l===l){const d=Math.abs(n.t-z.t);if(d<bd){bd=d;best=n}}
   if(best){best.st=1;z.hit++;z.fx.push({l,t:.25,ok:1});z.jt=.25;snd(660+l*110,.1,'square',.04)}else z.fx.push({l,t:.2,ok:0})}
 function updBand(dt){const z=BZ;z.t+=dt;if(z.jt>0)z.jt-=dt;
   if(z.ph!=='play')return;
+  if(z.mic){z.mic.an.getFloatTimeDomainData(z.mic.buf);let q=0;for(const v of z.mic.buf)q+=v*v;const lv=Math.sqrt(q/z.mic.buf.length);z.lv=z.lv*.6+lv*.4;if(!z.started){z.bs.push(lv);z.base=Math.max(.004,z.bs.reduce((a,b)=>a+b,0)/z.bs.length)}}
+  const thr=Math.max(.02,z.base*3);
+  if(z.sing&&z.started){const i=Math.floor((z.t-2)/.25),w=z.win[i];if(w){w.mx=Math.max(w.mx,z.lv);if(z.lv>thr)z.jt=.15}
+    z.win.forEach((w,j)=>{if(!w.st&&z.t-2>(j+1)*.25){w.st=w.v?(w.mx>thr?1:2):3;if(w.st===1)z.hit++;if(w.st===2)z.miss++}})}
   if(!z.started&&z.t>=2){z.started=1;play('derzsong')}
   const a=AEL.derzsong;if(z.started&&a&&!a.paused&&a.currentTime>0)z.t=2+a.currentTime;
-  for(const n of z.notes)if(!n.st&&z.t-n.t>.12){n.st=2;z.miss++}
+  if(!z.sing)for(const n of z.notes)if(!n.st&&z.t-n.t>.12){n.st=2;z.miss++}
   z.fx.forEach(f=>f.t-=dt);z.fx=z.fx.filter(f=>f.t>0);
-  if(z.t>z.end||(z.started&&a&&a.ended)){z.ph='done';const pp=Math.round(z.hit/z.notes.length*100);z.pp=pp;pct.style.display='none';lyr.style.display='none';
+  if(z.t>z.end||(z.started&&a&&a.ended)){z.ph='done';const tot=z.sing?z.win.filter(w=>w.v).length:z.notes.length,pp=Math.round(z.hit/tot*100);z.pp=pp;micStop();pct.style.display='none';lyr.style.display='none';
     show(`<div class="tag">ГРУППА ШГШ</div><h2>«Я дерзкий» — ${pp}%</h2><p>${pp>=80?'Зал взорвался! Даже гости хлопают, а оператор снимает всё до последней секунды.':pp>=50?'Зал качает! Болельщицы визжат, Кувалдович пританцовывает с мегафоном.':'Сбились пару раз, но зал всё равно хлопает — это же ШГШ!'}</p><button class="btn" id="b1">Дальше</button>`);
     $('b1').onclick=()=>{hide();try{a&&a.pause()}catch(e){}talk([['derz','Спасибо, шестой класс!!!'],['dimaT','Классно выступили… Но завтра снова думать про долг.']],()=>{BZ=null;finale()})}}}
 function drawBand(){const z=BZ,t=z.t,beat=Math.floor(t/.476),bob=beat%2,hop=z.jt>0?-3:0;g.setTransform(1,0,0,1,0,0);
@@ -1759,15 +1769,22 @@ function drawBand(){const z=BZ,t=z.t,beat=Math.floor(t/.476),bob=beat%2,hop=z.jt
   if(Math.floor(t*2)%2){g.fillStyle='#ffd84d';g.font='7px "Press Start 2P",monospace';g.fillText('♪',dx+30,48+hop);g.fillText('♫',dx-4,40+hop)}
   // зрители
   ['sasha','oreh','kamran','roma','german','malya','cheer1','cheer2','kuv','rashida','opp1','orlan','rott','oper'].forEach((id,i)=>{const jb=Math.floor(t/.476+i)%2;g.save();g.translate(-4+i*15,148+jb*2);g.scale(1.6,1.6);drawChar(g,0,0,id,'up',0,1);g.restore()});
+  if(z.ph==='mic'){g.fillStyle='rgba(0,0,0,.7)';g.fillRect(40,60,240,50);g.fillStyle='#ffd84d';g.font='7px "Press Start 2P",monospace';g.fillText('🎤 Разреши доступ к микрофону —',58,80);g.fillText('ты будешь петь сам!',96,96);g.fillStyle='#ccc';g.font='5px "Press Start 2P",monospace';g.fillText('(лучше в наушниках)',110,106);pct.style.display='none';lyr.style.display='none';return}
   if(z.ph==='intro'){hl.textContent='Спортзал · концерт';hr.textContent='';pct.style.display='none';lyr.style.display='none';return}
-  // дорожки нот
+  if(z.sing){g.fillStyle='rgba(0,0,0,.65)';g.fillRect(206,0,90,VH);g.fillStyle='rgba(255,255,255,.06)';g.fillRect(222,0,58,VH);
+    z.win.forEach((w,j)=>{if(!w.v)return;const tt=2+j*.25,y=HITY-(tt-t)*SPD;if(y<-40||y>VH+10)return;g.fillStyle=w.st===1?'#3fe07a':w.st===2?'#664':'#e8c040';g.fillRect(226,y-30,50,31)});
+    g.fillStyle='#fff';g.fillRect(208,HITY,86,2);const now=z.win[Math.floor((t-2)/.25)],want=now&&now.v&&t>2;
+    const thr=Math.max(.02,z.base*3),lvl=Math.min(1,z.lv/(thr*3));g.fillStyle='#222';g.fillRect(212,HITY+8,78,10);g.fillStyle=z.lv>thr?'#3fe07a':'#888';g.fillRect(212,HITY+8,78*lvl,10);g.fillStyle='#fff';g.fillRect(212+78/3,HITY+6,1,14);
+    g.font='7px "Press Start 2P",monospace';g.fillStyle=want?(z.lv>thr?'#3fe07a':'#ffd84d'):'#888';g.fillText(want?(z.lv>thr?'ПОЁШЬ!':'ПОЙ!'):'пауза',want?(z.lv>thr?224:232):228,HITY+34);
+    g.font='5px "Press Start 2P",monospace';g.fillStyle='#ccc';g.fillText('🎤 ПОЙ НА',220,14);g.fillText('ЖЁЛТЫХ ПОЛОСАХ',212,22)}
+  else{
   g.fillStyle='rgba(0,0,0,.6)';g.fillRect(206,0,90,VH);LANES.forEach((l,i)=>{g.fillStyle='rgba(255,255,255,.07)';g.fillRect(LX[i]-9,0,18,VH)});g.fillStyle='#fff';g.fillRect(208,HITY,86,2);
   const col=['#e8483b','#3fe07a','#4a8ae8','#ffd84d'];
   for(const n of z.notes){if(n.st===1)continue;const y=HITY-(n.t-t)*SPD;if(y<-10||y>VH)continue;g.fillStyle=n.st===2?'#555':col[n.l];g.fillRect(LX[n.l]-8,y-5,16,10);g.fillStyle='#fff';g.fillRect(LX[n.l]-6,y-3,12,2)}
   z.fx.forEach(f=>{g.fillStyle=f.ok?'rgba(255,255,255,.7)':'rgba(232,40,59,.5)';g.fillRect(LX[f.l]-10,HITY-8,20,16)});
   g.fillStyle='#fff';LANES.forEach((l,i)=>{const cx=LX[i],cy=HITY+16;g.beginPath();
     if(l==='left'){g.moveTo(cx-5,cy);g.lineTo(cx+4,cy-5);g.lineTo(cx+4,cy+5)}if(l==='right'){g.moveTo(cx+5,cy);g.lineTo(cx-4,cy-5);g.lineTo(cx-4,cy+5)}
-    if(l==='up'){g.moveTo(cx,cy-5);g.lineTo(cx-5,cy+4);g.lineTo(cx+5,cy+4)}if(l==='down'){g.moveTo(cx,cy+5);g.lineTo(cx-5,cy-4);g.lineTo(cx+5,cy-4)}g.fill()});
+    if(l==='up'){g.moveTo(cx,cy-5);g.lineTo(cx-5,cy+4);g.lineTo(cx+5,cy+4)}if(l==='down'){g.moveTo(cx,cy+5);g.lineTo(cx-5,cy-4);g.lineTo(cx+5,cy-4)}g.fill()})}
   const judged=z.hit+z.miss,pp=judged?Math.round(z.hit/judged*100):100;pct.style.display='block';$('pcl').textContent='Качество песни';const pt=pp+'%';if(pv.textContent!==pt){pv.textContent=pt;pv.style.color=pp>=80?'#3fe07a':pp>=60?'#ffd84d':'#ff6b5e'}
   const sec=Math.max(0,Math.floor(t-2)),cap=t<2?'Приготовься…':`♪ Группа ШГШ — «Я дерзкий»  0:${String(sec).padStart(2,'0')} / 0:32`;lyr.style.display='block';if(lyr.textContent!==cap)lyr.textContent=cap;
   hl.textContent='Концерт группы ШГШ';hr.textContent=`${z.hit} попаданий`}
@@ -1803,7 +1820,7 @@ function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return
   $('tfs').onclick=()=>{const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else if(f){const p=f.call(d);const lk=()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};if(p&&p.then)p.then(lk).catch(()=>{});else lk()}};const canFS=!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen),standalone=matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone;if(standalone)$('tfs').style.display='none';else if(!canFS)$('tfs').onclick=()=>{show(`<div class="tag">ИГРА НА ВЕСЬ ЭКРАН</div><h2 style="font-size:14px">Убрать строку браузера</h2><p>Safari на iPhone не даёт сайтам прятать строку. Сделай так:<br>1. Открой игру в <b>Safari</b> (не внутри Телеграма).<br>2. Нажми «Поделиться» ⬆️ → <b>«На экран Домой»</b>.<br>3. Запускай игру с иконки ШГШ — она откроется на весь экран, без вкладок и строки.</p><button class="btn" id="b1">Понятно</button>`);$('b1').onclick=()=>{hide();if(mode==='title')titleScreen()}};
   $('tmus').onclick=()=>$('mus').click();$('trst').onclick=()=>$('reset').click();
   window.__joy={JOY,LOOK}})();
-function loop(now){$('tc').classList.toggle('rh',mode==='rhythm'||mode==='band');musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
+function loop(now){$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
 }
 </script>
