@@ -471,7 +471,7 @@ const S=[
  {t:'Глава 8: Спартакиада',sportCh:1,map:'gym8',items:[],noMath:1,
   intro:[['dimaT','Три урока пролетели незаметно. Весь класс собрался в спортзале.'],['dimaT','Долг — 1 550 000… Но сначала спартакиада. Если проиграем, школу завалят проверками.']],
   target:{id:'kuv',x:20,y:8},start:[20,19],
-  npcs:[{id:'derz',x:9,y:12,say:'Шестой класс — сила! Порвём их!'},{id:'oreh',x:8,y:14,say:'Я в канате тяну. Я тяжёлый — это плюс!'},{id:'kamran',x:11,y:13,say:'Пусть только кто-то на нас вякнет.'},{id:'roma',x:7,y:12,say:'Я с Орланом буду драться. Не переживай, я готов.'},{id:'sasha',x:10,y:15,say:'Шапку не сниму даже на спартакиаде.'},{id:'malya',x:17,y:17,say:'Половина моя, Дима. Не забывай.',mal8:1},{id:'cheer1',x:4,y:21,sit:1,say:'Ше-стой класс! Ше-стой класс!'},{id:'cheer2',x:5,y:21,sit:1,say:'Мы за вас болеем!'},{id:'oper',x:15,y:16,say:'Не мешай, я снимаю!'},{id:'rashida',x:23,y:8,say:'Дмитрий, на тебя вся надежда.'},{id:'opp1',x:30,y:12,say:'Шестиклашки, вы слабаки!'},{id:'opp2',x:31,y:14,say:'Канат будет наш.'},{id:'opp3',x:32,y:12,say:'Мы прошлый год всех порвали.'},{id:'orlan',x:29,y:15,say:'Ваш Рома — следующий.'},{id:'rott',x:33,y:16,say:'Я сегодня только болею за своих.'}],
+  npcs:[{id:'derz',x:9,y:12,say:'Шестой класс — сила! Порвём их!'},{id:'oreh',x:8,y:14,say:'Я в канате тяну. Я тяжёлый — это плюс!'},{id:'kamran',x:11,y:13,say:'Пусть только кто-то на нас вякнет.'},{id:'roma',x:7,y:12,say:'Я с Орланом буду драться. Не переживай, я готов.'},{id:'sasha',x:10,y:15,say:'Шапку не сниму даже на спартакиаде.'},{id:'malya',x:17,y:17,say:'Половина моя, Дима. Не забывай.',mal8:1},{id:'cheer1',x:4,y:21,sit:1,say:'Ше-стой класс! Ше-стой класс!'},{id:'cheer2',x:5,y:21,sit:1,say:'Мы за вас болеем!'},{id:'oper',x:15,y:16,say:'Не мешай, я снимаю!'},{id:'rashida',x:23,y:8,say:'Дмитрий, на тебя вся надежда.'},{id:'opp1',x:30,y:12,say:'Шестиклашки, вы слабаки!'},{id:'opp2',x:31,y:14,say:'Канат будет наш.'},{id:'opp3',x:32,y:12,say:'Мы прошлый год всех порвали.'},{id:'orlan',x:29,y:15,say:'Ваш Рома — следующий.'},{id:'rott',x:33,y:16,say:'Я сегодня только болею за своих.'},{id:'dir',x:25,y:8,say:'Дима, вся школа на вас рассчитывает. Не подведите!'},{id:'math',x:36,y:9,say:'Я пришла болеть против вас, Дмитрий. Посмотрим, как вы проиграете.'}],
   outro:[]}
 ];
 
@@ -1369,7 +1369,7 @@ function render(){
     if(escP==='key'){gx=C(33);gy=C(18);gl='Директор'}else if(escP==='gym'){const it=items.find(i=>i.on);if(it){gx=it.x;gy=it.y;gl='Телефон'}}
     else if(homePhase==='mom2'||homePhase==='run'){gx=C(18);gy=C(6);gl='Мама'}
     else if(homePhase==='bed3'||homePhase==='bed4'){gx=C(32);gy=C(7);gl='Кровать'}
-    else if(S[lvl].sportCh&&POST){gx=C(31);gy=C(17);gl='Полина и Дерзкий'}
+    else if(S[lvl].sportCh&&POST){gx=C(32);gy=C(6);gl='Полина и Дерзкий'}
     else if(S[lvl].sportCh){if(mal8){gx=C(20);gy=C(8);gl='Кувалдович'}else{gx=C(17);gy=C(17);gl='Маля'}}
     else if(S[lvl].malCh){if(curMap==='casino'){if(!P.sit){gx=C(13);gy=C(8);gl='Автомат'}}else if(curMap==='vault'){if(hasNeck){gx=C(20);gy=C(16);gl='Выход'}else{gx=C(20);gy=C(10);gl='?'}}else if(malP==='find'||malP==='back'){gx=C(21);gy=C(12);gl='Маля'}else if(malP==='key'){gx=C(19);gy=C(2);gl='Буфетчица'}else if(malP==='vault'){gx=C(28);gy=C(17);gl='Шкаф'}}
     else if(homePhase==='sneak'){gx=C(9);gy=C(18);gl='Телефон'}
@@ -1806,10 +1806,12 @@ let POST=0,PB=null,PSC=[0,0];
 const PSAY=['Это было круто!','Дерзкий — легенда!','Я дерзкий! Я дерзкий!','Полина на гитаре — огонь!','Дима так стучал по барабанам!','Лучший концерт в школе!','Видели лицо Рашиды Жавдатовны?','Хочу ещё раз!','У меня до сих пор в ушах звенит!','Я снял всё на телефон!'];
 const PFOOT=['Пас! Пас!','Мне давай!','Мимо!','Бей!','Защита, куда смотрим?!','Ну ты мазила!'];
 const PTCH={rashida:[['Ну… признаю, пели неплохо.','Рашида Жавдатовна, а вы же танцевали!'],['Ничего я не танцевала!','Мы всё видели!'],['Но в ухо петь — это перебор.','Это была часть шоу!']],
+ dir:[['Ну что, понравилось выступление?','Это было лучше всего, директор!'],['Я даже немного подпевал.','Мы видели!'],['Только Рашиде Жавдатовне в ухо больше не петь.','Ладно-ладно!']],
  kuv:[['Молодцы, шестой класс! Энергия есть!','Анатолий Кувалдович, вам понравилось?'],['На пятёрку. С плюсом!','А можно нам ещё концерт?'],['Сначала зарядка, потом концерты.','Ну Анатолий Кувалдович!']]};
-function postSetup(){if(curMap!=='gym8')return;PSC=[0,0];const T={rashida:[C(8),C(6)+4],kuv:[C(19),C(5)+4]};
-  const st=npcs.filter(n=>!n.post&&n.id!=='oper'&&!T[n.id]);
-  npcs.forEach(n=>{n.mv=0;n.pts=null;n.face=null;n.pr=null;if(T[n.id]){n.x=T[n.id][0];n.y=T[n.id][1];n.pr='tch';n.say=n.id==='rashida'?'Ну… пели вы неплохо. Но в следующий раз — без пения мне в ухо!':'Молодцы! Вот это я понимаю — командный дух!';n.ct=1+Math.random()*2;n.ci=0}});
+function postSetup(){if(curMap!=='gym8')return;PSC=[0,0];const T={rashida:[C(8),C(6)+4],kuv:[C(19),C(5)+4],dir:[C(26),C(5)+4]};
+  const st=npcs.filter(n=>!n.post&&n.id!=='oper'&&n.id!=='math'&&!T[n.id]);
+  {const mt=npcs.find(n=>n.id==='math');if(mt){mt.pr='beda';mt.x=C(37);mt.y=C(8)+4;mt.mv=0;mt.bt=3;mt.say=SPW===false?'Ха! Проиграли! Так вам и надо.':'Подумаешь, выиграли… Повезло.'}}
+  npcs.forEach(n=>{n.mv=0;n.pts=null;n.face=null;n.pr=null;if(T[n.id]){n.x=T[n.id][0];n.y=T[n.id][1];n.pr='tch';n.say=n.id==='dir'?(SPW===false?'Ничего, Дима. Главное — вы показали характер. И концерт был отличный!':'Спартакиаду выиграли, концерт устроили — горжусь шестым классом!'):n.id==='rashida'?'Ну… пели вы неплохо. Но в следующий раз — без пения мне в ухо!':'Молодцы! Вот это я понимаю — командный дух!';n.ct=1+Math.random()*2;n.ci=0}});
   const tids=Object.keys(T).filter(id=>npcs.some(n=>n.id===id));let k=0;
   st.forEach((n,i)=>{n.dance=0;n.bt=1+Math.random()*4;n.say=PSAY[i%PSAY.length];
     if(i<6){n.pr='foot';n.tm=i%2;n.x=C(n.tm?24:14)+(i%3)*6;n.y=C(13+(i%3)*2)+4}
@@ -1833,6 +1835,7 @@ function updPost(dt){if(curMap!=='gym8')return;const b=PB;if(b&&b.ign>0)b.ign-=d
     else if(n.pr==='tch'){const p=n.pal;if(p&&p.face){n.face=p.x>n.x?'right':'left';n.ct-=dt;if(n.ct<=0){const L=PTCH[n.id]||PTCH.kuv,ln=L[Math.floor(n.ci/2)%L.length];const who=n.ci%2?p:n;BUB.push({e:who,txt:ln[n.ci%2],t:2.6});n.ci++;n.ct=2.9}}}
     else if(n.pr==='wan'){n.wt-=dt;if(n.wt<=0||n.wx==null){n.wx=C(3+Math.floor(Math.random()*34));n.wy=C(4+Math.floor(Math.random()*6))+4;n.wt=3+Math.random()*4;n.sp=Math.random()<.35?70:32}
       if(pMove(n,n.wx,n.wy,n.sp,dt))n.face=null}
+    if(n.pr==='beda'){n.face='left';n.bt-=dt;if(n.bt<=0){n.bt=6+Math.random()*4;BUB.push({e:n,txt:rnd(['Безобразие, а не концерт.','Я бы им двойку поставила.','Ещё пожалеете, Дмитрий.']),t:2.4})}continue}
     if(n.pr!=='tch'&&n.pr!=='foot'){n.bt-=dt;if(n.bt<=0){n.bt=5+Math.random()*6;if(!BUB.some(q=>q.e===n))BUB.push({e:n,txt:rnd(PSAY),t:2.2})}}}}
 function postGoals(ents){if(curMap!=='gym8'||POST!==1)return;ents.push({y:-999,d:()=>{g.fillStyle='rgba(255,255,255,.85)';[[C(1),1],[C(39)-3,-1]].forEach(([x])=>{g.fillRect(x,C(13),3,1);g.fillRect(x,C(18),3,1);g.fillRect(x+1,C(13),1,C(5))});g.font='6px "Press Start 2P",monospace';g.fillStyle='#fff';g.fillText(PSC[0]+' : '+PSC[1],C(20)-12,C(11)-3)}})}
 function afterBand(){mode='play';POST=1;micStop();if(curMap==='gym8'){P.x=C(17);P.y=C(9)+4;P.dir='down'}
@@ -1841,7 +1844,7 @@ function afterBand(){mode='play';POST=1;micStop();if(curMap==='gym8'){P.x=C(17);
   note='Полина и Дерзкий о чём-то болтают. Подойди к ним.';noteT=4;updTask()}
 const POSTW=[['derz','О, привет, Дим! Слушай, хочешь пойти на концерт Милкис? Там от всего отдохнём.'],['derz','Мы выгнали Беду из школы, выиграли спартакиаду — можно и отдохнуть!'],['polina','Пойдём втроём! Будет классно.'],['dima','Ну да, давай.']];
 const POSTL=[['derz','О, привет, Дим! Слушай, хочешь пойти на концерт Милкис? Там от всего отдохнём.'],['derz','Ну, спартакиаду не выиграли… Зато участвовали! Давай просто передохнём.'],['polina','Пойдём втроём! Будет классно.'],['dima','Ну да, давай.']];
-function bandIntro(){POST=0;const won=SPW!==false;if(curMap==='gym8'){let i=0;npcs.forEach(n=>{if(n.id==='derz')return;n.sit=0;n.mv=0;n.pts=null;n.st='';n.oper=0;n.dance=0;if(n.id==='kuv'){n.x=C(24);n.y=C(9)+4;return}if(n.id==='rashida'){n.x=C(14);n.y=C(10)+4;return}n.di=i;n.x=C(12+(i%7)*2);n.y=C(12+Math.floor(i/7)*2)+4;i++});P.x=C(17);P.y=C(6)}mode='dialog';BZ={t:0,ph:'intro',notes:[],hit:0,miss:0,fx:[],enter:0};micAsk().catch(()=>{});loadLyrics();
+function bandIntro(){POST=0;const won=SPW!==false;if(curMap==='gym8'){let i=0;npcs.forEach(n=>{if(n.id==='derz')return;n.sit=0;n.mv=0;n.pts=null;n.st='';n.oper=0;n.dance=0;if(n.id==='kuv'){n.x=C(24);n.y=C(9)+4;return}if(n.id==='rashida'){n.x=C(14);n.y=C(10)+4;return}if(n.id==='dir'){n.x=C(27);n.y=C(10)+4;return}if(n.id==='math'){n.x=C(31);n.y=C(10)+4;return}n.di=i;n.x=C(12+(i%7)*2);n.y=C(12+Math.floor(i/7)*2)+4;i++});P.x=C(17);P.y=C(6)}mode='dialog';BZ={t:0,ph:'intro',notes:[],hit:0,miss:0,fx:[],enter:0};micAsk().catch(()=>{});loadLyrics();
   talk([['polina','Подождите! Не расходитесь!'],['dima',won?'Ребята! Мы выиграли спартакиаду — и хотим выступить для всех вас!':'Ребята, хоть мы и проиграли, мы всё равно хотим выступить для всех вас!'],['dima','Сейчас выступит группа ШГШ со своей самой знаменитой песней — «Я дерзкий»!'],['derz','Погнали!!!']],()=>startBand())}
 function startBand(){BZ={t:0,ph:'mic',notes:DCHART.map(([t,l])=>({t:t+2,l,st:0})),hit:0,miss:0,fx:[],started:0,end:2+32.4,beat:0,jt:0,sing:0,lv:0,base:.01,bs:[],win:DVOC.map(v=>({v,mx:0,st:0}))};mode='band';try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}
   const z=BZ,fail=()=>{if(BZ!==z||z.mic)return;z.sing=1;z.hold=1;z.ph='play';z.t=0;note='Микрофона нет — пой кнопкой: держи E на жёлтых полосах!';noteT=4};
