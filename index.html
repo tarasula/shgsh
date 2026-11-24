@@ -560,14 +560,19 @@ dlg.addEventListener('click',()=>{if(mode==='dialog'&&!typingBusy())nextLine()})
 let HEARTS=5,HFX=0;try{const h=+localStorage.getItem('shgshHearts');if(h>=1&&h<=5)HEARTS=h}catch(e){}
 function saveHearts(){try{localStorage.setItem('shgshHearts',HEARTS)}catch(e){}}
 const LOSE_TAGS=['ПОПАЛСЯ!','ЗАЛ НЕ КАЧАЕТ','НОКАУТ','ЗАМЕТИЛИ!','ПОЙМАЛИ!'];
+const HPIX=[[1,0,3,2],[5,0,3,2],[0,1,9,3],[1,4,7,2],[2,6,5,1],[3,7,3,1],[4,8,1,1]];
+function heartSVG(on){const c=on?'#e8283b':'#3a2a30',o='#1a0a10';let r='';HPIX.forEach(([x,y,w,h])=>{r+=`<rect x="${x+1}" y="${y}" width="${w}" height="${h+1}" fill="${o}"/><rect x="${x}" y="${y+1}" width="${w+1}" height="${h}" fill="${o}"/><rect x="${x+1}" y="${y+1}" width="${w}" height="${h}" fill="${o}"/>`});HPIX.forEach(([x,y,w,h])=>{r+=`<rect x="${x+.5}" y="${y+.5}" width="${w}" height="${h}" fill="${c}"/>`});if(on)r+='<rect x="1.5" y="1.5" width="2" height="1" fill="#ff9aa8"/>';
+  return `<svg width="30" height="30" viewBox="0 0 10.5 10" style="image-rendering:pixelated;shape-rendering:crispEdges;margin:0 2px;vertical-align:middle">${r}</svg>`}
+function heartsRow(){let h='';for(let i=0;i<5;i++)h+=heartSVG(i<HEARTS);return h}
 function loseLife(){HEARTS=Math.max(0,HEARTS-1);HFX=1.5;saveHearts();snd(140,.3,'sawtooth',.08);return HEARTS}
-function gameOverHTML(){return `<div class="tag">ЖИЗНИ ЗАКОНЧИЛИСЬ</div><h2>💔 💔 💔 💔 💔</h2><p>Все 5 сердечек потрачены. Глава начнётся заново, и жизни восстановятся.</p><button class="btn" id="bgo">Начать главу заново</button><button id="b1" style="display:none"></button><button id="b2" style="display:none"></button>`}
+function gameOverHTML(){return `<div class="tag">ЖИЗНИ ЗАКОНЧИЛИСЬ</div><h2>${heartsRow()}</h2><p>Все 5 сердечек потрачены. Глава начнётся заново, и жизни восстановятся.</p><button class="btn" id="bgo">Начать главу заново</button><button id="b1" style="display:none"></button><button id="b2" style="display:none"></button>`}
 function show(html){if(typeof html==='string'&&LOSE_TAGS.some(t=>html.includes('class="tag">'+t))){if(loseLife()<=0){ov.innerHTML=gameOverHTML();ov.classList.add('on');mode='card';const b=$('bgo');if(b)b.onclick=()=>{HEARTS=5;saveHearts();card()};return}
-    html=html.replace('</h2>',`</h2><p style="font-size:16px;letter-spacing:2px">${'❤️'.repeat(HEARTS)}${'🖤'.repeat(5-HEARTS)}</p><p style="font-size:12px">Минус жизнь! Осталось: ${HEARTS}</p>`)}
+    html=html.replace('</h2>',`</h2><div style="margin:6px 0">${heartsRow()}</div><p style="font-size:12px">Минус жизнь! Осталось: ${HEARTS}</p>`)}
   ov.innerHTML=html;ov.classList.add('on')}
-function drawHearts(){if(['title','card','end'].includes(mode))return;g.setTransform(1,0,0,1,0,0);const x0=320-5*11-4,y0=4;
-  for(let i=0;i<5;i++){const x=x0+i*11,y=y0,on=i<HEARTS,bl=HFX>0&&i===HEARTS&&Math.floor(HFX*8)%2;const c=on?'#e8283b':bl?'#ff8a9a':'#3a2a30';
-    g.fillStyle='rgba(0,0,0,.55)';g.fillRect(x-1,y-1,11,10);g.fillStyle=c;g.fillRect(x+1,y,3,2);g.fillRect(x+5,y,3,2);g.fillRect(x,y+1,9,3);g.fillRect(x+1,y+4,7,2);g.fillRect(x+2,y+6,5,1);g.fillRect(x+3,y+7,3,1);g.fillRect(x+4,y+8,1,1);
+function drawHearts(){if(['title','card','end'].includes(mode))return;g.setTransform(1,0,0,1,0,0);const x0=160-27,y0=3;
+  for(let i=0;i<5;i++){const x=x0+i*11,y=y0,on=i<HEARTS,bl=HFX>0&&i===HEARTS&&Math.floor(HFX*8)%2;const c=on?'#e8283b':bl?'#ff8a9a':'#4a3a40';
+    g.fillStyle='#1a0a10';HPIX.forEach(([a,b,w,h])=>{g.fillRect(x+a-1,y+b,w+2,h);g.fillRect(x+a,y+b-1,w,h+2)});
+    g.fillStyle=c;HPIX.forEach(([a,b,w,h])=>g.fillRect(x+a,y+b,w,h));
     if(on){g.fillStyle='#ff9aa8';g.fillRect(x+1,y+1,2,1)}}
   if(HFX>0)HFX-=1/60}
 function hide(){ov.classList.remove('on')}
