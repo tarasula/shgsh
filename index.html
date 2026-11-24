@@ -317,7 +317,8 @@ const bg=document.createElement('canvas');bg.width=W*TS;bg.height=H*TS;
 g=bg.getContext('2d');for(let y=0;y<H;y++)for(let x=0;x<W;x++)drawTile(x,y);g=main;
 
 /* ===== СПРАЙТЫ 16×24 ===== */
-function drawExtras(c,x,y,id,dir,sit){const k=look(id);if(dir==='up')return;const T=k.tall?3:0;
+function flowerHint(){if(mode!=='play'||P.flower||!inDirOffice())return;const q=nearTile([10]);if(!q)return;tag(C(q[0])+8,C(q[1])-2,'E — сорвать цветок')}
+function drawExtras(c,x,y,id,dir,sit){const k=look(id);if(id==='dima'&&P.flower&&!sit&&mode!=='title'&&dir!=='up'){const hx=x+(dir==='left'?1:12),hy=y+12;c.fillStyle='#2e8b3a';c.fillRect(hx+1,hy-4,1,6);c.fillStyle='#ff5a8a';c.fillRect(hx,hy-7,3,3);c.fillStyle='#ffd84d';c.fillRect(hx+1,hy-6,1,1)}if(dir==='up')return;const T=k.tall?3:0;
   if(k.cam){c.fillStyle='#1a1a1e';c.fillRect(x+10,y+11-T,5,4);c.fillStyle='#3a3a44';c.fillRect(x+14,y+12-T,2,2);c.fillStyle='#8ab0ff';c.fillRect(x+15,y+12-T,1,1)}
   if(k.mega){c.fillStyle='#d8283b';c.fillRect(x+11,y+12-T,3,3);c.fillStyle='#f2f2f2';c.fillRect(x+14,y+11-T,2,5)}}
 function blinkOn(id){let h=0;for(let i=0;i<id.length;i++)h=h*31+id.charCodeAt(i)&65535;const p=2600+h%1900;return ((t0*1000+h*7)%p)<130}
@@ -755,7 +756,7 @@ function action(){
   if(homePhase==='bed3'&&nearBed()){startNight();return}
   if(homePhase==='bed4'&&nearBed()){startPhoneNight();return}
   if(S[lvl].homeCh&&homePhase==='bed'&&nearBed()){CUT={sc:'bed',t:0};mode='cut';return}
-  const n=nearNpc();if(n&&n.fol&&postNpc())return;if(!n&&postNpc())return;if(!n){const [px,py]=tileOf(P);let lk=0;for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(tile(x,y)===30)lk=1;
+  const n=nearNpc();if(P.flower&&n&&mode==='play'){giveFlower(n);return}if(n&&n.fol&&postNpc())return;if(!n&&postNpc())return;if(!n){const [px,py]=tileOf(P);let lk=0;for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(tile(x,y)===30)lk=1;
     if(lk){const nearGym=Math.abs(px-9)<=1&&Math.abs(py-14)<=1;
       if(nearGym&&hasKey){if(!DOOR){DOOR={x:9,y:14,t:0};snd(180,.5,'sawtooth',.03);snd(90,.3,'square',.04);note='Дима открывает дверь ключом…';noteT=1.5}return}
       note=nearGym?'Заперто! Ключ только у директора — его кабинет справа внизу.':escP==='gym'?'Эта дверь не нужна. Тебе в спортзал — подойди к его двери и нажми E.':'Заперто! Ключ только у директора — его кабинет справа внизу.';noteT=3;return}trySit();return}
@@ -1119,12 +1120,13 @@ function updBro(dt){const b=BS;b.t+=dt;const tot=3.4,k=Math.min(1,b.t/tot)*(BRP.
 let NS=null,BW=null,GYM=[],RP=null,BUB=[],ATE=0,malMet=0,malP='',hasNeck=0,VST=null,AR=null,PH=null,CS=null,CMU=null,crN=0;
 const OUCH={math:'Ай! Ты что делаешь, Дмитрий?!',derz:'Ай! Ну больно же!',polina:'Ай! Дима, ну ты чего?!',sasha:'Эй! Шапку чуть не сбил!',oreh:'Ой! Я же ничего не сделал!',german:'Ай! За что?!',kamran:'Ты чё, совсем?!',milkis:'Ай! Дима, ну ты даёшь!',natasha:'Ай! Больно!',bufet:'Ай! Ещё раз — и без пирожных останешься!',malya:'Ты чё, Дима? Я ж свой!',roma:'Эй! Я же каратист, осторожнее!',kuv:'Так! Жёлтая карточка, Дмитрий!',oper:'Камеру разобьёшь!',cheer1:'Ай! Мы же за вас болеем!',cheer2:'Ай!',orlan:'Ну всё, после турнира поговорим.',rott:'…',dir:'Дмитрий! Это что ещё такое?!',rashida:'Дмитрий! Немедленно прекрати!',geo:'Ай! Глобус чуть не уронил!',mom:'Ай! Дима!',otchim:'Ну всё, щенок…',thug:'Ты чё, бессмертный?!'};
 const SWEETS=['эклер','кусок торта «Наполеон»','пончик с глазурью','пирожное «Картошка»','корзиночку с кремом','кусок шоколадного торта'];
-function ouch(e,id){if(e.ob>0)return;e.ob=1.2;BUB.push({e,txt:OUCH[id]||'Ай!',t:2.2});snd(260,.12,'square',.05);if(id==='math'&&e.st&&(e.st==='teach'||e.st==='roam')){e.dx=P.x-e.x;e.dy=P.y-e.y;const d=Math.hypot(e.dx,e.dy)||1;e.dx/=d;e.dy/=d}}
+function ouch(e,id){if(e.ob>0)return;e.ob=1.2;if(id==='math'&&mode==='play'){MATHH++;if(MATHH>=10){MATHH=0;startFP(e);return}if(MATHH>=3){BUB.push({e,txt:MATHH>=8?'ДМИТРИЙ! Последнее предупреждение!':MATHH>=6?'Ещё раз — и ты пожалеешь!':'Дмитрий, прекрати немедленно!',t:2.2});snd(260,.12,'square',.05);return}}BUB.push({e,txt:OUCH[id]||'Ай!',t:2.2});snd(260,.12,'square',.05);if(id==='math'&&e.st&&(e.st==='teach'||e.st==='roam')){e.dx=P.x-e.x;e.dy=P.y-e.y;const d=Math.hypot(e.dx,e.dy)||1;e.dx/=d;e.dy/=d}}
 function ballHits(o){const sp=Math.hypot(o.vx,o.vy);if(sp<40||o.post)return;
   for(const n of npcs){if(n.hid)continue;const d=Math.hypot(n.x-o.x,n.y-6-(o.y-o.z*.3));if(d<11){ouch(n,n.id);o.vx=-o.vx*.5;o.vy=-o.vy*.5;o.vz=Math.max(o.vz,50);return}}
   for(const q of guards){if(q.hid)continue;const d=Math.hypot(q.x-o.x,q.y-6-o.y);if(d<11){ouch(q,q.id);o.vx=-o.vx*.5;o.vy=-o.vy*.5;o.vz=Math.max(o.vz,50);return}}}
 function nearTile(set){const [px,py]=tileOf(P);for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(set.includes(tile(x,y)))return[x,y];return null}
 function preNpc(){
+  if(!P.flower&&inDirOffice()&&nearTile([10])){P.flower=1;snd(900,.08,'sine',.05);note='Дима сорвал цветок. Подари его кому-нибудь (E рядом с человеком).';noteT=3;return true}
   if(P.hide){P.hide=null;note='Дима вылез из шкафа.';noteT=1.5;return true}
   if(P.climb){P.climb=null;return true}
   if(P.pull){P.pull=null;return true}
@@ -1250,6 +1252,7 @@ function update(dt){
   if(mode==='sport'){updSport(dt);return}
   if(SP)SP.at+=dt;
   if(mode==='phone'){updPhone(dt);return}
+  if(mode==='fp'){updFP(dt);return}
   if(mode==='arrest'){updArrest(dt);return}
   if(mode==='rhythm'){updRhythm(dt);return}
   if(mode==='kiss'){KS.t+=dt;return}
@@ -1300,7 +1303,33 @@ function update(dt){
 /* ===== ОТРИСОВКА ===== */
 const dirTo=(x,y)=>{if(mode!=='play'&&mode!=='dialog'&&mode!=='scene'&&mode!=='casino')return null;const dx=P.x-x,dy=P.y-y;if(Math.hypot(dx,dy)>96||Math.hypot(dx,dy)<1)return null;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')};
 const gdir=q=>Math.abs(q.dx)>Math.abs(q.dy)?(q.dx>0?'right':'left'):(q.dy>0?'down':'up');
+let MATHH=0,FP=null;
+function inDirOffice(){if(curMap!=='school')return false;const [x,y]=tileOf(P);return x>=28&&x<=38&&y>=15&&y<=22}
+const FLW={polina:[['polina','Ой… Дима… это мне? Спасибо!'],['dimaT','Кажется, она покраснела.']],
+ natasha:[['natasha','Ого, цветок! Спасибо, Дима!']],milkis:[['milkis','Мне? Ну ты даёшь… Спасибо!']],
+ cheer1:[['cheer1','Ааа, спасибо! Девочки, смотрите!']],cheer2:[['cheer2','Мне цветок?! Спасибо!']],
+ rashida:[['rashida','Дмитрий, спасибо. Но оценку это не исправит.']],math:[['math','Это взятка, Дмитрий? Не поможет.']],
+ mom:[['mom','Сыночек… спасибо, родной!']],bufet:[['bufet','Ой, спасибо, милый! Держи пирожок.']],
+ dir:[['dir','Дима… это же цветок из МОЕГО кабинета?!'],['dima','Э-э… нет, это другой.']],
+ malya:[['malya','Ты думаешь, цветок вернёт мне миллион?']],kuv:[['kuv','Цветы — потом. Сначала — спорт!']],
+ derz:[['derz','Это… мне? Ну… спасибо, Дима. Приятно. Наверное.']],oreh:[['oreh','А его можно съесть? Нет? Ну… спасибо.']]};
+function giveFlower(n){P.flower=0;const L=FLW[n.id]||[[n.id,'Ну… спасибо, Дима. Приятно… Сомнительно, но приятно.']];talk(L)}
+function startFP(e){mode='fp';FP={t:0,hits:0,e};dlg.classList.remove('on');play('dmitry');flash=.4}
+function updFP(dt){const f=FP;f.t+=dt;const k=Math.floor((f.t-1.2)/.7);if(f.t>1.2&&f.t<5&&k>=f.hits){f.hits++;flash=.5;snd(90,.18,'sawtooth',.12);snd(200,.08,'square',.08)}
+  if(f.t>6.5){FP=null;mode='play';P.x+=P.dir==='left'?16:P.dir==='right'?-16:0;note='Дима еле пришёл в себя. Математичку лучше не злить…';noteT=3.5}}
+function drawFP(){const f=FP,t=f.t;g.save();g.setTransform(1,0,0,1,0,0);
+  const hitting=t>1.2&&t<5,ph=hitting?((t-1.2)%.7)/.7:0,sh=hitting&&ph<.15?Math.round(Math.sin(t*90)*5):0;
+  g.fillStyle='#e8dcc0';g.fillRect(0,0,320,192);g.fillStyle='#c9b98f';g.fillRect(0,120,320,72);g.fillStyle='#2a4a3a';g.fillRect(30+sh,20,120,60);
+  const sc=Math.min(8,3+t*4),bob=hitting?Math.sin(ph*6.28)*3:0,cx=160-8*sc+sh,cy=78-9*sc+sh+bob+Math.max(0,(1-t)*60);
+  g.save();g.translate(cx,cy);g.scale(sc,sc);drawChar0(g,0,0,'math','down',0);g.restore();
+  if(hitting){const a=.9-ph*2.2;g.save();g.translate(250+sh,200);g.rotate(a);g.fillStyle='#e8c0a0';g.fillRect(-6,-60,14,60);g.fillStyle='#7a2a2a';g.fillRect(-26,-120,54,66);g.fillStyle='#f2ead8';g.fillRect(-21,-115,44,56);g.fillStyle='#7a2a2a';g.font='7px "Press Start 2P",monospace';g.fillText('ЖУРНАЛ',-20,-84);g.restore();
+    if(ph<.15){g.fillStyle='rgba(200,0,0,.28)';g.fillRect(0,0,320,192);g.fillStyle='#fff';g.font='14px "Press Start 2P",monospace';g.fillText(['БАЦ!','БУМ!','ШЛЁП!','БАЦ!','ХРЯСЬ!','БАЦ!'][(f.hits-1)%6],110+sh*2,110)}}
+  const lines=[[0,'ДМИТРИЙ!!!'],[1.2,'Мячом — в учителя?!'],[2.6,'Я тебе покажу!'],[3.9,'Двойка! В четверти!']];let ln='';lines.forEach(([a,b])=>{if(t>=a)ln=b});
+  g.fillStyle='rgba(0,0,0,.7)';g.fillRect(0,0,320,22);g.fillStyle='#ffd84d';g.font='8px "Press Start 2P",monospace';g.fillText('Математичка: '+ln,8,14);
+  const blink=t>5?Math.min(1,(t-5)/1):0,ey=96*blink+(hitting&&ph<.2?20:0);g.fillStyle='#000';g.fillRect(0,0,320,ey);g.fillRect(0,192-ey,320,ey);
+  g.restore()}
 function render(){
+  if(mode==='fp'&&FP){drawFP();return}
   if(BZ&&curMap!=='gym8'){drawBand();return}
   if(SP&&curMap!=='gym8'){drawSport();return}
   if(CS&&!['walk','walk2','after','vid','end','leave','msit','buzz2','chat'].includes(CS.ph)){drawCasino();return}
@@ -1357,7 +1386,7 @@ function render(){
     if(inv>0&&Math.floor(t0*10)%2)return;drawChar(g,Math.round(P.x-8),Math.round(P.y-24),'dima',P.dir,P.fr);
     if(P.hold){const o=P.hold,x=Math.round(P.x),y=Math.round(P.y-30);if(o.k==='ball')drawBall(x,y,o.t);else{g.fillStyle='#3a6ad0';g.fillRect(x-6,y,12,1)}}}});
   if(GYM.length)ents.push({y:-1,d:drawGym});
-  ents.push({y:99999,d:drawBubbles});
+  ents.push({y:99999,d:()=>{drawBubbles();flowerHint()}});
   if(SP&&curMap==='gym8')spWorld(ents);
   if(BZ&&curMap==='gym8')bandWorld(ents);postGoals(ents);
   ents.sort((a,b)=>a.y-b.y).forEach(e=>e.d());
