@@ -103,7 +103,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
     <div class="tc" id="tc"><div class="tz tzl" id="tzL"></div><div class="tz tzr" id="tzR"></div><div class="joy" id="joy"><i></i></div><div class="tlook">правый палец —<br>куда смотреть</div>
       <button class="tb tbQ" data-c="KeyQ">Q</button><button class="tb tbE" data-c="KeyE">E</button>
       <div class="tlanes"><div><button data-c="ArrowLeft">◀</button><button data-c="ArrowDown">▼</button></div><div><button data-c="ArrowUp">▲</button><button data-c="ArrowRight">▶</button></div></div>
-      <div class="tmenu"><button id="tfs" aria-label="На весь экран">⛶</button><button id="tmus" aria-label="Музыка">♪</button><button id="trst" aria-label="Заново">⟲</button></div></div>
+      <div class="tmenu"><button id="tfs" aria-label="На весь экран">⛶</button><button id="trst" aria-label="Заново">⟲</button></div></div>
     <div class="ov" id="ov"></div>
   </div></div>
   <div class="below">
@@ -116,7 +116,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
       <button class="act" id="act" aria-label="Действие">E</button>
     </div>
   </div>
-  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="mus" style="margin:0 0 10px">Музыка: вкл</button> <button class="btn alt" id="coop" style="display:none">Вдвоём: выкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
+  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="mus" style="display:none">Музыка: вкл</button> <button class="btn alt" id="coop" style="display:none">Вдвоём: выкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
 </div>
 <script>
 {
@@ -1970,7 +1970,7 @@ document.addEventListener('click',e=>{if(NET.guest&&e.target.closest&&e.target.c
 (()=>{const m=location.search.match(/join=(\d{4})/);if(m)setTimeout(()=>{netMenu();const i=$('nc');if(i)i.value=m[1];netJoin(m[1])},400)})();
 
 let last=performance.now();
-let MUS=1,musW='';try{MUS=localStorage.getItem('shgshMus')!=='0'}catch(e){}
+let MUS=1,musW='';try{localStorage.removeItem('shgshMus')}catch(e){}
 function casRec(on){try{const a=AEL.casino||(AEL.casino=new Audio(AU.casino));a.loop=true;const vol=SP?0:!CS?.9:(CS.ph==='vid'||CS.ph==='end')?.12:CS.ph==='last'?.45:CS.ph==='lose'?Math.max(0,.45*(1-CS.lt/5)):.9;if(!a._g&&actx&&!a._gf){try{const src=actx.createMediaElementSource(a),gn=actx.createGain();src.connect(gn);gn.connect(actx.destination);a._g=gn}catch(e){a._gf=1}}if(a._g){a._g.gain.value=vol;a.volume=1}else a.volume=vol;if(CS&&((CS.ph==='lose'&&CS.lt>=5)||['after','buzz2','chat'].includes(CS.ph)))on=false;if(on){if(a.paused){a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{})}}else if(!a.paused)a.pause()}catch(e){}}
 let unl=0;
 function unlockAudio(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state!=='running'&&actx.resume)actx.resume();
@@ -1998,7 +1998,7 @@ function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return
   const key=(c,t)=>dispatchEvent(new KeyboardEvent(t,{code:c,key:c==='KeyE'?'e':c==='KeyQ'?'q':c,bubbles:true}));
   tc.querySelectorAll('[data-c]').forEach(b=>{const c=b.dataset.c;b.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();b.style.filter='brightness(1.5)';key(c,'keydown')},{passive:false});b.addEventListener('touchend',e=>{e.preventDefault();b.style.filter='';key(c,'keyup')});b.addEventListener('mousedown',()=>key(c,'keydown'));b.addEventListener('mouseup',()=>key(c,'keyup'))});
   $('tfs').onclick=()=>{const d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else if(f){const p=f.call(d);const lk=()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}};if(p&&p.then)p.then(lk).catch(()=>{});else lk()}};const canFS=!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen),standalone=matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone;if(standalone)$('tfs').style.display='none';else if(!canFS)$('tfs').onclick=()=>{show(`<div class="tag">ИГРА НА ВЕСЬ ЭКРАН</div><h2 style="font-size:14px">Убрать строку браузера</h2><p>Safari на iPhone не даёт сайтам прятать строку. Сделай так:<br>1. Открой игру в <b>Safari</b> (не внутри Телеграма).<br>2. Нажми «Поделиться» ⬆️ → <b>«На экран Домой»</b>.<br>3. Запускай игру с иконки ШГШ — она откроется на весь экран, без вкладок и строки.</p><button class="btn" id="b1">Понятно</button>`);$('b1').onclick=()=>{hide();if(mode==='title')titleScreen()}};
-  $('tmus').onclick=()=>$('mus').click();
+
   $('coop').onclick=()=>{COOP=COOP?0:1;try{localStorage.setItem('shgshCoop',COOP?'1':'0')}catch(e){}coopUI();P2.map='';if(COOP){note='Игра вдвоём: Дима — WASD + E, Дерзкий — стрелки + Enter';noteT=5;if(!(S[lvl].target&&S[lvl].target.id==='derz'))npcs=npcs.filter(n=>n.id!=='derz')}};coopUI();$('trst').onclick=()=>$('reset').click();
   window.__joy={JOY,LOOK}})();
 function loop(now){if(NET.guest){netGuestTick();requestAnimationFrame(loop);return}$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));$('tc').classList.toggle('bh',mode==='band'&&!!BZ&&!!BZ.hold);musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);netHostTick();if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
