@@ -1145,6 +1145,7 @@ function ballHits(o){const sp=Math.hypot(o.vx,o.vy);if(sp<40||o.post)return;
   for(const q of guards){if(q.hid)continue;const d=Math.hypot(q.x-o.x,q.y-6-o.y);if(d<11){ouch(q,q.id);o.vx=-o.vx*.5;o.vy=-o.vy*.5;o.vz=Math.max(o.vz,50);return}}}
 function nearTile(set){const [px,py]=tileOf(P);for(let y=py-1;y<=py+1;y++)for(let x=px-1;x<=px+1;x++)if(set.includes(tile(x,y)))return[x,y];return null}
 function preNpc(){
+  if(!MIL&&curMap==='vault'&&Math.hypot(P.x-(C(17)+8),P.y-(C(10)+12))<22){talk([['dimaT','Странная тёмная коробка… внутри какие-то разноцветные таблетки. И пятно зелёной краски.'],['dimaT','Не моё дело. Мне нужно ожерелье.']]);return true}
   if(MIL&&MIL.ph==='vault'&&Math.hypot(P.x-(C(17)+8),P.y-(C(10)+12))<24){MIL.ph='found';talk(BOXD,goClub);return true}
   if(!P.flower&&inDirOffice()&&nearTile([10])){P.flower=1;snd(900,.08,'sine',.05);note='Дима сорвал цветок. Подари его кому-нибудь (E рядом с человеком).';noteT=3;return true}
   if(P.hide){P.hide=null;note='Дима вылез из шкафа.';noteT=1.5;return true}
@@ -1501,7 +1502,7 @@ function studioWorld(ents){ents.push({y:-998,d:()=>{
   g.fillStyle='rgba(10,40,48,.25)';g.fillRect(C(6),C(1),C(11),C(9));g.fillRect(C(3),C(3),C(2),C(11));g.fillRect(C(3),C(12),C(15),C(2))}});
   const sa=npcs.find(n=>n.id==='salam');if(sa)ents.push({y:sa.y+2,d:()=>{const X=Math.round(sa.x-8),Y=Math.round(sa.y-24);
     g.fillStyle='#0c0c0e';g.fillRect(X+2,Y+18,12,6);g.fillRect(X+7,Y+24,2,5);g.fillRect(X+3,Y+28,10,2);drawChar(g,X,Y,'salam','up',0,1);g.fillStyle='#101012';g.fillRect(X+3,Y+15,10,8)}});}
-function milWorld(ents){if(curMap==='vault'&&MIL.ph==='vault'||curMap==='vault'&&MIL.ph==='found'){ents.push({y:C(10)+14,d:()=>{const X=C(17)+1,Y=C(10)+4;g.fillStyle='rgba(0,0,0,.45)';g.fillRect(X-1,Y+11,16,3);g.fillStyle='#6a6080';g.fillRect(X-1,Y-1,16,13);g.fillStyle='#1a1820';g.fillRect(X,Y,14,11);g.fillStyle='#0e0c12';g.fillRect(X-1,Y-4,16,4);g.fillStyle='#6a6080';g.fillRect(X-1,Y-5,16,1);
+function milWorld(ents){if(curMap==='vault'){ents.push({y:C(10)+14,d:()=>{const X=C(17)+1,Y=C(10)+4;g.fillStyle='rgba(0,0,0,.45)';g.fillRect(X-1,Y+11,16,3);g.fillStyle='#6a6080';g.fillRect(X-1,Y-1,16,13);g.fillStyle='#1a1820';g.fillRect(X,Y,14,11);g.fillStyle='#0e0c12';g.fillRect(X-1,Y-4,16,4);g.fillStyle='#6a6080';g.fillRect(X-1,Y-5,16,1);
     const pc=['#ff4a6a','#4ad0ff','#ffd84d','#7aff6a','#c07aff'];for(let i=0;i<10;i++){g.fillStyle=pc[i%5];g.fillRect(X+2+(i%5)*2+((i/5|0)),Y+2+(i/5|0)*2,1,1)}
     g.fillStyle='#1f4a2a';g.fillRect(X+9,Y+6,4,4);g.fillRect(X+11,Y+9,2,3);g.fillStyle='#2a6a3a';g.fillRect(X+10,Y+7,2,1)}})}
   if(curMap!=='club')return;
@@ -1592,7 +1593,7 @@ function render(){
   if(GYM.length)ents.push({y:-1,d:drawGym});
   ents.push({y:99999,d:()=>{drawBubbles();flowerHint()}});
   if(SP&&curMap==='gym8')spWorld(ents);
-  if(BZ&&curMap==='gym8')bandWorld(ents);postGoals(ents);if(MIL)milWorld(ents);
+  if(BZ&&curMap==='gym8')bandWorld(ents);postGoals(ents);if(MIL||curMap==='vault')milWorld(ents);
   ents.sort((a,b)=>a.y-b.y).forEach(e=>e.d());
   if(mode==='play'&&!P.sit&&!nearNpc()){const fd=findDesk();if(fd){const lx=fd[0]*TS+8,ly=fd[1]*TS-6;tag(lx,ly,M[fd[1]][fd[0]]===16?'E — сесть на стул':'E — сесть за парту')}}
   if(mode==='wait'&&homePhase==='rec')tag(P.x,P.y-30,'♪ …');
