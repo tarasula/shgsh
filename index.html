@@ -168,7 +168,7 @@ const L={
  opp4:{hair:'#2a1a10',style:'short',top:'tee',pants:'#151515'},
  opp5:{hair:'#8a5a34',style:'short',top:'tee',pants:'#151515'}
 };
-Object.assign(L,{fan1:{hair:'#ff5aa8',style:'long',top:'dress',skirt:1},fan2:{hair:'#1a1a1a',style:'short',top:'hoodieb',pants:'#1a1a22',hat:'cap'},fan3:{hair:'#f2e6a0',style:'long',top:'shirtb',skirt:1},fan4:{hair:'#6a3a22',style:'bangs',top:'floral',pants:'#2a2a33'},fan5:{hair:'#8a5aff',style:'long',top:'shirtw',skirt:1},fan6:{hair:'#2a2a2a',style:'longcurly',top:'trackb',pants:'#141418'}});
+Object.assign(L,{fan1:{hair:'#ff5aa8',style:'long',top:'dress',skirt:1},fan2:{hair:'#1a1a1a',style:'short',top:'hoodieb',pants:'#1a1a22',hat:'cap'},fan3:{hair:'#f2e6a0',style:'long',top:'shirtb',skirt:1},fan4:{hair:'#6a3a22',style:'bangs',top:'floral',pants:'#2a2a33'},fan5:{hair:'#8a5aff',style:'long',top:'shirtw',skirt:1},fan6:{hair:'#2a2a2a',style:'longcurly',top:'trackb',pants:'#141418'},fan7:{hair:'#e6cf9a',style:'long',top:'hoodieb',pants:'#1a1a22'},fan8:{hair:'#3a2418',style:'short',top:'shirtw',pants:'#2a3a5a'},fan9:{hair:'#c03a3a',style:'bangs',top:'shirtb',skirt:1},fan10:{hair:'#1a1a1a',style:'updo',top:'dress',skirt:1},fan11:{hair:'#7a5a3a',style:'short',top:'hoodie',pants:'#22222a',hat:'cap'},fan12:{hair:'#f4f0e8',style:'long',top:'trackb',pants:'#141418'}});
 const N={dima:'Дима',polina:'Полина',sasha:'Саша',oreh:'Орех',derz:'Дерзкий',german:'Герман',kamran:'Камран',math:'Математичка',milkis:'Милкис',natasha:'Наташа',mom:'Мама',otchim:'Отчим',rashida:'Рашида Жавдатовна',thug:'Громила',bufet:'Буфетчица',dimaT:'Дима (думает)',cop:'Николай Андреевич',brat2:'Брат',op:'Оператор 911',brat:'Главарь',band1:'Бандит',band2:'Бандит',band3:'Бандит',geo:'Географ',malya:'Маля',gamb:'Игрок',roma:'Рома',romaG:'Рома',orlan:'Орлан',kuv:'Анатолий Кувалдович',oper:'Оператор',cheer1:'Болельщица',cheer2:'Болельщица',rott:'Ротвейлер',orehW:'Орех',opp1:'Соперник',opp2:'Соперник',opp3:'Соперник',opp4:'Соперник',opp5:'Соперник',zav:'Завуч',dir:'Директор',guard:'Охранник'};
 L.dimaT=L.dima;
 const look=id=>L[id]||L.dima;
@@ -1414,7 +1414,7 @@ function drawRay(){g.setTransform(1,0,0,1,0,0);g.imageSmoothingEnabled=false;con
   if(flash>0){g.fillStyle=`rgba(232,72,59,${flash*.5})`;g.fillRect(0,0,SW,SH)}
   if(noteT>0&&mode==='play'){noteT-=1/60;g.fillStyle='rgba(0,0,0,.7)';g.fillRect(10,24,300,18);g.fillStyle='#ffd84d';g.font='7px "Press Start 2P",monospace';g.fillText(note,16,36)}
   const ri=R[Math.floor(P.y/TS)]?.[Math.floor(P.x/TS)];hl.textContent=`Глава ${lvl+1} · ${ri>=0?ROOMS[ri].n:''} · 1-е лицо`}
-let MIL=null,QR=null;Object.assign(N,{fan1:'Фанатка',fan2:'Фанат',fan3:'Фанатка',fan4:'Фанат',fan5:'Фанатка',fan6:'Фанат'});
+let MIL=null,QR=null;function dirTo2(x,y){const dx=P.x-x,dy=P.y-y;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}Object.assign(N,{fan1:'Фанатка',fan2:'Фанат',fan3:'Фанатка',fan4:'Фанат',fan5:'Фанатка',fan6:'Фанат',fan7:'Фанатка',fan8:'Фанат',fan9:'Фанатка',fan10:'Фанатка',fan11:'Фанат',fan12:'Фанатка'});
 const QRD=[['dima','Э-э… Дерзкий. Посмотри на это.'],['derz','Стоп. Это что… наркотики?!'],['polina','Это не билеты! Кто-то подменил QR-код.'],['dima','Подожди… Я недавно был на складе в школе. Там стояла такая же коробка — как на этом сайте.'],['derz','А зачем ты вообще ходил на склад?'],['dima','Ну… было дело. Неважно.'],['derz','Ладно. Идём проверим. Сейчас же.']];
 const BOXD=[['derz','Вот она… Тёмная коробка. А внутри — разноцветные таблетки.'],['polina','Это хранят прямо в школе?! Или тут их продают?'],['derz','Надо узнать, кто это сюда притащил.'],['dima','Подожди. Смотри — тут тёмно-зелёная краска. Свежая. Мы её трогали.'],['dima','Если снимут отпечатки — посадят нас, а не их.'],['derz','…Уходим. Быстро.'],['dima','Идём на концерт. Разберёмся потом.']];
 const MILEND=[['milkis','Спасибо, что пришли! Вы — лучшие!'],['derz','Вот это вечер… Дим, ты как?'],['dimaT','Классно. Но тёмная коробка на складе не выходит у меня из головы…'],['polina','Разберёмся. Вместе.']];
@@ -1429,10 +1429,10 @@ function buildClub(){const m=[],rr=[];for(let y=0;y<H;y++){m.push(Array(W).fill(
 let CLUBMAP=null;
 function goClub(){fadeT=1.6;CLUBMAP=CLUBMAP||buildClub();curMap='club';
   {const s=CLUBMAP;for(let y=0;y<H;y++){M[y]=s.M[y].slice();R[y]=s.R[y].slice()}ROOMS.length=0;ROOMS.push(...s.ROOMS);FLOOR.length=0;FLOOR.push(...s.FLOOR);BGV++;const old=g;g=bg.getContext('2d');for(let y=0;y<H;y++)for(let x=0;x<W;x++)drawTile(x,y);g=old}
-  P.x=C(20);P.y=C(21)+4;P.dir='up';const ids=['fan1','fan2','fan3','fan4','fan5','fan6','cheer1','cheer2','natasha','opp1','opp2','opp3','fan1','fan3','fan5','fan2','fan4','fan6','fan1','fan5','fan3','fan2','fan6','fan4'];
-  const says=['МИЛКИС!!!','Это лучший концерт!','Снимаю в сторис!','Аааа, я её обожаю!','Где ты взял такие кроссы?','Громче!!!','Я тут с шести утра стою!'];
+  P.x=C(20);P.y=C(21)+4;P.dir='up';const ids=['fan1','fan2','fan3','fan4','fan5','fan6','fan7','fan8','fan9','fan10','fan11','fan12','fan3','fan8','fan5','fan11','fan9','fan2','fan10','fan7','fan4','fan12','fan6','fan1'];
+  const says=['МИЛКИС!!!','Это лучший концерт!','Аааа, я её обожаю!','Где ты взял такие кроссы?','Громче!!!','Я тут с шести утра стою!'];
   npcs=[{id:'milkis',x:C(20),y:C(6)+2,say:'Всем привет!!!',star:1},{id:'derz',x:C(21),y:C(20)+4,say:'Вот это толпа!'},{id:'polina',x:C(19),y:C(20)+4,say:'Пошли ближе к сцене!'}];
-  ids.forEach((id,i)=>{const row=Math.floor(i/6),col=i%6;let x=C(7+col*5+(row%2)*2)+Math.floor(Math.random()*6),y=C(8+row*3)+4;if(Math.abs(x-C(20))<12)x+=col<3?-14:14;npcs.push({id,x,y,say:says[i%says.length],dance:1,di:Math.random()*6,film:i%5===2})});
+  ids.forEach((id,i)=>{const row=Math.floor(i/6),col=i%6;let x=C(7+col*5+(row%2)*2)+Math.floor(Math.random()*6),y=C(8+row*3)+4;if(Math.abs(x-C(20))<12)x+=col<3?-14:14;npcs.push({id,x,y,say:says[i%says.length],dance:1,di:Math.random()*6,turn:i%4===1})});
   MIL.ph='club';MIL.t=0;mode='play';note='Клуб «Милкис». Неон, музыка, толпа!';noteT=3;updTask()}
 function updMil(dt){MIL.t+=dt;if(mode!=='play')return;
   if(MIL.ph==='club'&&curMap==='club'&&P.y<C(11)){MIL.ph='show';MIL.st=0;flash=.3;npcs.forEach(n=>{if(n.id!=='milkis'){n.dance=1;n.di=n.di||Math.random()*6}});note='Милкис выходит на сцену!';noteT=2.5;updTask()}
@@ -1499,8 +1499,9 @@ function render(){
       g.fillStyle='#8ac8ff';g.fillRect(Math.round(n.x+6),Math.round(n.y-18+(t0*20)%6),1,2);g.fillRect(Math.round(n.x-7),Math.round(n.y-16+(t0*16)%6),1,2);
       tag(n.x,n.y-22,'Не бейте!');return}
     if(n.sit){const X=n.tx*TS,Y=n.ty*TS;drawChar(g,X,Y-4,n.id,lk||'up',0,1)}
-    else if(MIL&&n.dance){const tt=t0+n.di,bt=Math.floor(tt*2.4),j=Math.round(-Math.abs(Math.sin(tt*7.5))*3),X=Math.round(n.x-8),Y=Math.round(n.y-24+j);drawChar(g,X,Y,n.id,n.film?'up':bt%4<2?'left':'right',bt%2);
-      if(n.film){g.fillStyle='#111';g.fillRect(X+5,Y-9,6,9);g.fillStyle=Math.floor(t0*4+n.di)%2?'#fff':'#9ad';g.fillRect(X+6,Y-8,4,6);g.fillStyle='#f0c7a4';g.fillRect(X+6,Y,4,3)}else if(bt%2){g.fillStyle='#f0c7a4';g.fillRect(X+1,Y+2,2,5);g.fillRect(X+13,Y+2,2,5)}}
+    else if(MIL&&n.dance){const hop=MIL.ph==='show'?1:.5,ph=(t0*2.1+n.di)%1,j=-Math.round(Math.max(0,Math.sin(ph*Math.PI))*4*hop),X=Math.round(n.x-8),Y=Math.round(n.y-24+j);
+      const near=Math.hypot(n.x-P.x,n.y-P.y)<40,look=n.turn&&(near||Math.sin(t0*.7+n.di*3)>.75);
+      g.fillStyle='rgba(0,0,0,.3)';g.fillRect(X+3,Math.round(n.y-2),10,2);drawChar(g,X,Y,n.id,look?dirTo2(n.x,n.y):'up',0)}
     else if(BZ&&n.dance){const bt=Math.floor(BZ.t/.476+n.di),j=Math.round(-Math.abs(Math.sin(BZ.t*6.6+n.di))*3);drawChar(g,Math.round(n.x-8),Math.round(n.y-24+j),n.id,bt%4<2?'left':'right',bt%2)}
     else if(n.post&&POST===1){drawChar(g,Math.round(n.x-8),Math.round(n.y-24),n.id,n.id==='polina'?'right':'left',0);if(Math.floor(t0*1.5+(n.id==='derz'?1:0))%2){g.fillStyle='#fff';g.fillRect(Math.round(n.x-7),Math.round(n.y-36),14,8);g.fillStyle='#222';g.font='5px "Press Start 2P",monospace';g.fillText('…',Math.round(n.x-5),Math.round(n.y-30))}}
     else if(BZ&&n.id==='rashida'&&curMap==='gym8'){drawChar(g,Math.round(n.x-8),Math.round(n.y-24),n.id,'down',0);const X=Math.round(n.x-8),Y=Math.round(n.y-24);g.fillStyle='#3a6ad0';g.fillRect(X+3,Y+13,10,2);g.fillStyle='#f0c7a4';g.fillRect(X+3,Y+13,2,2);g.fillRect(X+11,Y+13,2,2);g.fillStyle='#2a4a9a';g.fillRect(X+5,Y+12,6,1)}
