@@ -168,7 +168,7 @@ const L={
  opp4:{hair:'#2a1a10',style:'short',top:'tee',pants:'#151515'},
  opp5:{hair:'#8a5a34',style:'short',top:'tee',pants:'#151515'}
 };
-Object.assign(L,{fan1:{hair:'#ff5aa8',style:'long',top:'dress',skirt:1},fan2:{hair:'#1a1a1a',style:'short',top:'hoodieb',pants:'#1a1a22',hat:'cap'},fan3:{hair:'#f2e6a0',style:'long',top:'shirtb',skirt:1},fan4:{hair:'#6a3a22',style:'bangs',top:'floral',pants:'#2a2a33'},fan5:{hair:'#8a5aff',style:'long',top:'shirtw',skirt:1},fan6:{hair:'#2a2a2a',style:'longcurly',top:'trackb',pants:'#141418'},fan7:{hair:'#e6cf9a',style:'long',top:'hoodieb',pants:'#1a1a22'},fan8:{hair:'#3a2418',style:'short',top:'shirtw',pants:'#2a3a5a'},fan9:{hair:'#c03a3a',style:'bangs',top:'shirtb',skirt:1},fan10:{hair:'#1a1a1a',style:'updo',top:'dress',skirt:1},fan11:{hair:'#7a5a3a',style:'short',top:'hoodie',pants:'#22222a',hat:'cap'},fan12:{hair:'#f4f0e8',style:'long',top:'trackb',pants:'#141418'},salam:{hair:'#3a2216',style:'longcurly',top:'shirtb',skirt:0,pants:'#141418',skin:'#f2d2c0'}});
+Object.assign(L,{fan1:{hair:'#ff5aa8',style:'long',top:'dress',skirt:1},fan2:{hair:'#1a1a1a',style:'short',top:'hoodieb',pants:'#1a1a22',hat:'cap'},fan3:{hair:'#f2e6a0',style:'long',top:'shirtb',skirt:1},fan4:{hair:'#6a3a22',style:'bangs',top:'floral',pants:'#2a2a33'},fan5:{hair:'#8a5aff',style:'long',top:'shirtw',skirt:1},fan6:{hair:'#2a2a2a',style:'longcurly',top:'trackb',pants:'#141418'},fan7:{hair:'#e6cf9a',style:'long',top:'hoodieb',pants:'#1a1a22'},fan8:{hair:'#3a2418',style:'short',top:'shirtw',pants:'#2a3a5a'},fan9:{hair:'#c03a3a',style:'bangs',top:'shirtb',skirt:1},fan10:{hair:'#1a1a1a',style:'updo',top:'dress',skirt:1},fan11:{hair:'#7a5a3a',style:'short',top:'hoodie',pants:'#22222a',hat:'cap'},fan12:{hair:'#f4f0e8',style:'long',top:'trackb',pants:'#141418'},svin:{hair:'#5a3a22',style:'short',top:'tee',pants:'#22222a'},salam:{hair:'#3a2216',style:'longcurly',top:'shirtb',skirt:0,pants:'#141418',skin:'#f2d2c0'}});
 const N={dima:'Дима',polina:'Полина',sasha:'Саша',oreh:'Орех',derz:'Дерзкий',german:'Герман',kamran:'Камран',math:'Математичка',milkis:'Милкис',natasha:'Наташа',mom:'Мама',otchim:'Отчим',rashida:'Рашида Жавдатовна',thug:'Громила',bufet:'Буфетчица',dimaT:'Дима (думает)',cop:'Николай Андреевич',brat2:'Брат',op:'Оператор 911',brat:'Главарь',band1:'Бандит',band2:'Бандит',band3:'Бандит',geo:'Географ',malya:'Маля',gamb:'Игрок',roma:'Рома',romaG:'Рома',orlan:'Орлан',kuv:'Анатолий Кувалдович',oper:'Оператор',cheer1:'Болельщица',cheer2:'Болельщица',rott:'Ротвейлер',orehW:'Орех',opp1:'Соперник',opp2:'Соперник',opp3:'Соперник',opp4:'Соперник',opp5:'Соперник',zav:'Завуч',dir:'Директор',guard:'Охранник'};
 L.dimaT=L.dima;
 const look=id=>L[id]||L.dima;
@@ -547,7 +547,7 @@ function typeStep(dt){if(!TY||TY.i>=TY.full.length)return;TY.acc+=dt*38;let n=0;
 function typingBusy(){if(TY&&TY.i<TY.full.length){TY.i=TY.full.length;dt_.textContent=TY.full;return true}return false}
 function nextLine(){
   if(!queue.length){dlg.classList.remove('on');mode='play';const f=after;after=null;if(f)f();return}
-  const [id,tx]=queue.shift();
+  const [id,tx]=queue.shift();FLB=id==='salam'&&/свинтус|граффити|хрюкать/.test(tx)?(FLB||{t:0}):null;
   dn.textContent=N[id]||id;dt.textContent='';TY={full:tx,i:0,acc:0};if(/царица/.test(tx))play('tsar');if(/Кто вы такие/.test(tx))play('r1');
   pc.clearRect(0,0,16,26);drawChar(pc,0,look(id).tall?5:2,id,'down',0);
   dlg.classList.add('on');
@@ -1419,7 +1419,26 @@ function drawRay(){g.setTransform(1,0,0,1,0,0);g.imageSmoothingEnabled=false;con
   if(flash>0){g.fillStyle=`rgba(232,72,59,${flash*.5})`;g.fillRect(0,0,SW,SH)}
   if(noteT>0&&mode==='play'){noteT-=1/60;g.fillStyle='rgba(0,0,0,.7)';g.fillRect(10,24,300,18);g.fillStyle='#ffd84d';g.font='7px "Press Start 2P",monospace';g.fillText(note,16,36)}
   const ri=R[Math.floor(P.y/TS)]?.[Math.floor(P.x/TS)];hl.textContent=`Глава ${lvl+1} · ${ri>=0?ROOMS[ri].n:''} · 1-е лицо`}
-let MIL=null,QR=null;function dirTo2(x,y){const dx=P.x-x,dy=P.y-y;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}Object.assign(N,{salam:'Саламандра',fan1:'Фанатка',fan2:'Фанат',fan3:'Фанатка',fan4:'Фанат',fan5:'Фанатка',fan6:'Фанат',fan7:'Фанатка',fan8:'Фанат',fan9:'Фанатка',fan10:'Фанатка',fan11:'Фанат',fan12:'Фанатка'});
+let MIL=null,QR=null,FLB=null;
+function drawFLB(){const t=(FLB.t+=1/60);g.setTransform(1,0,0,1,0,0);
+  g.fillStyle='#0c0a0a';g.fillRect(0,0,320,192);g.fillStyle='#3a3634';g.fillRect(20,14,280,96);g.fillStyle='#2a2624';g.fillRect(20,110,280,70);
+  g.font='9px "Press Start 2P",monospace';g.fillStyle='rgba(230,90,140,.5)';g.fillText('СВИН',40,52);g.fillStyle='rgba(120,200,120,.4)';g.fillText('ХРЮ',220,40);g.fillStyle='rgba(240,240,240,.25)';g.fillText('XD',250,82);
+  const big=(id,x,y,sc,dir,sit,fr)=>{g.save();g.translate(x,y);g.scale(sc,sc);drawChar(g,0,0,id,dir,fr||0,sit);g.restore()};
+  const by=Math.round(Math.sin(t*5)*1.5),BX=136,BY=78+by;
+  g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(160,152,30,6,0,0,7);g.fill();
+  big('svin',BX,BY,3,'down',1);
+  g.fillStyle='#22222a';g.fillRect(BX+6,BY+66,36,9);g.fillStyle='#f0c7a4';g.fillRect(BX+2,BY+56,8,6);g.fillRect(BX+38,BY+56,8,6);
+  g.fillStyle='#f2a6b8';g.beginPath();g.ellipse(BX+24,BY+20,15,13,0,0,7);g.fill();
+  g.beginPath();g.moveTo(BX+10,BY+8);g.lineTo(BX+6,BY-2);g.lineTo(BX+16,BY+5);g.fill();g.beginPath();g.moveTo(BX+38,BY+8);g.lineTo(BX+42,BY-2);g.lineTo(BX+32,BY+5);g.fill();
+  g.fillStyle='#e07a92';g.beginPath();g.ellipse(BX+24,BY+24,7,5,0,0,7);g.fill();g.fillStyle='#5a2030';g.fillRect(BX+20,BY+22,2,4);g.fillRect(BX+26,BY+22,2,4);
+  g.fillStyle='#1a1a1a';g.fillRect(BX+15,BY+14,4,3);g.fillRect(BX+29,BY+14,4,3);
+  if(Math.floor(t*1.6)%2){g.font='6px "Press Start 2P",monospace';g.fillStyle='#f2a6b8';g.fillText('хрю…',BX+46,BY+12)}
+  [['opp1',44,64,'right',1],['opp2',236,62,'left',-1],['opp3',196,30,'down',-1]].forEach(([id,x,y,dir,s],i)=>{const j=-Math.round(Math.abs(Math.sin(t*7+i*2))*3);big(id,x,y+j,2.6,dir,0,Math.floor(t*4+i)%2);
+    g.fillStyle='#f0c7a4';const ax=x+(s>0?36:4),ay=y+j+30;g.fillRect(s>0?ax:ax-16,ay,16,4);g.fillRect(s>0?ax+14:ax-18,ay-1,4,3);
+    if(Math.floor(t*3+i)%3){g.font='7px "Press Start 2P",monospace';g.fillStyle='#ffd84d';g.fillText(['ХА-ХА!','ХА-ХА-ХА!','СВИНТУС!'][i],x-4+(i===1?-10:0),y+j-6)}});
+  const gr=g.createRadialGradient(160,96,50,160,96,190);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.85)');g.fillStyle=gr;g.fillRect(0,0,320,192);
+  g.fillStyle='rgba(90,60,40,.18)';g.fillRect(0,0,320,192);g.font='6px "Press Start 2P",monospace';g.fillStyle='rgba(255,255,255,.6)';g.fillText('Воспоминание…',8,12)}
+Object.assign(N,{svin:'Мальчик'});function dirTo2(x,y){const dx=P.x-x,dy=P.y-y;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}Object.assign(N,{salam:'Саламандра',fan1:'Фанатка',fan2:'Фанат',fan3:'Фанатка',fan4:'Фанат',fan5:'Фанатка',fan6:'Фанат',fan7:'Фанатка',fan8:'Фанат',fan9:'Фанатка',fan10:'Фанатка',fan11:'Фанат',fan12:'Фанатка'});
 const QRD=[['dima','Э-э… Дерзкий. Посмотри на это.'],['derz','Стоп. Это что… наркотики?!'],['polina','Это не билеты! Кто-то подменил QR-код.'],['dima','Подожди… Я недавно был на складе в школе. Там стояла такая же коробка — как на этом сайте.'],['derz','А зачем ты вообще ходил на склад?'],['dima','Ну… было дело. Неважно.'],['derz','Ладно. Идём проверим. Сейчас же.']];
 const BOXD=[['derz','Вот она… Тёмная коробка. А внутри — разноцветные таблетки.'],['polina','Это хранят прямо в школе?! Или тут их продают?'],['derz','Надо узнать, кто это сюда притащил.'],['dima','Подожди. Смотри — тут тёмно-зелёная краска. Свежая. Мы её трогали.'],['dima','Если снимут отпечатки — посадят нас, а не их.'],['derz','…Уходим. Быстро.'],['dima','Идём на концерт. Разберёмся потом.']];
 const MILHI=[['milkis','О, привет! Вы ко мне?'],['dima','Так, давай сразу к делу. Мы хотели купить билеты на твой концерт.'],['dima','Но вместо обычного сайта после QR-кода у нас открылся сайт с наркотиками.'],['milkis','Чего?! Не может этого быть! Может, вы не мой флаер отсканировали? У меня такого просто не может быть.'],['dima','А может, это кто-то из твоей команды делает?'],['milkis','Я не знаю… У нас в команде всего двое: я и Саламандра.'],['derz','А кто такая Саламандра?'],['milkis','Моя подруга. Помогает мне делать песни, монтировать видео, озвучку.'],['milkis','Она сейчас в студии. Идите налево, потом прямо, потом… ну, не знаю, направо.']];
@@ -2251,7 +2270,7 @@ function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return
   window.__joy={JOY,LOOK}})();
 function loop(now){if(NET.guest){netGuestTick();requestAnimationFrame(loop);return}$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));$('tc').classList.toggle('bh',mode==='band'&&!!BZ&&!!BZ.hold);musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);netHostTick();if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
-{const _R=render;render=function(){_R();if(mode==='qr'&&QR){try{drawQR()}catch(e){}}}}
+{const _R=render;render=function(){_R();if(mode==='qr'&&QR){try{drawQR()}catch(e){}}if(FLB&&mode==='dialog'){try{drawFLB()}catch(e){}}}}
 }
 
 </script>
