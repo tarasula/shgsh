@@ -565,7 +565,7 @@ function titleScreen(){
   $('b5').onclick=()=>netMenu();
 }
 function chapterMenu(){mode='title';
-  const sc=[['Арест отчима',5,()=>startArrest()],['Сообщение ночью',5,()=>startPhoneNight()],['Казино',6,()=>startCasino()],['Спартакиада',7,()=>{mal8=1;startSpart()}],['Концерт «Я дерзкий»',7,()=>{SPW=true;bandIntro()}]];
+  const sc=[['Арест отчима',5,()=>startArrest()],['Сообщение ночью',5,()=>startPhoneNight()],['Казино',6,()=>startCasino()],['Спартакиада',7,()=>{mal8=1;startSpart()}],['Концерт «Я дерзкий»',7,()=>{SPW=true;bandIntro()}],['QR-код',8,()=>startQR()],['Склад с коробкой',8,()=>{MIL={ph:'qr',t:0};goVault()}],['Клуб «Милкис»',8,()=>{MIL={ph:'vault',t:0};goClub()}]];
   const bs='font-size:clamp(8px,1.3vw,11px);padding:9px 10px;min-height:40px';
   show(`<div class="tag">ВЫБОР ГЛАВЫ</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,46%),1fr));gap:8px;width:min(640px,100%);max-height:72%;overflow:auto;padding:2px">
     ${S.map((c,i)=>`<button class="btn alt" data-ch="${i}" style="${bs}">${esc(c.t)}</button>`).join('')}
