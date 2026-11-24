@@ -326,9 +326,9 @@ function drawExtras(c,x,y,id,dir,sit){const k=look(id);if(id==='salam'){const T=
   if(id==='dima'&&P.flower&&!sit&&mode!=='title'&&dir!=='up'){const hx=x+(dir==='left'?1:12),hy=y+12;c.fillStyle='#2e8b3a';c.fillRect(hx+1,hy-4,1,6);c.fillStyle='#ff5a8a';c.fillRect(hx,hy-7,3,3);c.fillStyle='#ffd84d';c.fillRect(hx+1,hy-6,1,1)}if(dir==='up')return;const T=k.tall?3:0;
   if(k.cam){c.fillStyle='#1a1a1e';c.fillRect(x+10,y+11-T,5,4);c.fillStyle='#3a3a44';c.fillRect(x+14,y+12-T,2,2);c.fillStyle='#8ab0ff';c.fillRect(x+15,y+12-T,1,1)}
   if(k.mega){c.fillStyle='#d8283b';c.fillRect(x+11,y+12-T,3,3);c.fillStyle='#f2f2f2';c.fillRect(x+14,y+11-T,2,5)}}
-function blinkOn(id){let h=0;for(let i=0;i<id.length;i++)h=h*31+id.charCodeAt(i)&65535;const p=2600+h%1900;return ((t0*1000+h*7)%p)<130}
+function blinkOn(id){if(BLC===pc)return false;let h=0;for(let i=0;i<id.length;i++)h=h*31+id.charCodeAt(i)&65535;const p=2600+h%1900;return ((t0*1000+h*7)%p)<130}
 function drawChar(c,x,y,id,dir,fr,sit){drawChar0(c,x,y,id,dir,fr,sit);drawExtras(c,x,y,id,dir,sit)}
-function drawChar0(c,x,y,id,dir,fr,sit){
+var BLC=null;function drawChar0(c,x,y,id,dir,fr,sit){BLC=c;
   const k=look(id),T=k.tall?3:0,sk=k.skin||'#f0c7a4',up=dir==='up',lf=dir==='left',rt=dir==='right';
   const p=(a,b,w,h,col)=>{c.fillStyle=col;c.fillRect(x+a,y+b,w,h)};
   const U=(a,b,w,h,col)=>p(a,b-T,w,h,col);
