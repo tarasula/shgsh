@@ -515,7 +515,7 @@ function setup(){
 }
 function updTask(){
   const s=S[lvl];
-  if(s.milCh){task.innerHTML=`<b>${esc2(s.t)}</b><span>${!MIL||MIL.ph==='qr'?'Отсканируй QR-код.':MIL.ph==='vault'?'Найди на складе тёмную коробку и осмотри её (E).':MIL.ph==='club'?'Проберись через толпу к сцене.':MIL.ph==='door'?'Иди в студию к Саламандре: дверь слева в зале.':MIL.ph==='studio'?'Налево, прямо, направо — найди Саламандру в студии.':'Танцуй! Милкис поёт.'}</span>`;return}
+  if(s.milCh){task.innerHTML=`<b>${esc2(s.t)}</b><span>${!MIL||MIL.ph==='qr'?'Отсканируй QR-код.':MIL.ph==='vault'?'Найди на складе тёмную коробку и осмотри её (E).':MIL.ph==='club'?'Пройди через неоновый вход и проберись через толпу к Милкис.':MIL.ph==='door'?'Иди в студию к Саламандре: дверь слева в зале.':MIL.ph==='studio'?'Налево, прямо, направо — найди Саламандру в студии.':'Танцуй! Милкис поёт.'}</span>`;return}
   if(s.homeCh){task.innerHTML=`<b>${esc2(s.t)}</b><span>${homePhase==='mom'?'Найди маму в зале и поговори с ней (E). По квартире можно ходить.':'Иди в свою комнату и ляг на кровать (E рядом с кроватью).'}</span>`;return}
   if(homePhase==='bed3'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Мама отправила спать. Иди в свою комнату и ляг на кровать (E).</span>`;return}
   if(homePhase==='run'){task.innerHTML=`<b>${esc2(s.t)}</b><span>Кто-то кричит! Беги в зал к маме и нажми E.</span>`;return}
@@ -579,7 +579,7 @@ function chapterMenu(){mode='title';
   ov.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{const c=sc[+b.dataset.sc];try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}lvl=c[1];saveL();card();hide();c[2]()});
   $('bk').onclick=()=>titleScreen()}
 function card(){
-  RP=null;NS=null;BW=null;SNK=null;AR=null;PH=null;CS=null;SP=null;micStop();if(BZ){try{AEL.derzsong&&AEL.derzsong.pause()}catch(e){}}BZ=null;casMusic(0);BRUISE.clear();PS=null;BS=null;fadeT=0;
+  try{milMusicStop()}catch(e){}RP=null;NS=null;BW=null;SNK=null;AR=null;PH=null;CS=null;SP=null;micStop();if(BZ){try{AEL.derzsong&&AEL.derzsong.pause()}catch(e){}}BZ=null;casMusic(0);BRUISE.clear();PS=null;BS=null;fadeT=0;
   dlg.classList.remove('on');queue=[];after=null;gymOpen=0;DOOR=null;CALL=null;try{VEL.pause();VEL.style.display='none'}catch(e){}gangDone=0;hasKey=0;escP='';BR=null;restoreDesks();CUT=null;GS=null;FT=null;fui.classList.remove('on');P.sit=null;stopDiss();scDone=0;SC=null;mode='card';KS=null;ACT=null;cast='duo';RZ=S[lvl].rhythm?{time:0,notes:[],hit:0,miss:0,end:1e9,fx:[],beat:-1,idle:1}:null;setup();
   const [a,b]=S[lvl].t.split(': ');
   show(`<div class="tag">${esc(a.toUpperCase())} ИЗ ${S.length}</div><h2>${esc(b)}</h2><button class="btn" id="b1">Начать</button>`);
@@ -1421,7 +1421,7 @@ function drawRay(){g.setTransform(1,0,0,1,0,0);g.imageSmoothingEnabled=false;con
 let MIL=null,QR=null;function dirTo2(x,y){const dx=P.x-x,dy=P.y-y;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}Object.assign(N,{salam:'Саламандра',fan1:'Фанатка',fan2:'Фанат',fan3:'Фанатка',fan4:'Фанат',fan5:'Фанатка',fan6:'Фанат',fan7:'Фанатка',fan8:'Фанат',fan9:'Фанатка',fan10:'Фанатка',fan11:'Фанат',fan12:'Фанатка'});
 const QRD=[['dima','Э-э… Дерзкий. Посмотри на это.'],['derz','Стоп. Это что… наркотики?!'],['polina','Это не билеты! Кто-то подменил QR-код.'],['dima','Подожди… Я недавно был на складе в школе. Там стояла такая же коробка — как на этом сайте.'],['derz','А зачем ты вообще ходил на склад?'],['dima','Ну… было дело. Неважно.'],['derz','Ладно. Идём проверим. Сейчас же.']];
 const BOXD=[['derz','Вот она… Тёмная коробка. А внутри — разноцветные таблетки.'],['polina','Это хранят прямо в школе?! Или тут их продают?'],['derz','Надо узнать, кто это сюда притащил.'],['dima','Подожди. Смотри — тут тёмно-зелёная краска. Свежая. Мы её трогали.'],['dima','Если снимут отпечатки — посадят нас, а не их.'],['derz','…Уходим. Быстро.'],['dima','Идём на концерт. Разберёмся потом.']];
-const MILHI=[['milkis','Всем привет!!! Спасибо, что пришли!'],['milkis','О, привет! Вы ко мне?'],['dima','Так, давай сразу к делу. Мы хотели купить билеты на твой концерт.'],['dima','Но вместо обычного сайта после QR-кода у нас открылся сайт с наркотиками.'],['milkis','Чего?! Не может этого быть! Может, вы не мой флаер отсканировали? У меня такого просто не может быть.'],['dima','А может, это кто-то из твоей команды делает?'],['milkis','Я не знаю… У нас в команде всего двое: я и Саламандра.'],['derz','А кто такая Саламандра?'],['milkis','Моя подруга. Помогает мне делать песни, монтировать видео, озвучку.'],['milkis','Она сейчас в студии. Идите налево, потом прямо, потом… ну, не знаю, направо.']];
+const MILHI=[['milkis','О, привет! Вы ко мне?'],['dima','Так, давай сразу к делу. Мы хотели купить билеты на твой концерт.'],['dima','Но вместо обычного сайта после QR-кода у нас открылся сайт с наркотиками.'],['milkis','Чего?! Не может этого быть! Может, вы не мой флаер отсканировали? У меня такого просто не может быть.'],['dima','А может, это кто-то из твоей команды делает?'],['milkis','Я не знаю… У нас в команде всего двое: я и Саламандра.'],['derz','А кто такая Саламандра?'],['milkis','Моя подруга. Помогает мне делать песни, монтировать видео, озвучку.'],['milkis','Она сейчас в студии. Идите налево, потом прямо, потом… ну, не знаю, направо.']];
 const SALD=[['salam','Ой… Вы кто такие? Я тут клип Милкис монтирую.'],['dima','Мы по поводу QR-кода на флаерах Милкис. Нам надо поговорить.'],['salam','…Закройте дверь.']];
 function buildStudio(){const m=[],rr=[];for(let y=0;y<H;y++){m.push(Array(W).fill(1));rr.push(Array(W).fill(-1))}
   const rooms=[{n:'Коридор',x:14,y:15,w:22,h:2,wc:'#1a2230',wb:'#40c0ff'},{n:'Коридор',x:14,y:4,w:2,h:11,wc:'#1a2230',wb:'#40c0ff'},{n:'Студия звукозаписи',x:17,y:2,w:20,h:10,wc:'#14202a',wb:'#2a8a9a'}];
@@ -1439,33 +1439,38 @@ function startQR(){mode='qr';QR={t:0};MIL={ph:'qr',t:0};updTask();snd(1400,.06,'
 function updQR(dt){QR.t+=dt;if(QR.t>4.5&&!QR.done){QR.done=1;talk(QRD,goVault)}}
 function goVault(){QR=null;fadeT=1.2;switchMap('vault');GYM=[];P.x=C(20);P.y=C(15)+4;P.dir='up';npcs=[{id:'derz',x:C(21),y:C(15)+4,say:'Где эта коробка?'},{id:'polina',x:C(19),y:C(15)+4,say:'Тут жутко…'}];milPlace();MIL.ph='vault';mode='play';note='Школьный склад. Ищи тёмную коробку.';noteT=3;updTask()}
 function buildClub(){const m=[],rr=[];for(let y=0;y<H;y++){m.push(Array(W).fill(1));rr.push(Array(W).fill(-1))}
-  const rooms=[{n:'Клуб «Милкис»',x:5,y:3,w:30,h:19,wc:'#12081e',wb:'#ff40c0',led:1}];
+  const rooms=[{n:'Клуб «Милкис»',x:5,y:3,w:30,h:13,wc:'#12081e',wb:'#ff40c0',led:1},{n:'Неоновый вход',x:19,y:16,w:3,h:8,wc:'#0c0618',wb:'#40c0ff'}];
   rooms.forEach((r,i)=>{for(let y=r.y;y<r.y+r.h;y++)for(let x=r.x;x<r.x+r.w;x++){m[y][x]=0;rr[y][x]=i}});
-  for(let x=13;x<=26;x++)for(let y=3;y<=6;y++)m[y][x]=43;m[22][20]=4;rr[22][20]=0;m[12][4]=4;rr[12][4]=0;
-  return{M:m,R:rr,ROOMS:rooms,FLOOR:[['#1c1230','#180f2a']]}}
+  for(let x=13;x<=26;x++)for(let y=3;y<=6;y++)m[y][x]=43;m[12][4]=4;rr[12][4]=0;
+  return{M:m,R:rr,ROOMS:rooms,FLOOR:[['#1c1230','#180f2a'],['#100820','#0e071c']]}}
 let CLUBMAP=null;
 function goClub(){fadeT=1.6;CLUBMAP=CLUBMAP||buildClub();curMap='club';
   {const s=CLUBMAP;for(let y=0;y<H;y++){M[y]=s.M[y].slice();R[y]=s.R[y].slice()}ROOMS.length=0;ROOMS.push(...s.ROOMS);FLOOR.length=0;FLOOR.push(...s.FLOOR);BGV++;const old=g;g=bg.getContext('2d');for(let y=0;y<H;y++)for(let x=0;x<W;x++)drawTile(x,y);g=old}
-  P.x=C(20);P.y=C(21)+4;P.dir='up';const ids=['fan1','fan2','fan3','fan4','fan5','fan6','fan7','fan8','fan9','fan10','fan11','fan12','fan3','fan8','fan5','fan11','fan9','fan2','fan10','fan7','fan4','fan12','fan6','fan1'];
+  P.x=C(20)+8;P.y=C(22)+4;P.dir='up';const ids=['fan1','fan2','fan3','fan4','fan5','fan6','fan7','fan8','fan9','fan10','fan11','fan12','fan3','fan8','fan5','fan11','fan9','fan2','fan10','fan7','fan4','fan12','fan6','fan1'];
   const says=['МИЛКИС!!!','Это лучший концерт!','Аааа, я её обожаю!','Где ты взял такие кроссы?','Громче!!!','Я тут с шести утра стою!'];
-  npcs=[{id:'milkis',x:C(20),y:C(6)+2,say:'Всем привет!!!',star:1},{id:'derz',x:C(21),y:C(20)+4,say:'Вот это толпа!'},{id:'polina',x:C(19),y:C(20)+4,say:'Пошли ближе к сцене!'}];
-  ids.forEach((id,i)=>{const row=Math.floor(i/6),col=i%6;let x=C(7+col*5+(row%2)*2)+Math.floor(Math.random()*6),y=C(8+row*3)+4;if(Math.abs(x-C(20))<12)x+=col<3?-14:14;npcs.push({id,x,y,say:says[i%says.length],dance:1,di:Math.random()*6,turn:i%4===1})});
-  MIL.clubN=npcs;milPlace();MIL.ph='club';MIL.t=0;mode='play';note='Клуб «Милкис». Неон, музыка, толпа!';noteT=3;updTask()}
-let MTR=[];function milPlace(){MTR=[];['derz','polina'].forEach((id,i)=>{const m=npcs.find(n=>n.id===id);if(m){m.x=P.x+(i?-10:10);m.y=P.y+6;m.mv=0}})}
+  npcs=[{id:'milkis',x:C(20),y:C(6)+2,say:'Всем привет!!!',star:1},{id:'derz',x:C(20)+8,y:C(23)+4,say:'Вот это толпа!'},{id:'polina',x:C(20)+8,y:C(23)+8,say:'Пошли ближе к сцене!'}];
+  ids.forEach((id,i)=>{const row=Math.floor(i/6),col=i%6;let x=C(7+col*5+(row%2)*2)+Math.floor(Math.random()*6),y=C(8+row*2)+4;if(Math.abs(x-C(20))<12)x+=col<3?-14:14;npcs.push({id,x,y,say:says[i%says.length],dance:1,di:Math.random()*6,turn:i%4===1})});
+  MIL.clubN=npcs;milPlace();MIL.ph='club';MIL.t=0;mode='play';note='Неоновый вход в клуб «Милкис»! Музыка уже играет.';noteT=3;updTask()}
+let MTR=[],MSRC=null,MGN=null,MEL=null;
+function milMusicStart(){if(MSRC||MEL)return;try{if(BUF.milsong&&actx){if(actx.state!=='running'&&actx.resume)actx.resume();MSRC=actx.createBufferSource();MSRC.buffer=BUF.milsong;MSRC.loop=true;MGN=actx.createGain();MGN.gain.value=.3;MSRC.connect(MGN);MGN.connect(actx.destination);MSRC.start(0);return}}catch(e){MSRC=null}
+  try{MEL=new Audio(AU.milsong);MEL.loop=true;MEL.volume=.3;MEL.play().catch(()=>{})}catch(e){}}
+function milMusicStop(){try{MSRC&&MSRC.stop()}catch(e){}MSRC=null;MGN=null;try{MEL&&MEL.pause()}catch(e){}MEL=null}
+function milVol(v){v=Math.max(0,Math.min(1,v));try{if(MGN)MGN.gain.setTargetAtTime(v,actx.currentTime,.15);if(MEL)MEL.volume=v}catch(e){}}function milPlace(){MTR=[];['derz','polina'].forEach((id,i)=>{const m=npcs.find(n=>n.id===id);if(m){m.x=P.x+(i?-10:10);m.y=P.y+6;m.mv=0}})}
 function milFollow(dt){const L0=MTR[MTR.length-1];if(!L0||Math.hypot(L0.x-P.x,L0.y-P.y)>2)MTR.push({x:P.x,y:P.y});if(MTR.length>80)MTR.splice(0,MTR.length-80);
   [['derz',9],['polina',18]].forEach(([id,lag])=>{const m=npcs.find(n=>n.id===id);if(!m)return;if(MIL.ph==='show'&&m.dance){m.mv=0;return}
     if(Math.hypot(m.x-P.x,m.y-P.y)>90){m.x=P.x;m.y=P.y+8}
     const k=MTR.length-lag;if(k<0){m.mv=0;return}const T=MTR[k],dx=T.x-m.x,dy=T.y-m.y,d=Math.hypot(dx,dy);
     if(d>1.5){const sp=Math.min(d/dt,110);m.x+=dx/d*sp*dt;m.y+=dy/d*sp*dt;m.mv=1;m.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');m.ft=(m.ft||0)+dt;if(m.ft>.15){m.ft=0;m.fr=1-(m.fr||0)}}else{m.mv=0;m.face=null}})}
-function updMil(dt){MIL.t+=dt;if(mode!=='play')return;if(MIL.ph!=='qr')milFollow(dt);
-  if(MIL.ph==='club'&&curMap==='club'&&P.y<C(11)){MIL.ph='show';MIL.st=0;flash=.3;casMusic(0);play('milsong');npcs.forEach(n=>{if(n.id!=='milkis'){n.dance=1;n.di=n.di||Math.random()*6}});note='Милкис выходит на сцену!';noteT=2.5;updTask()}
+function updMil(dt){MIL.t+=dt;if(curMap==='club'||curMap==='studio'){milMusicStart();const mk=npcs.find(n=>n.id==='milkis');const d=curMap==='club'&&mk?Math.hypot(P.x-mk.x,P.y-mk.y):999;milVol(curMap==='studio'?.05:Math.max(.07,Math.min(1,1.08-(d-30)/300)))}else milMusicStop();if(mode!=='play')return;if(MIL.ph!=='qr')milFollow(dt);
+  if(MIL.ph==='club'&&curMap==='club'&&P.y<C(9)+8&&Math.abs(P.x-C(20))<C(5)){MIL.ph='talk';const d=npcs.find(n=>n.id==='derz'),p=npcs.find(n=>n.id==='polina');if(d){d.x=P.x+14;d.y=P.y;d.mv=0}if(p){p.x=P.x-14;p.y=P.y;p.mv=0}talk(MILHI,()=>{MIL.ph='door';MIL.told=1;note='Студия: налево, потом прямо, потом направо.';noteT=4;updTask()})}
+  if(false){npcs.forEach(n=>{if(n.id!=='milkis'){n.dance=1;n.di=n.di||Math.random()*6}});note='Милкис выходит на сцену!';noteT=2.5;updTask()}
   if(MIL.ph==='show'){MIL.st+=dt;const m=npcs.find(n=>n.id==='milkis');if(m&&!BUB.some(b=>b.e===m)&&Math.random()<dt*.6)BUB.push({e:m,txt:rnd(['♪ ♫ ♪','Поднимите руки!!!','Громче!!!','Я вас не слышу!','♫ ♪ ♫ ♪']),t:2});
     const sg=AEL.milsong;if(MIL.st>3&&!MIL.end&&((sg&&sg.ended)||MIL.st>52)){MIL.end=1;npcs.forEach(n=>{if(n.id==='derz'||n.id==='polina')n.dance=0});const d=npcs.find(n=>n.id==='derz'),p=npcs.find(n=>n.id==='polina');if(d){d.x=P.x+14;d.y=P.y}if(p){p.x=P.x-14;p.y=P.y}
       talk(MILHI,()=>{MIL.ph='door';MIL.told=1;note='Студия: налево, потом прямо, потом направо.';noteT=4;updTask()})}}
   if(false){npcs.forEach((n,i)=>{if(n.fol2){const tx=P.x+(i?-12:12)*(P.dir==='left'||P.dir==='right'?0:1),ty=P.y+(P.dir==='down'?-14:14)*(P.dir==='left'||P.dir==='right'?0:1)+(P.dir==='left'?0:0);const bx=P.x+(P.dir==='left'?16:P.dir==='right'?-16:(i?-10:10)),by=P.y+(P.dir==='up'?14:P.dir==='down'?-14:(i?-8:8));const d=Math.hypot(bx-n.x,by-n.y);if(d>3){const sp=Math.min(d,75*dt);const nx=n.x+(bx-n.x)/d*sp,ny=n.y+(by-n.y)/d*sp;if(free(nx,n.y))n.x=nx;if(free(n.x,ny))n.y=ny;n.mv=1;n.dir=Math.abs(bx-n.x)>Math.abs(by-n.y)?(bx>n.x?'right':'left'):(by>n.y?'down':'up');n.ft=(n.ft||0)+dt;if(n.ft>.15){n.ft=0;n.fr^=1}}else n.mv=0}})}
   if((MIL.ph==='door'||MIL.ph==='club')&&curMap==='club'&&P.x<C(5)+2&&Math.abs(P.y-C(12)-4)<12)goStudio();
   if(MIL.ph==='studio'&&curMap==='studio'&&P.x>C(36)+4&&P.y>C(14))goClubBack();
-  if(MIL.ph==='studio'&&curMap==='studio'){const sa=npcs.find(n=>n.id==='salam');const dS=sa?Math.hypot(sa.x-P.x,sa.y-P.y):99;if(dS>44)MIL.sno=0;if(sa&&dS<30&&!MIL.end2){if(MIL.told){MIL.end2=1;talk(SALD,()=>{MIL=null;finale()})}else if(!MIL.sno){MIL.sno=1;talk([['salam','Ой! Сюда нельзя, тут студия. Концерт — в зале.'],['derz','Пошли обратно, Дим. Сначала к Милкис.']])}}}}
+  if(MIL.ph==='studio'&&curMap==='studio'){const sa=npcs.find(n=>n.id==='salam');const dS=sa?Math.hypot(sa.x-P.x,sa.y-P.y):99;if(dS>44)MIL.sno=0;if(sa&&dS<30&&!MIL.end2){if(MIL.told){MIL.end2=1;talk(SALD,()=>{MIL=null;milMusicStop();finale()})}else if(!MIL.sno){MIL.sno=1;talk([['salam','Ой! Сюда нельзя, тут студия. Концерт — в зале.'],['derz','Пошли обратно, Дим. Сначала к Милкис.']])}}}}
 function drawQR(){const t=QR.t;g.setTransform(1,0,0,1,0,0);g.fillStyle='rgba(0,0,0,.6)';g.fillRect(0,0,320,192);
   const X=110,Y=6,Wp=100,Hp=180;g.fillStyle='#111';g.fillRect(X-4,Y-2,Wp+8,Hp+4);g.fillStyle=t<1.6?'#000':'#0c0c10';g.fillRect(X,Y+6,Wp,Hp-12);
   g.font='5px "Press Start 2P",monospace';
@@ -1520,15 +1525,16 @@ function milWorld(ents){if(curMap==='vault'&&MIL.ph==='vault'||curMap==='vault'&
     g.fillStyle='#1a1424';g.fillRect(X+6,Y+20,10,22);g.fillRect(X+C(14)-16,Y+20,10,22);g.fillStyle='#333';g.fillRect(X+8,Y+24,6,6);g.fillRect(X+C(14)-14,Y+24,6,6);
     g.save();g.shadowColor='#ff40c0';g.shadowBlur=8;g.font='10px "Press Start 2P",monospace';g.fillStyle=Math.floor(t0*2)%5?'#ff7ad8':'#ffd0f0';g.fillText('МИЛКИС',C(20)-30,Y+14);
     g.shadowColor='#40e0ff';g.font='6px "Press Start 2P",monospace';g.fillStyle='#7af0ff';g.fillText('LIVE',C(6)+2,C(5));g.fillText('★ NEON ★',C(30)+4,C(5));g.shadowColor='#b040ff';g.fillStyle='#d090ff';g.fillText('MILKIS TOUR',C(6),C(14));g.fillText('SOLD OUT',C(30),C(14));
-    const ax=C(20)+8,ay=C(22)+6;g.strokeStyle=Math.floor(t0*3)%2?'#ff40c0':'#ff7ad8';g.lineWidth=2;g.shadowColor='#ff40c0';g.beginPath();g.arc(ax,ay,30,Math.PI,0);g.stroke();g.strokeStyle='#40c0ff';g.lineWidth=1;g.beginPath();g.arc(ax,ay,34,Math.PI,0);g.stroke();
-    g.font='5px "Press Start 2P",monospace';g.fillStyle='#ffd0f0';g.fillText('ВХОД',ax-10,ay-36);g.restore()}});
+    const tx=C(20)+8;for(let i=0;i<9;i++){const y=C(16)+4+i*14,ph=(t0*2.2-i*.35)%1,on=ph<.5;g.lineWidth=2;g.shadowColor=i%2?'#40c0ff':'#ff40c0';g.shadowBlur=on?12:6;g.strokeStyle=i%2?(on?'#9af0ff':'#40a8e0'):(on?'#ff9ae8':'#d040b0');g.beginPath();g.ellipse(tx,y,25,6,0,0,7);g.stroke()}
+    g.shadowColor='#ff40c0';g.shadowBlur=16;g.lineWidth=3;g.strokeStyle=Math.floor(t0*3)%2?'#ff7ad8':'#ffd0f0';g.beginPath();g.ellipse(tx,C(16),34,12,0,0,7);g.stroke();g.lineWidth=1;g.strokeStyle='#40e0ff';g.beginPath();g.ellipse(tx,C(16),38,14,0,0,7);g.stroke();
+    g.font='5px "Press Start 2P",monospace';g.fillStyle='#ffd0f0';g.fillText('MILKIS',tx-15,C(23)+12);g.restore()}});
   const m=npcs.find(n=>n.id==='milkis');if(m)ents.push({y:m.y+1,d:()=>{const X=Math.round(m.x-8),Y=Math.round(m.y-24);g.fillStyle='#222';g.fillRect(X+11,Y+10,2,6);g.fillStyle='#888';g.fillRect(X+10,Y+8,3,3);
     if(MIL.ph==='show'){g.fillStyle=['#ff7ad8','#7af0ff','#ffd84d'][Math.floor(t0*2)%3];g.font='6px "Press Start 2P",monospace';g.fillText('♪',X+16+Math.sin(t0*3)*3,Y-4-(t0*10)%10);g.fillText('♫',X-8,Y-2-((t0*10+5)%10))}}});
   ents.push({y:99990,d:()=>{g.save();g.globalCompositeOperation='lighter';const on=MIL.ph==='show'?1:.5;
     for(let i=0;i<3;i++){const a=Math.sin(t0*(.8+i*.3)+i*2)*.7,cx=C(16)+i*C(4),cy=C(6),L2=C(16),col=['255,64,192','64,192,255','176,64,255'][i];const ex=cx+Math.sin(a)*L2,ey=cy+Math.cos(a)*L2;
       g.fillStyle=`rgba(${col},${.10*on})`;g.beginPath();g.moveTo(cx,cy);g.lineTo(ex-22,ey);g.lineTo(ex+22,ey);g.closePath();g.fill();
       const gr=g.createRadialGradient(ex,ey,0,ex,ey,30);gr.addColorStop(0,`rgba(${col},${.25*on})`);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(ex-30,ey-30,60,60)}
-    g.restore();g.fillStyle='rgba(70,20,130,.13)';g.fillRect(C(5),C(3),C(30),C(19));
+    g.restore();g.fillStyle='rgba(70,20,130,.13)';g.fillRect(C(5),C(3),C(30),C(13));
     for(let i=0;i<8;i++){const hx=C(5)+((i*97+t0*8)%C(30)),hy=C(8)+((i*53)%C(12));g.fillStyle='rgba(200,170,255,.05)';g.beginPath();g.ellipse(hx,hy,40,14,0,0,7);g.fill()}}});
 }
 function render(){
@@ -2219,7 +2225,7 @@ function unlockAudio(){try{if(navigator.audioSession)navigator.audioSession.type
   musW=''}
 ['pointerdown','touchend','keydown','click'].forEach(ev=>addEventListener(ev,unlockAudio,{capture:true}));setTimeout(preDecode,300);setTimeout(()=>{const b=$('viewb');if(b){b.textContent=PVIEW==='fp'?'Вид: от первого лица':'Вид: сверху';b.onclick=e=>{setView(PVIEW==='fp'?'top':'fp');b.blur()}}const t=$('tview');if(t)t.onclick=()=>setView(PVIEW==='fp'?'top':'fp')},0);
 function musTick0(){}
-function musTick(){if(BZ){if(CMU){casMusic(0)}musW='';return}if(SP&&SP.ph==='rec'){if(CMU)casMusic(0);musW='';return}if(actx&&actx.state==='suspended'&&CMU){/* ждём жеста */}casRec(MUS&&!!CS);if(CS){if(CMU){casMusic(0);musW=''}return}const want=MUS&&mode!=='title'&&mode!=='rhythm'&&mode!=='act'&&mode!=='kiss'&&!(S[lvl]&&S[lvl].rhythm&&mode!=='end');const v=CS?.55:.17,k=want?'on'+v:'off';if(k===musW&&(!want||CMU))return;musW=k;if(want)casMusic(1,v);else casMusic(0)}
+function musTick(){if(BZ){if(CMU){casMusic(0)}musW='';return}if(SP&&SP.ph==='rec'){if(CMU)casMusic(0);musW='';return}if(actx&&actx.state==='suspended'&&CMU){/* ждём жеста */}casRec(MUS&&!!CS);if(CS){if(CMU){casMusic(0);musW=''}return}const want=MUS&&!(MIL&&(curMap==='club'||curMap==='studio'))&&mode!=='title'&&mode!=='rhythm'&&mode!=='act'&&mode!=='kiss'&&!(S[lvl]&&S[lvl].rhythm&&mode!=='end');const v=CS?.55:.17,k=want?'on'+v:'off';if(k===musW&&(!want||CMU))return;musW=k;if(want)casMusic(1,v);else casMusic(0)}
 $('mus').onclick=()=>{MUS=!MUS;try{localStorage.setItem('shgshMus',MUS?'1':'0')}catch(e){}$('mus').textContent=MUS?'Музыка: вкл':'Музыка: выкл';musW='';if(!MUS)casMusic(0)};$('mus').textContent=MUS?'Музыка: вкл':'Музыка: выкл';
 const JOY={on:0,x:0,y:0,id:null,bx:0,by:0},LOOK={on:0,id:null,dir:null,sx:0,sy:0};
 function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return[(keys.right?1:0)-(keys.left?1:0),(keys.down?1:0)-(keys.up?1:0)]}
