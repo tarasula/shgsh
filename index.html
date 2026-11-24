@@ -168,7 +168,7 @@ const L={
  opp4:{hair:'#2a1a10',style:'short',top:'tee',pants:'#151515'},
  opp5:{hair:'#8a5a34',style:'short',top:'tee',pants:'#151515'}
 };
-Object.assign(L,{fan1:{hair:'#ff5aa8',style:'long',top:'dress',skirt:1},fan2:{hair:'#1a1a1a',style:'short',top:'hoodieb',pants:'#1a1a22',hat:'cap'},fan3:{hair:'#f2e6a0',style:'long',top:'shirtb',skirt:1},fan4:{hair:'#6a3a22',style:'bangs',top:'floral',pants:'#2a2a33'},fan5:{hair:'#8a5aff',style:'long',top:'shirtw',skirt:1},fan6:{hair:'#2a2a2a',style:'longcurly',top:'trackb',pants:'#141418'},fan7:{hair:'#e6cf9a',style:'long',top:'hoodieb',pants:'#1a1a22'},fan8:{hair:'#3a2418',style:'short',top:'shirtw',pants:'#2a3a5a'},fan9:{hair:'#c03a3a',style:'bangs',top:'shirtb',skirt:1},fan10:{hair:'#1a1a1a',style:'updo',top:'dress',skirt:1},fan11:{hair:'#7a5a3a',style:'short',top:'hoodie',pants:'#22222a',hat:'cap'},fan12:{hair:'#f4f0e8',style:'long',top:'trackb',pants:'#141418'},salam:{hair:'#2a1810',style:'longcurly',top:'shirtb',skirt:0,pants:'#141418',skin:'#f2d2c0'}});
+Object.assign(L,{fan1:{hair:'#ff5aa8',style:'long',top:'dress',skirt:1},fan2:{hair:'#1a1a1a',style:'short',top:'hoodieb',pants:'#1a1a22',hat:'cap'},fan3:{hair:'#f2e6a0',style:'long',top:'shirtb',skirt:1},fan4:{hair:'#6a3a22',style:'bangs',top:'floral',pants:'#2a2a33'},fan5:{hair:'#8a5aff',style:'long',top:'shirtw',skirt:1},fan6:{hair:'#2a2a2a',style:'longcurly',top:'trackb',pants:'#141418'},fan7:{hair:'#e6cf9a',style:'long',top:'hoodieb',pants:'#1a1a22'},fan8:{hair:'#3a2418',style:'short',top:'shirtw',pants:'#2a3a5a'},fan9:{hair:'#c03a3a',style:'bangs',top:'shirtb',skirt:1},fan10:{hair:'#1a1a1a',style:'updo',top:'dress',skirt:1},fan11:{hair:'#7a5a3a',style:'short',top:'hoodie',pants:'#22222a',hat:'cap'},fan12:{hair:'#f4f0e8',style:'long',top:'trackb',pants:'#141418'},salam:{hair:'#3a2216',style:'longcurly',top:'shirtb',skirt:0,pants:'#141418',skin:'#f2d2c0'}});
 const N={dima:'Дима',polina:'Полина',sasha:'Саша',oreh:'Орех',derz:'Дерзкий',german:'Герман',kamran:'Камран',math:'Математичка',milkis:'Милкис',natasha:'Наташа',mom:'Мама',otchim:'Отчим',rashida:'Рашида Жавдатовна',thug:'Громила',bufet:'Буфетчица',dimaT:'Дима (думает)',cop:'Николай Андреевич',brat2:'Брат',op:'Оператор 911',brat:'Главарь',band1:'Бандит',band2:'Бандит',band3:'Бандит',geo:'Географ',malya:'Маля',gamb:'Игрок',roma:'Рома',romaG:'Рома',orlan:'Орлан',kuv:'Анатолий Кувалдович',oper:'Оператор',cheer1:'Болельщица',cheer2:'Болельщица',rott:'Ротвейлер',orehW:'Орех',opp1:'Соперник',opp2:'Соперник',opp3:'Соперник',opp4:'Соперник',opp5:'Соперник',zav:'Завуч',dir:'Директор',guard:'Охранник'};
 L.dimaT=L.dima;
 const look=id=>L[id]||L.dima;
@@ -319,7 +319,11 @@ g=bg.getContext('2d');for(let y=0;y<H;y++)for(let x=0;x<W;x++)drawTile(x,y);g=ma
 
 /* ===== СПРАЙТЫ 16×24 ===== */
 function flowerHint(){if(mode!=='play'||P.flower||!inDirOffice())return;const q=nearTile([10]);if(!q)return;tag(C(q[0])+8,C(q[1])-2,'E — сорвать цветок')}
-function drawExtras(c,x,y,id,dir,sit){const k=look(id);if(id==='dima'&&P.flower&&!sit&&mode!=='title'&&dir!=='up'){const hx=x+(dir==='left'?1:12),hy=y+12;c.fillStyle='#2e8b3a';c.fillRect(hx+1,hy-4,1,6);c.fillStyle='#ff5a8a';c.fillRect(hx,hy-7,3,3);c.fillStyle='#ffd84d';c.fillRect(hx+1,hy-6,1,1)}if(dir==='up')return;const T=k.tall?3:0;
+function drawExtras(c,x,y,id,dir,sit){const k=look(id);if(id==='salam'){const T=k.tall?3:0,H2='#3a2216',HL='#5a3826',f=(a,b,w,h,col)=>{c.fillStyle=col;c.fillRect(x+a,y+b-T,w,h)};
+    f(0,1,2,11,H2);f(14,1,2,11,H2);f(1,-2,14,3,H2);[[0,3],[1,7],[14,4],[15,8],[3,-2],[8,-2],[12,-1],[1,11],[14,11]].forEach(([a,b])=>f(a,b,1,1,HL));
+    if(dir==='up'){f(1,1,14,13,H2);[[3,4],[7,6],[11,3],[5,10],[10,9],[12,12]].forEach(([a,b])=>f(a,b,1,1,HL))}
+    else if(dir==='down'&&!sit){f(3,2,10,2,H2);f(4,4,2,1,H2);f(10,4,2,1,H2);f(8,8,1,1,'#d8dce0');f(6,12,1,1,'#c8ccd0');f(9,12,1,1,'#c8ccd0');f(7,13,2,1,'#c8ccd0');f(7,14,2,2,'#9aa0a4')}}
+  if(id==='dima'&&P.flower&&!sit&&mode!=='title'&&dir!=='up'){const hx=x+(dir==='left'?1:12),hy=y+12;c.fillStyle='#2e8b3a';c.fillRect(hx+1,hy-4,1,6);c.fillStyle='#ff5a8a';c.fillRect(hx,hy-7,3,3);c.fillStyle='#ffd84d';c.fillRect(hx+1,hy-6,1,1)}if(dir==='up')return;const T=k.tall?3:0;
   if(k.cam){c.fillStyle='#1a1a1e';c.fillRect(x+10,y+11-T,5,4);c.fillStyle='#3a3a44';c.fillRect(x+14,y+12-T,2,2);c.fillStyle='#8ab0ff';c.fillRect(x+15,y+12-T,1,1)}
   if(k.mega){c.fillStyle='#d8283b';c.fillRect(x+11,y+12-T,3,3);c.fillStyle='#f2f2f2';c.fillRect(x+14,y+11-T,2,5)}}
 function blinkOn(id){let h=0;for(let i=0;i<id.length;i++)h=h*31+id.charCodeAt(i)&65535;const p=2600+h%1900;return ((t0*1000+h*7)%p)<130}
@@ -1417,26 +1421,27 @@ function drawRay(){g.setTransform(1,0,0,1,0,0);g.imageSmoothingEnabled=false;con
 let MIL=null,QR=null;function dirTo2(x,y){const dx=P.x-x,dy=P.y-y;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}Object.assign(N,{salam:'Саламандра',fan1:'Фанатка',fan2:'Фанат',fan3:'Фанатка',fan4:'Фанат',fan5:'Фанатка',fan6:'Фанат',fan7:'Фанатка',fan8:'Фанат',fan9:'Фанатка',fan10:'Фанатка',fan11:'Фанат',fan12:'Фанатка'});
 const QRD=[['dima','Э-э… Дерзкий. Посмотри на это.'],['derz','Стоп. Это что… наркотики?!'],['polina','Это не билеты! Кто-то подменил QR-код.'],['dima','Подожди… Я недавно был на складе в школе. Там стояла такая же коробка — как на этом сайте.'],['derz','А зачем ты вообще ходил на склад?'],['dima','Ну… было дело. Неважно.'],['derz','Ладно. Идём проверим. Сейчас же.']];
 const BOXD=[['derz','Вот она… Тёмная коробка. А внутри — разноцветные таблетки.'],['polina','Это хранят прямо в школе?! Или тут их продают?'],['derz','Надо узнать, кто это сюда притащил.'],['dima','Подожди. Смотри — тут тёмно-зелёная краска. Свежая. Мы её трогали.'],['dima','Если снимут отпечатки — посадят нас, а не их.'],['derz','…Уходим. Быстро.'],['dima','Идём на концерт. Разберёмся потом.']];
-const MILHI=[['milkis','О, привет!'],['dima','Так, давай сразу к делу. Мы хотели купить билеты на твой концерт.'],['dima','Но вместо обычного сайта после QR-кода у нас открылся сайт с наркотиками.'],['milkis','Чего?! Не может этого быть! Может, вы не мой флаер отсканировали? У меня такого просто не может быть.'],['dima','А может, это кто-то из твоей команды делает?'],['milkis','Я не знаю… У нас в команде всего двое: я и Саламандра.'],['derz','А кто такая Саламандра?'],['milkis','Моя подруга. Помогает мне делать песни, монтировать видео, озвучку.'],['milkis','Она сейчас в студии. Идите налево, потом прямо, потом… ну, не знаю, направо.']];
+const MILHI=[['milkis','Всем привет!!! Спасибо, что пришли!'],['milkis','О, привет! Вы ко мне?'],['dima','Так, давай сразу к делу. Мы хотели купить билеты на твой концерт.'],['dima','Но вместо обычного сайта после QR-кода у нас открылся сайт с наркотиками.'],['milkis','Чего?! Не может этого быть! Может, вы не мой флаер отсканировали? У меня такого просто не может быть.'],['dima','А может, это кто-то из твоей команды делает?'],['milkis','Я не знаю… У нас в команде всего двое: я и Саламандра.'],['derz','А кто такая Саламандра?'],['milkis','Моя подруга. Помогает мне делать песни, монтировать видео, озвучку.'],['milkis','Она сейчас в студии. Идите налево, потом прямо, потом… ну, не знаю, направо.']];
 const SALD=[['salam','Ой… Вы кто такие? Я тут клип Милкис монтирую.'],['dima','Мы по поводу QR-кода на флаерах Милкис. Нам надо поговорить.'],['salam','…Закройте дверь.']];
 function buildStudio(){const m=[],rr=[];for(let y=0;y<H;y++){m.push(Array(W).fill(1));rr.push(Array(W).fill(-1))}
   const rooms=[{n:'Коридор',x:14,y:15,w:22,h:2,wc:'#1a2230',wb:'#40c0ff'},{n:'Коридор',x:14,y:4,w:2,h:11,wc:'#1a2230',wb:'#40c0ff'},{n:'Студия звукозаписи',x:17,y:2,w:20,h:10,wc:'#14202a',wb:'#2a8a9a'}];
   rooms.forEach((r,i)=>{for(let y=r.y;y<r.y+r.h;y++)for(let x=r.x;x<r.x+r.w;x++){m[y][x]=0;rr[y][x]=i}});
-  m[6][16]=4;rr[6][16]=2;for(let x=18;x<=35;x++)m[2][x]=43;for(let x=26;x<=29;x++)m[8][x]=43;
+  m[6][16]=4;rr[6][16]=2;m[15][36]=0;m[16][36]=0;rr[15][36]=0;rr[16][36]=0;for(let x=17;x<=36;x++)for(let y=2;y<=5;y++)m[y][x]=43;for(let x=25;x<=30;x++)m[8][x]=43;
   return{M:m,R:rr,ROOMS:rooms,FLOOR:[['#1c2228','#192026'],['#1c2228','#192026'],['#1e2a30','#1a262c']]}}
 let STUDIOMAP=null;
 function loadMap(name,s){curMap=name;for(let y=0;y<H;y++){M[y]=s.M[y].slice();R[y]=s.R[y].slice()}ROOMS.length=0;ROOMS.push(...s.ROOMS);FLOOR.length=0;FLOOR.push(...s.FLOOR);BGV++;const old=g;g=bg.getContext('2d');for(let y=0;y<H;y++)for(let x=0;x<W;x++)drawTile(x,y);g=old}
-function goStudio(){fadeT=1.4;STUDIOMAP=STUDIOMAP||buildStudio();loadMap('studio',STUDIOMAP);P.x=C(35);P.y=C(15)+4;P.dir='left';
-  npcs=[{id:'derz',x:C(36),y:C(16)+4,say:'Налево, прямо, направо… Запутаешься тут.',fol2:1},{id:'polina',x:C(36),y:C(15)+4,say:'Тут так тихо после концерта…',fol2:1},{id:'salam',x:C(27)+8,y:C(9)+10,tx:27,ty:9,sit:1,say:'Я монтирую, не мешайте.'}];
+function goClubBack(){fadeT=1.2;CLUBMAP=CLUBMAP||buildClub();loadMap('club',CLUBMAP);if(MIL.clubN){const keep=npcs.filter(n=>n.id==='derz'||n.id==='polina');npcs=MIL.clubN.filter(n=>n.id!=='derz'&&n.id!=='polina').concat(keep)}P.x=C(5)+8;P.y=C(12)+4;P.dir='right';milPlace();MIL.ph=MIL.told?'door':'club';mode='play';updTask()}
+function goStudio(){fadeT=1.4;STUDIOMAP=STUDIOMAP||buildStudio();loadMap('studio',STUDIOMAP);P.x=C(35);P.y=C(15)+12;P.dir='left';
+  MIL.clubN=MIL.clubN||null;npcs=[{id:'derz',x:C(36),y:C(16)+4,say:'Налево, прямо, направо… Запутаешься тут.'},{id:'polina',x:C(36),y:C(15)+4,say:'Тут так тихо после концерта…'},{id:'salam',x:C(28),y:C(9)+10,hid:1,say:'Я монтирую, не мешайте.'}];milPlace();
   MIL.ph='studio';mode='play';note='Налево по коридору, потом прямо, потом направо — в студию.';noteT=4;updTask()}
 const MILEND=[['milkis','Спасибо, что пришли! Вы — лучшие!'],['derz','Вот это вечер… Дим, ты как?'],['dimaT','Классно. Но тёмная коробка на складе не выходит у меня из головы…'],['polina','Разберёмся. Вместе.']];
 function startQR(){mode='qr';QR={t:0};MIL={ph:'qr',t:0};updTask();snd(1400,.06,'square',.04)}
 function updQR(dt){QR.t+=dt;if(QR.t>4.5&&!QR.done){QR.done=1;talk(QRD,goVault)}}
-function goVault(){QR=null;fadeT=1.2;switchMap('vault');GYM=[];P.x=C(20);P.y=C(15)+4;P.dir='up';npcs=[{id:'derz',x:C(21),y:C(15)+4,say:'Где эта коробка?'},{id:'polina',x:C(19),y:C(15)+4,say:'Тут жутко…'}];MIL.ph='vault';mode='play';note='Школьный склад. Ищи тёмную коробку.';noteT=3;updTask()}
+function goVault(){QR=null;fadeT=1.2;switchMap('vault');GYM=[];P.x=C(20);P.y=C(15)+4;P.dir='up';npcs=[{id:'derz',x:C(21),y:C(15)+4,say:'Где эта коробка?'},{id:'polina',x:C(19),y:C(15)+4,say:'Тут жутко…'}];milPlace();MIL.ph='vault';mode='play';note='Школьный склад. Ищи тёмную коробку.';noteT=3;updTask()}
 function buildClub(){const m=[],rr=[];for(let y=0;y<H;y++){m.push(Array(W).fill(1));rr.push(Array(W).fill(-1))}
   const rooms=[{n:'Клуб «Милкис»',x:5,y:3,w:30,h:19,wc:'#12081e',wb:'#ff40c0',led:1}];
   rooms.forEach((r,i)=>{for(let y=r.y;y<r.y+r.h;y++)for(let x=r.x;x<r.x+r.w;x++){m[y][x]=0;rr[y][x]=i}});
-  for(let x=13;x<=26;x++)for(let y=3;y<=6;y++)m[y][x]=43;m[22][20]=4;rr[22][20]=0;
+  for(let x=13;x<=26;x++)for(let y=3;y<=6;y++)m[y][x]=43;m[22][20]=4;rr[22][20]=0;m[12][4]=4;rr[12][4]=0;
   return{M:m,R:rr,ROOMS:rooms,FLOOR:[['#1c1230','#180f2a']]}}
 let CLUBMAP=null;
 function goClub(){fadeT=1.6;CLUBMAP=CLUBMAP||buildClub();curMap='club';
@@ -1445,15 +1450,22 @@ function goClub(){fadeT=1.6;CLUBMAP=CLUBMAP||buildClub();curMap='club';
   const says=['МИЛКИС!!!','Это лучший концерт!','Аааа, я её обожаю!','Где ты взял такие кроссы?','Громче!!!','Я тут с шести утра стою!'];
   npcs=[{id:'milkis',x:C(20),y:C(6)+2,say:'Всем привет!!!',star:1},{id:'derz',x:C(21),y:C(20)+4,say:'Вот это толпа!'},{id:'polina',x:C(19),y:C(20)+4,say:'Пошли ближе к сцене!'}];
   ids.forEach((id,i)=>{const row=Math.floor(i/6),col=i%6;let x=C(7+col*5+(row%2)*2)+Math.floor(Math.random()*6),y=C(8+row*3)+4;if(Math.abs(x-C(20))<12)x+=col<3?-14:14;npcs.push({id,x,y,say:says[i%says.length],dance:1,di:Math.random()*6,turn:i%4===1})});
-  MIL.ph='club';MIL.t=0;mode='play';note='Клуб «Милкис». Неон, музыка, толпа!';noteT=3;updTask()}
-function updMil(dt){MIL.t+=dt;if(mode!=='play')return;
+  MIL.clubN=npcs;milPlace();MIL.ph='club';MIL.t=0;mode='play';note='Клуб «Милкис». Неон, музыка, толпа!';noteT=3;updTask()}
+let MTR=[];function milPlace(){MTR=[];['derz','polina'].forEach((id,i)=>{const m=npcs.find(n=>n.id===id);if(m){m.x=P.x+(i?-10:10);m.y=P.y+6;m.mv=0}})}
+function milFollow(dt){const L0=MTR[MTR.length-1];if(!L0||Math.hypot(L0.x-P.x,L0.y-P.y)>2)MTR.push({x:P.x,y:P.y});if(MTR.length>80)MTR.splice(0,MTR.length-80);
+  [['derz',9],['polina',18]].forEach(([id,lag])=>{const m=npcs.find(n=>n.id===id);if(!m)return;if(MIL.ph==='show'&&m.dance){m.mv=0;return}
+    if(Math.hypot(m.x-P.x,m.y-P.y)>90){m.x=P.x;m.y=P.y+8}
+    const k=MTR.length-lag;if(k<0){m.mv=0;return}const T=MTR[k],dx=T.x-m.x,dy=T.y-m.y,d=Math.hypot(dx,dy);
+    if(d>1.5){const sp=Math.min(d/dt,110);m.x+=dx/d*sp*dt;m.y+=dy/d*sp*dt;m.mv=1;m.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up');m.ft=(m.ft||0)+dt;if(m.ft>.15){m.ft=0;m.fr=1-(m.fr||0)}}else{m.mv=0;m.face=null}})}
+function updMil(dt){MIL.t+=dt;if(mode!=='play')return;if(MIL.ph!=='qr')milFollow(dt);
   if(MIL.ph==='club'&&curMap==='club'&&P.y<C(11)){MIL.ph='show';MIL.st=0;flash=.3;casMusic(0);play('milsong');npcs.forEach(n=>{if(n.id!=='milkis'){n.dance=1;n.di=n.di||Math.random()*6}});note='Милкис выходит на сцену!';noteT=2.5;updTask()}
   if(MIL.ph==='show'){MIL.st+=dt;const m=npcs.find(n=>n.id==='milkis');if(m&&!BUB.some(b=>b.e===m)&&Math.random()<dt*.6)BUB.push({e:m,txt:rnd(['♪ ♫ ♪','Поднимите руки!!!','Громче!!!','Я вас не слышу!','♫ ♪ ♫ ♪']),t:2});
     const sg=AEL.milsong;if(MIL.st>3&&!MIL.end&&((sg&&sg.ended)||MIL.st>52)){MIL.end=1;npcs.forEach(n=>{if(n.id==='derz'||n.id==='polina')n.dance=0});const d=npcs.find(n=>n.id==='derz'),p=npcs.find(n=>n.id==='polina');if(d){d.x=P.x+14;d.y=P.y}if(p){p.x=P.x-14;p.y=P.y}
-      talk(MILHI,()=>{MIL.ph='door';setTile(4,12,4);R[12][4]=0;note='Студия: налево, потом прямо, потом направо.';noteT=4;updTask()})}}
-  if(MIL.ph==='studio'){npcs.forEach((n,i)=>{if(n.fol2){const tx=P.x+(i?-12:12)*(P.dir==='left'||P.dir==='right'?0:1),ty=P.y+(P.dir==='down'?-14:14)*(P.dir==='left'||P.dir==='right'?0:1)+(P.dir==='left'?0:0);const bx=P.x+(P.dir==='left'?16:P.dir==='right'?-16:(i?-10:10)),by=P.y+(P.dir==='up'?14:P.dir==='down'?-14:(i?-8:8));const d=Math.hypot(bx-n.x,by-n.y);if(d>3){const sp=Math.min(d,75*dt);const nx=n.x+(bx-n.x)/d*sp,ny=n.y+(by-n.y)/d*sp;if(free(nx,n.y))n.x=nx;if(free(n.x,ny))n.y=ny;n.mv=1;n.dir=Math.abs(bx-n.x)>Math.abs(by-n.y)?(bx>n.x?'right':'left'):(by>n.y?'down':'up');n.ft=(n.ft||0)+dt;if(n.ft>.15){n.ft=0;n.fr^=1}}else n.mv=0}})}
-  if(MIL.ph==='door'&&curMap==='club'&&P.x<C(5)+4&&Math.abs(P.y-C(12)-4)<12)goStudio();
-  if(MIL.ph==='studio'&&curMap==='studio'){const sa=npcs.find(n=>n.id==='salam');if(sa&&Math.hypot(sa.x-P.x,sa.y-P.y)<30&&!MIL.end2){MIL.end2=1;talk(SALD,()=>{MIL=null;finale()})}}}
+      talk(MILHI,()=>{MIL.ph='door';MIL.told=1;note='Студия: налево, потом прямо, потом направо.';noteT=4;updTask()})}}
+  if(false){npcs.forEach((n,i)=>{if(n.fol2){const tx=P.x+(i?-12:12)*(P.dir==='left'||P.dir==='right'?0:1),ty=P.y+(P.dir==='down'?-14:14)*(P.dir==='left'||P.dir==='right'?0:1)+(P.dir==='left'?0:0);const bx=P.x+(P.dir==='left'?16:P.dir==='right'?-16:(i?-10:10)),by=P.y+(P.dir==='up'?14:P.dir==='down'?-14:(i?-8:8));const d=Math.hypot(bx-n.x,by-n.y);if(d>3){const sp=Math.min(d,75*dt);const nx=n.x+(bx-n.x)/d*sp,ny=n.y+(by-n.y)/d*sp;if(free(nx,n.y))n.x=nx;if(free(n.x,ny))n.y=ny;n.mv=1;n.dir=Math.abs(bx-n.x)>Math.abs(by-n.y)?(bx>n.x?'right':'left'):(by>n.y?'down':'up');n.ft=(n.ft||0)+dt;if(n.ft>.15){n.ft=0;n.fr^=1}}else n.mv=0}})}
+  if((MIL.ph==='door'||MIL.ph==='club')&&curMap==='club'&&P.x<C(5)+2&&Math.abs(P.y-C(12)-4)<12)goStudio();
+  if(MIL.ph==='studio'&&curMap==='studio'&&P.x>C(36)+4&&P.y>C(14))goClubBack();
+  if(MIL.ph==='studio'&&curMap==='studio'){const sa=npcs.find(n=>n.id==='salam');const dS=sa?Math.hypot(sa.x-P.x,sa.y-P.y):99;if(dS>44)MIL.sno=0;if(sa&&dS<30&&!MIL.end2){if(MIL.told){MIL.end2=1;talk(SALD,()=>{MIL=null;finale()})}else if(!MIL.sno){MIL.sno=1;talk([['salam','Ой! Сюда нельзя, тут студия. Концерт — в зале.'],['derz','Пошли обратно, Дим. Сначала к Милкис.']])}}}}
 function drawQR(){const t=QR.t;g.setTransform(1,0,0,1,0,0);g.fillStyle='rgba(0,0,0,.6)';g.fillRect(0,0,320,192);
   const X=110,Y=6,Wp=100,Hp=180;g.fillStyle='#111';g.fillRect(X-4,Y-2,Wp+8,Hp+4);g.fillStyle=t<1.6?'#000':'#0c0c10';g.fillRect(X,Y+6,Wp,Hp-12);
   g.font='5px "Press Start 2P",monospace';
@@ -1466,27 +1478,38 @@ function drawQR(){const t=QR.t;g.setTransform(1,0,0,1,0,0);g.fillStyle='rgba(0,0
   g.fillStyle='#ddd';['«Товар» в наличии','Точки продаж: ████','████ — школа №██','Связь: █████'].forEach((l,i)=>g.fillText(l,X+6,Y+92+i*12));
   g.fillStyle='#ff3a4a';g.fillText('Это не билеты…',X+6,Y+148);if(t>3&&Math.floor(t*3)%2){g.fillStyle='#ffd84d';g.fillText('?!',X+84,Y+148)}}
 function studioWorld(ents){ents.push({y:-999,d:()=>{
-  const X=C(18),Y=C(2);g.fillStyle='#0e161c';g.fillRect(X,Y,C(18),C(1));
-  /* стекло в комнату записи */
-  g.fillStyle='#16202a';g.fillRect(C(19),C(2)+1,C(14),14);g.fillStyle='#22324a';g.fillRect(C(19)+2,C(2)+2,C(14)-4,11);
-  g.fillStyle='rgba(120,200,255,.18)';g.fillRect(C(19)+2,C(2)+2,C(14)-4,11);
-  for(let i=0;i<4;i++){g.fillStyle=i%2?'#60e0ff':'#e0f4ff';g.fillRect(C(21)+i*C(3),C(2)+2,1,10)}
-  g.fillStyle='#222';g.fillRect(C(22),C(2)+7,8,6);g.fillStyle='#c8a060';g.fillRect(C(22)+1,C(2)+8,6,1);g.fillStyle='#ddd';g.fillRect(C(22)+2,C(2)+5,4,2);
-  g.fillStyle='#1a1a1a';g.fillRect(C(28),C(2)+5,8,8);g.fillStyle='#d8c48a';g.fillRect(C(28)+1,C(2)+6,6,1);
-  g.fillStyle='#555';g.fillRect(C(25)+4,C(2)+4,1,9);g.fillStyle='#888';g.fillRect(C(25)+3,C(2)+3,3,2);
-  /* акустический поролон */
-  for(let i=0;i<6;i++){g.fillStyle='#10181e';g.fillRect(C(18)+2,C(3)+i*4,4,2);g.fillRect(C(35)+10,C(3)+i*4,4,2)}
-  /* неоновые лампы */
-  [[C(18)+2,C(5)],[C(35)+12,C(5)],[C(35)+12,C(8)]].forEach(([x,y],i)=>{g.save();g.shadowColor='#60e0ff';g.shadowBlur=6;g.fillStyle=i%2?'#9af0ff':'#e0f8ff';g.fillRect(x,y,2,18);g.restore()});
-  /* стол Саламандры */
-  const DX=C(26),DY=C(8);g.fillStyle='#14181c';g.fillRect(DX-2,DY+2,C(4)+4,12);g.fillStyle='#2a2e34';g.fillRect(DX-2,DY+2,C(4)+4,2);
-  g.fillStyle='#0a0a0c';g.fillRect(DX+14,DY-12,36,16);g.fillStyle='#c8d4dc';g.fillRect(DX+15,DY-11,34,13);
-  for(let i=0;i<10;i++){g.fillStyle=i%3?'#7a8a96':'#e07a2a';g.fillRect(DX+16+i*3,DY-9+((i*5+Math.floor(t0*6))%7),2,1)}
-  g.fillStyle='#4a5a66';for(let i=0;i<10;i++)g.fillRect(DX+16+i*3,DY-1,2,2);
-  g.fillStyle='#1a1a1a';g.fillRect(DX+4,DY-8,8,12);g.fillRect(DX+52,DY-8,8,12);g.fillStyle='#8a8a80';g.fillRect(DX+6,DY-5,4,4);g.fillRect(DX+54,DY-5,4,4);
-  g.fillStyle='#e8ecf0';g.fillRect(DX+22,DY+5,18,3);
-  g.save();g.shadowColor='#60e0ff';g.shadowBlur=10;g.fillStyle='rgba(120,220,255,.05)';g.fillRect(DX+10,DY-16,44,24);g.restore()}});
-  ents.push({y:99990,d:()=>{g.fillStyle='rgba(10,30,50,.25)';g.fillRect(0,0,C(W),C(H))}})}
+  const BX=C(17),BY=C(2),BW=C(20),BH=C(4);
+  /* комната записи за стеклом */
+  g.fillStyle='#6a7a7c';g.fillRect(BX,BY,BW,BH);
+  for(let i=0;i<BW;i+=6){g.fillStyle=i%12?'#7a8a88':'#728280';g.fillRect(BX+i,BY+4,5,BH-14)}
+  g.fillStyle='#4a5658';g.fillRect(BX,BY+BH-12,BW,12);
+  [[BX+28,'#cfefff'],[BX+92,'#e8f8ff'],[BX+104,'#cfefff'],[BX+250,'#9ae8ff']].forEach(([x,c])=>{g.save();g.shadowColor='#7ae0ff';g.shadowBlur=10;g.fillStyle=c;g.fillRect(x,BY+6,2,40);g.restore()});
+  g.fillStyle='#141414';g.fillRect(BX+40,BY+22,22,30);g.fillStyle='#2a2a2a';g.fillRect(BX+42,BY+24,18,12);g.fillStyle='#c8b070';g.font='4px "Press Start 2P",monospace';g.fillText('Marshall',BX+41,BY+44);g.fillStyle='#222';g.fillRect(BX+42,BY+46,18,4);
+  g.fillStyle='#3a3a3a';g.beginPath();g.arc(BX+132,BY+44,9,0,7);g.fill();g.fillStyle='#d8d8d0';g.beginPath();g.arc(BX+132,BY+44,6,0,7);g.fill();
+  g.fillStyle='#5a5a5a';g.fillRect(BX+118,BY+34,9,5);g.fillRect(BX+139,BY+34,9,5);g.fillStyle='#d8b84a';g.fillRect(BX+112,BY+26,14,2);g.fillRect(BX+142,BY+24,14,2);g.fillStyle='#888';g.fillRect(BX+118,BY+28,1,20);g.fillRect(BX+148,BY+26,1,22);
+  g.fillStyle='#1c1c1c';g.fillRect(BX+176,BY+16,1,36);g.fillStyle='#9a9a9a';g.fillRect(BX+173,BY+12,7,5);g.fillStyle='rgba(30,30,30,.7)';g.beginPath();g.arc(BX+176,BY+22,4,0,7);g.fill();
+  g.fillStyle='#d0d4d8';g.fillRect(BX+205,BY+14,26,34);g.fillStyle='#b8bcc0';g.fillRect(BX+207,BY+16,22,30);g.fillStyle='#8a8e92';g.fillRect(BX+212,BY+20,12,4);
+  /* стекло */
+  g.fillStyle='rgba(60,140,220,.28)';g.fillRect(BX+10,BY+4,BW-20,BH-6);g.fillStyle='rgba(200,240,255,.10)';for(let i=0;i<4;i++){g.beginPath();g.moveTo(BX+30+i*70,BY+4);g.lineTo(BX+50+i*70,BY+4);g.lineTo(BX+20+i*70,BY+BH-2);g.lineTo(BX+i*70,BY+BH-2);g.fill()}
+  g.fillStyle='#0c1014';g.fillRect(BX+8,BY+2,BW-16,3);g.fillRect(BX+8,BY+BH-3,BW-16,4);g.fillRect(BX+8,BY+2,3,BH);g.fillRect(BX+BW-11,BY+2,3,BH);
+  for(let i=0;i<BH;i+=5){g.fillStyle='#0a0a0a';g.beginPath();g.moveTo(BX,BY+i);g.lineTo(BX+8,BY+i+2.5);g.lineTo(BX,BY+i+5);g.fill();g.beginPath();g.moveTo(BX+BW,BY+i);g.lineTo(BX+BW-8,BY+i+2.5);g.lineTo(BX+BW,BY+i+5);g.fill()}
+  g.fillStyle='#8a9496';g.fillRect(BX,BY+BH,BW,3);
+  /* неоновая лампа слева, гитарный кейс и клавиши справа */
+  g.save();g.shadowColor='#9af0ff';g.shadowBlur=12;g.fillStyle='#e8fcff';g.fillRect(C(18)+2,C(6)+2,3,C(4));g.restore();
+  g.fillStyle='#14181a';g.beginPath();g.ellipse(C(35)+8,C(6)+14,7,13,0,0,7);g.fill();g.fillStyle='#1e2428';g.fillRect(C(35)+6,C(6)-2,4,8);
+  g.fillStyle='#2a2e30';g.fillRect(C(35)+2,C(10)-6,10,22);for(let i=0;i<9;i++){g.fillStyle='#e8e8e0';g.fillRect(C(35)+4,C(10)-4+i*2,6,1)}
+  /* колонки на стойках */
+  [[C(21)+4,C(7)-14],[C(32)+4,C(7)-14]].forEach(([x,y])=>{g.fillStyle='#333';g.fillRect(x+3,y+16,2,14);g.fillRect(x,y+29,8,2);g.fillStyle='#0e0e10';g.fillRect(x-2,y-2,12,18);g.fillStyle='#c8ccd0';g.beginPath();g.arc(x+4,y+10,4,0,7);g.fill();g.fillStyle='#8a8e92';g.beginPath();g.arc(x+4,y+10,1.5,0,7);g.fill();g.fillStyle='#d8dce0';g.beginPath();g.arc(x+4,y+2,1.5,0,7);g.fill()});
+  /* стол с монитором */
+  const DX=C(25),DY=C(8);g.fillStyle='#1e2a30';g.fillRect(DX,DY,C(6),16);g.fillStyle='#1a1e22';g.fillRect(DX,DY,C(6),12);g.fillStyle='#2e3438';g.fillRect(DX,DY,C(6),2);g.fillStyle='#101214';g.fillRect(DX+4,DY+12,3,6);g.fillRect(DX+C(6)-7,DY+12,3,6);
+  g.fillStyle='#08090a';g.fillRect(DX+18,DY-20,60,24);g.fillStyle='#b8c4cc';g.fillRect(DX+20,DY-18,56,19);
+  g.fillStyle='#3a4450';g.fillRect(DX+20,DY-18,56,3);for(let i=0;i<16;i++){g.fillStyle='#6a7884';g.fillRect(DX+22+i*3.4,DY-13,2,12);g.fillStyle=i%4?'#e8ecee':'#f0a040';g.fillRect(DX+22+i*3.4,DY-13+((i*7+Math.floor(t0*5))%10),2,2)}
+  g.fillStyle='#222';g.fillRect(DX+44,DY+4,8,4);g.fillStyle='#d8dce0';g.fillRect(DX+30,DY+6,30,4);
+  g.save();g.globalCompositeOperation='lighter';const gr=g.createRadialGradient(DX+48,DY-8,2,DX+48,DY-8,50);gr.addColorStop(0,'rgba(120,180,200,.25)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(DX-10,DY-60,120,110);g.restore()}});
+  const sa=npcs.find(n=>n.id==='salam');if(sa)ents.push({y:C(10)+4,d:()=>{const X=C(28)-8,Y=C(9)-6;
+    g.fillStyle='#0c0c0e';g.fillRect(X+2,Y+18,12,6);g.fillRect(X+7,Y+24,2,5);g.fillRect(X+3,Y+28,10,2);
+    drawChar(g,X,Y,'salam','up',0,1);g.fillStyle='#101012';g.fillRect(X+3,Y+15,10,8)}});
+  ents.push({y:99990,d:()=>{g.fillStyle='rgba(10,40,48,.28)';g.fillRect(0,0,C(W),C(H))}})}
 function milWorld(ents){if(curMap==='vault'&&MIL.ph==='vault'||curMap==='vault'&&MIL.ph==='found'){ents.push({y:C(10)+14,d:()=>{const X=C(17)+1,Y=C(10)+4;g.fillStyle='rgba(0,0,0,.45)';g.fillRect(X-1,Y+11,16,3);g.fillStyle='#6a6080';g.fillRect(X-1,Y-1,16,13);g.fillStyle='#1a1820';g.fillRect(X,Y,14,11);g.fillStyle='#0e0c12';g.fillRect(X-1,Y-4,16,4);g.fillStyle='#6a6080';g.fillRect(X-1,Y-5,16,1);
     const pc=['#ff4a6a','#4ad0ff','#ffd84d','#7aff6a','#c07aff'];for(let i=0;i<10;i++){g.fillStyle=pc[i%5];g.fillRect(X+2+(i%5)*2+((i/5|0)),Y+2+(i/5|0)*2,1,1)}
     g.fillStyle='#1f4a2a';g.fillRect(X+9,Y+6,4,4);g.fillRect(X+11,Y+9,2,3);g.fillStyle='#2a6a3a';g.fillRect(X+10,Y+7,2,1)}})}
@@ -1521,7 +1544,7 @@ function render(){
   if(KS){drawKiss();return}
   if(S[lvl]&&S[lvl].rhythm&&RZ){drawRhythm();return}
   pct.style.display='none';lyr.style.display='none';
-  const cp=PS?camPolice():AR?[C(19),C(10)]:(BZ&&curMap==='gym8')?[C(20),C(10)]:(SP&&curMap==='gym8')?[C(20),C(12)]:null;
+  const cp=curMap==='studio'&&P.y<C(12)&&P.x>C(16)?[P.x,C(7)]:PS?camPolice():AR?[C(19),C(10)]:(BZ&&curMap==='gym8')?[C(20),C(10)]:(SP&&curMap==='gym8')?[C(20),C(12)]:null;
   const both=!cp&&!SC&&!GS&&p2On(),fx=cp?cp[0]:SC?C(6):GS?C(7):both?(P.x+P2.x)/2:P.x,fy=cp?cp[1]:SC?C(5):GS?C(5):both?(P.y+P2.y)/2:P.y,sh=SC&&SC.t>5.6&&SC.t<6.1?Math.round(Math.sin(SC.t*90)*3):0;
   cam.x=Math.max(0,Math.min(W*TS-VW,Math.round(fx-VW/2)))+sh;cam.y=Math.max(0,Math.min(H*TS-VH,Math.round(fy-VH/2)));
   g.setTransform(1,0,0,1,0,0);g.drawImage(bg,-cam.x,-cam.y);g.translate(-cam.x,-cam.y);
