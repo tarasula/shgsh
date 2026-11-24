@@ -1420,24 +1420,29 @@ function drawRay(){g.setTransform(1,0,0,1,0,0);g.imageSmoothingEnabled=false;con
   if(noteT>0&&mode==='play'){noteT-=1/60;g.fillStyle='rgba(0,0,0,.7)';g.fillRect(10,24,300,18);g.fillStyle='#ffd84d';g.font='7px "Press Start 2P",monospace';g.fillText(note,16,36)}
   const ri=R[Math.floor(P.y/TS)]?.[Math.floor(P.x/TS)];hl.textContent=`Глава ${lvl+1} · ${ri>=0?ROOMS[ri].n:''} · 1-е лицо`}
 let MIL=null,QR=null,FLB=null;
+const FLC2=document.createElement('canvas');FLC2.width=32;FLC2.height=30;const flx=FLC2.getContext('2d');
+function kidSprite(id,point,fr){flx.clearRect(0,0,32,30);drawChar(flx,8,2,id,'down',fr);const k=look(id),sl=({tee:'#f2f2f2',shirtw:'#f2f4f8',hoodie:'#3a9a5a',hoodieb:'#16161a'})[k.top]||'#f2f2f2',sk=k.skin||'#f0c7a4';
+  if(point>0){flx.clearRect(21,15,3,8);flx.fillStyle=sl;flx.fillRect(21,15,5,2);flx.fillStyle=sk;flx.fillRect(26,15,4,2);flx.fillRect(30,15,2,1)}
+  else{flx.clearRect(8,15,3,8);flx.fillStyle=sl;flx.fillRect(6,15,5,2);flx.fillStyle=sk;flx.fillRect(2,15,4,2);flx.fillRect(0,15,2,1)}}
+function boySprite(){flx.clearRect(0,0,32,30);drawChar(flx,8,2,'svin','down',0);flx.clearRect(0,22,32,8);flx.fillStyle='#22222a';flx.fillRect(10,22,12,3);flx.fillStyle='#16161c';flx.fillRect(10,24,12,1)}
 function drawFLB(){const t=(FLB.t+=1/60);g.setTransform(1,0,0,1,0,0);
-  g.fillStyle='#0c0a0a';g.fillRect(0,0,320,192);g.fillStyle='#3a3634';g.fillRect(20,14,280,96);g.fillStyle='#2a2624';g.fillRect(20,110,280,70);
-  g.font='9px "Press Start 2P",monospace';g.fillStyle='rgba(230,90,140,.5)';g.fillText('СВИН',40,52);g.fillStyle='rgba(120,200,120,.4)';g.fillText('ХРЮ',220,40);g.fillStyle='rgba(240,240,240,.25)';g.fillText('XD',250,82);
-  const big=(id,x,y,sc,dir,sit,fr)=>{g.save();g.translate(x,y);g.scale(sc,sc);drawChar(g,0,0,id,dir,fr||0,sit);g.restore()};
-  const by=Math.round(Math.sin(t*5)*1.5),BX=136,BY=78+by;
-  g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(160,152,30,6,0,0,7);g.fill();
-  big('svin',BX,BY,3,'down',1);
-  g.fillStyle='#22222a';g.fillRect(BX+6,BY+66,36,9);g.fillStyle='#f0c7a4';g.fillRect(BX+2,BY+56,8,6);g.fillRect(BX+38,BY+56,8,6);
-  g.fillStyle='#f2a6b8';g.beginPath();g.ellipse(BX+24,BY+20,15,13,0,0,7);g.fill();
-  g.beginPath();g.moveTo(BX+10,BY+8);g.lineTo(BX+6,BY-2);g.lineTo(BX+16,BY+5);g.fill();g.beginPath();g.moveTo(BX+38,BY+8);g.lineTo(BX+42,BY-2);g.lineTo(BX+32,BY+5);g.fill();
-  g.fillStyle='#e07a92';g.beginPath();g.ellipse(BX+24,BY+24,7,5,0,0,7);g.fill();g.fillStyle='#5a2030';g.fillRect(BX+20,BY+22,2,4);g.fillRect(BX+26,BY+22,2,4);
-  g.fillStyle='#1a1a1a';g.fillRect(BX+15,BY+14,4,3);g.fillRect(BX+29,BY+14,4,3);
-  if(Math.floor(t*1.6)%2){g.font='6px "Press Start 2P",monospace';g.fillStyle='#f2a6b8';g.fillText('хрю…',BX+46,BY+12)}
-  [['opp1',44,64,'right',1],['opp2',236,62,'left',-1],['opp3',196,30,'down',-1]].forEach(([id,x,y,dir,s],i)=>{const j=-Math.round(Math.abs(Math.sin(t*7+i*2))*3);big(id,x,y+j,2.6,dir,0,Math.floor(t*4+i)%2);
-    g.fillStyle='#f0c7a4';const ax=x+(s>0?36:4),ay=y+j+30;g.fillRect(s>0?ax:ax-16,ay,16,4);g.fillRect(s>0?ax+14:ax-18,ay-1,4,3);
-    if(Math.floor(t*3+i)%3){g.font='7px "Press Start 2P",monospace';g.fillStyle='#ffd84d';g.fillText(['ХА-ХА!','ХА-ХА-ХА!','СВИНТУС!'][i],x-4+(i===1?-10:0),y+j-6)}});
-  const gr=g.createRadialGradient(160,96,50,160,96,190);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.85)');g.fillStyle=gr;g.fillRect(0,0,320,192);
-  g.fillStyle='rgba(90,60,40,.18)';g.fillRect(0,0,320,192);g.font='6px "Press Start 2P",monospace';g.fillStyle='rgba(255,255,255,.6)';g.fillText('Воспоминание…',8,12)}
+  const sky=g.createLinearGradient(0,0,0,80);sky.addColorStop(0,'#1a2240');sky.addColorStop(1,'#5a4a5a');g.fillStyle=sky;g.fillRect(0,0,320,80);
+  g.fillStyle='#4a4440';g.fillRect(0,22,190,78);g.fillStyle='#3a3430';for(let i=0;i<6;i++)g.fillRect(14+i*30,34,16,18);g.fillStyle='#d8c060';g.fillRect(44,38,12,12);
+  g.fillStyle='#5a3a2a';g.fillRect(190,40,130,60);g.fillStyle='#4a2e22';g.fillRect(200,50,18,26);
+  g.font='9px "Press Start 2P",monospace';g.fillStyle='rgba(240,100,150,.75)';g.fillText('СВИН',22,72);g.fillStyle='rgba(120,220,120,.6)';g.fillText('ХРЮ',120,62);g.fillStyle='rgba(120,180,255,.5)';g.fillText('ХРЮ-ХРЮ',226,92);
+  g.fillStyle='#6a6660';g.fillRect(0,98,320,8);g.fillStyle='#3a3a3e';g.fillRect(0,106,320,86);g.fillStyle='#4a4a50';for(let i=0;i<8;i++)g.fillRect(i*44,146,22,2);
+  g.fillStyle='#2a2a2a';g.fillRect(292,20,3,82);g.fillStyle='#ffe8a0';g.fillRect(286,16,14,4);const lg=g.createRadialGradient(292,30,2,292,60,60);lg.addColorStop(0,'rgba(255,230,160,.25)');lg.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=lg;g.fillRect(230,10,120,120);
+  const draw=(x,y,sc)=>{g.drawImage(FLC2,0,0,32,30,x,y,32*sc,30*sc)};
+  const sc=2.6,by=Math.round(Math.sin(t*5)*1.2),BX=118,BY=150-25*sc+by;g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(BX+16*sc,150,24,5,0,0,7);g.fill();
+  boySprite();draw(BX,BY,sc);g.fillStyle='#16161c';g.fillRect(BX+9*sc,BY+24*sc,4*sc,1*sc);g.fillRect(BX+19*sc,BY+24*sc,4*sc,1*sc);
+  const cx=BX+16*sc,cy=BY+10*sc;g.fillStyle='#f2a6b8';g.beginPath();g.ellipse(cx,cy,13,11,0,0,7);g.fill();
+  g.beginPath();g.moveTo(cx-12,cy-8);g.lineTo(cx-16,cy-18);g.lineTo(cx-6,cy-11);g.fill();g.beginPath();g.moveTo(cx+12,cy-8);g.lineTo(cx+16,cy-18);g.lineTo(cx+6,cy-11);g.fill();
+  g.fillStyle='#e07a92';g.beginPath();g.ellipse(cx,cy+4,6,4,0,0,7);g.fill();g.fillStyle='#5a2030';g.fillRect(cx-4,cy+2,2,3);g.fillRect(cx+2,cy+2,2,3);g.fillStyle='#1a1a1a';g.fillRect(cx-8,cy-4,3,3);g.fillRect(cx+5,cy-4,3,3);
+  if(Math.floor(t*1.6)%2){g.font='6px "Press Start 2P",monospace';g.fillStyle='#f2a6b8';g.fillText('хрю…',BX+30*sc,BY+6*sc)}
+  [['opp1',16,70,1],['opp2',206,72,-1],['opp3',178,44,-1]].forEach(([id,x,y,s],i)=>{const j=-Math.round(Math.abs(Math.sin(t*7+i*2))*3);kidSprite(id,s,Math.floor(t*4+i)%2);draw(x,y+j,i===2?2.2:2.6);
+    if(Math.floor(t*3+i)%3){g.font='7px "Press Start 2P",monospace';g.fillStyle='#ffd84d';g.fillText(['ХА-ХА!','ХА-ХА-ХА!','СВИНТУС!'][i],x+12,y+j-4)}});
+  const gr=g.createRadialGradient(160,96,60,160,96,200);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.8)');g.fillStyle=gr;g.fillRect(0,0,320,192);
+  g.fillStyle='rgba(90,60,40,.15)';g.fillRect(0,0,320,192);g.font='6px "Press Start 2P",monospace';g.fillStyle='rgba(255,255,255,.6)';g.fillText('Воспоминание…',8,12)}
 Object.assign(N,{svin:'Мальчик'});function dirTo2(x,y){const dx=P.x-x,dy=P.y-y;return Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up')}Object.assign(N,{salam:'Саламандра',fan1:'Фанатка',fan2:'Фанат',fan3:'Фанатка',fan4:'Фанат',fan5:'Фанатка',fan6:'Фанат',fan7:'Фанатка',fan8:'Фанат',fan9:'Фанатка',fan10:'Фанатка',fan11:'Фанат',fan12:'Фанатка'});
 const QRD=[['dima','Э-э… Дерзкий. Посмотри на это.'],['derz','Стоп. Это что… наркотики?!'],['polina','Это не билеты! Кто-то подменил QR-код.'],['dima','Подожди… Я недавно был на складе в школе. Там стояла такая же коробка — как на этом сайте.'],['derz','А зачем ты вообще ходил на склад?'],['dima','Ну… было дело. Неважно.'],['derz','Ладно. Идём проверим. Сейчас же.']];
 const BOXD=[['derz','Вот она… Тёмная коробка. А внутри — разноцветные таблетки.'],['polina','Это хранят прямо в школе?! Или тут их продают?'],['derz','Надо узнать, кто это сюда притащил.'],['dima','Подожди. Смотри — тут тёмно-зелёная краска. Свежая. Мы её трогали.'],['dima','Если снимут отпечатки — посадят нас, а не их.'],['derz','…Уходим. Быстро.'],['dima','Идём на концерт. Разберёмся потом.']];
