@@ -103,7 +103,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
     <div class="tc" id="tc"><div class="tz tzl" id="tzL"></div><div class="tz tzr" id="tzR"></div><div class="joy" id="joy"><i></i></div><div class="tlook">правый палец —<br>куда смотреть</div>
       <button class="tb tbQ" data-c="KeyQ">Q</button><button class="tb tbE" data-c="KeyE">E</button>
       <div class="tlanes"><div><button data-c="ArrowLeft">◀</button><button data-c="ArrowDown">▼</button></div><div><button data-c="ArrowUp">▲</button><button data-c="ArrowRight">▶</button></div></div>
-      <div class="tmenu"><button id="tfs" aria-label="На весь экран">⛶</button><button id="tview" aria-label="Сменить вид">👁</button><button id="trst" aria-label="Заново">⟲</button></div></div>
+      <div class="tmenu"><button id="tfs" aria-label="На весь экран">⛶</button><button id="trst" aria-label="Заново">⟲</button></div></div>
     <div class="ov" id="ov"></div>
   </div></div>
   <div class="below">
@@ -116,7 +116,7 @@ button:focus-visible{outline:3px solid #ffd84d;outline-offset:2px}
       <button class="act" id="act" aria-label="Действие">E</button>
     </div>
   </div>
-  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="viewb" style="margin:0 0 10px">Вид: сверху</button> <button class="btn alt" id="mus" style="display:none">Музыка: вкл</button> <button class="btn alt" id="coop" style="display:none">Вдвоём: выкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
+  <p class="keys"><button class="btn alt" id="reset" style="margin:0 0 10px">Начать игру заново</button> <button class="btn alt" id="mus" style="display:none">Музыка: вкл</button> <button class="btn alt" id="coop" style="display:none">Вдвоём: выкл</button><br>Клавиатура: стрелки или WASD — ходить, E или пробел — говорить и листать диалоги. Жёлтый конус — взгляд, в него не заходи. На концерте стрелки — это ноты.</p>
 </div>
 <script>
 {
@@ -1337,12 +1337,12 @@ function drawFP(){const f=FP,t=f.t;g.save();g.setTransform(1,0,0,1,0,0);
   g.fillStyle='rgba(0,0,0,.7)';g.fillRect(0,0,320,22);g.fillStyle='#ffd84d';g.font='8px "Press Start 2P",monospace';g.fillText('Математичка: '+ln,8,14);
   const blink=t>5?Math.min(1,(t-5)/1):0,ey=96*blink+(hitting&&ph<.2?20:0);g.fillStyle='#000';g.fillRect(0,0,320,ey);g.fillRect(0,192-ey,320,ey);
   g.restore()}
-let PVIEW='top',FPA=0;try{PVIEW=localStorage.getItem('shgshView')==='fp'?'fp':'top'}catch(e){}
+let PVIEW='top',FPA=0;try{localStorage.removeItem('shgshView')}catch(e){}
 function angDir(a){const c=Math.cos(a),s=Math.sin(a);return Math.abs(c)>Math.abs(s)?(c>0?'right':'left'):(s>0?'down':'up')}
 function dirAng(d){return {right:0,down:Math.PI/2,left:Math.PI,up:-Math.PI/2}[d]||0}
 function fpOn(){return PVIEW==='fp'&&['play','dialog','wait'].includes(mode)&&!BZ&&!SP&&!CS&&!BR&&!GS&&!AR&&!P.sit&&!P.hide}
 function setView(v){PVIEW=v;try{localStorage.setItem('shgshView',v)}catch(e){}FPA=dirAng(P.dir);const b=$('viewb');if(b)b.textContent=v==='fp'?'Вид: от первого лица':'Вид: сверху';note=v==='fp'?'Вид от первого лица. ↑↓ — идти, ←→ — поворот. V — сменить вид.':'Вид сверху. V — сменить вид.';noteT=3}
-addEventListener('keydown',e=>{if(e.code==='KeyV'&&!e.repeat&&mode!=='title'){setView(PVIEW==='fp'?'top':'fp')}});
+
 const FPC=document.createElement('canvas');FPC.width=16;FPC.height=30;const fpc=FPC.getContext('2d');
 const ZB=new Float32Array(320);
 function wallCol(t){const m={home:'#c9b08a',vault:'#3e3848',casino:'#5a1830',gym8:'#a9bccf'}[curMap]||'#d9d0bb';
