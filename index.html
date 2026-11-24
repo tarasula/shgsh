@@ -557,7 +557,19 @@ function nextLine(){
 dlg.addEventListener('click',()=>{if(mode==='dialog'&&!typingBusy())nextLine()});
 
 /* ===== ЭКРАНЫ ===== */
-function show(html){ov.innerHTML=html;ov.classList.add('on')}
+let HEARTS=5,HFX=0;try{const h=+localStorage.getItem('shgshHearts');if(h>=1&&h<=5)HEARTS=h}catch(e){}
+function saveHearts(){try{localStorage.setItem('shgshHearts',HEARTS)}catch(e){}}
+const LOSE_TAGS=['ПОПАЛСЯ!','ЗАЛ НЕ КАЧАЕТ','НОКАУТ','ЗАМЕТИЛИ!','ПОЙМАЛИ!'];
+function loseLife(){HEARTS=Math.max(0,HEARTS-1);HFX=1.5;saveHearts();snd(140,.3,'sawtooth',.08);return HEARTS}
+function gameOverHTML(){return `<div class="tag">ЖИЗНИ ЗАКОНЧИЛИСЬ</div><h2>💔 💔 💔 💔 💔</h2><p>Все 5 сердечек потрачены. Глава начнётся заново, и жизни восстановятся.</p><button class="btn" id="bgo">Начать главу заново</button><button id="b1" style="display:none"></button><button id="b2" style="display:none"></button>`}
+function show(html){if(typeof html==='string'&&LOSE_TAGS.some(t=>html.includes('class="tag">'+t))){if(loseLife()<=0){ov.innerHTML=gameOverHTML();ov.classList.add('on');mode='card';const b=$('bgo');if(b)b.onclick=()=>{HEARTS=5;saveHearts();card()};return}
+    html=html.replace('</h2>',`</h2><p style="font-size:16px;letter-spacing:2px">${'❤️'.repeat(HEARTS)}${'🖤'.repeat(5-HEARTS)}</p><p style="font-size:12px">Минус жизнь! Осталось: ${HEARTS}</p>`)}
+  ov.innerHTML=html;ov.classList.add('on')}
+function drawHearts(){if(['title','card','end'].includes(mode))return;g.setTransform(1,0,0,1,0,0);const x0=320-5*11-4,y0=4;
+  for(let i=0;i<5;i++){const x=x0+i*11,y=y0,on=i<HEARTS,bl=HFX>0&&i===HEARTS&&Math.floor(HFX*8)%2;const c=on?'#e8283b':bl?'#ff8a9a':'#3a2a30';
+    g.fillStyle='rgba(0,0,0,.55)';g.fillRect(x-1,y-1,11,10);g.fillStyle=c;g.fillRect(x+1,y,3,2);g.fillRect(x+5,y,3,2);g.fillRect(x,y+1,9,3);g.fillRect(x+1,y+4,7,2);g.fillRect(x+2,y+6,5,1);g.fillRect(x+3,y+7,3,1);g.fillRect(x+4,y+8,1,1);
+    if(on){g.fillStyle='#ff9aa8';g.fillRect(x+1,y+1,2,1)}}
+  if(HFX>0)HFX-=1/60}
 function hide(){ov.classList.remove('on')}
 function titleScreen(){
   mode='title';
@@ -1937,7 +1949,7 @@ function updSport(dt){const p=SP;p.t+=dt;if(p.msgT>0)p.msgT-=dt;if(p.fl>0)p.fl-=
   (p.parts||[]).forEach(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=100*dt;q.t-=dt});if(p.parts)p.parts=p.parts.filter(q=>q.t>0);
   p.bub=p.bub.filter(b=>(b.t-=dt)>0);
   if(p.ph==='rec'){if(p.t>4.2){spEv('tug')}return}
-  if(p.ph==='won'||p.ph==='lost'){if(p.t>1.6){const ev=p.ev,won=p.ph==='won';p.ph='talk';const L=[['kuv',(won?SWIN1:SLOSE)[ev]+` Счёт ${p.us}:${p.them}.`]];if(ev==='kar'){const ok=p.us>=p.them;SPW=ok;L.push(...(ok?SWINEND:SLOSEEND))}talk(L,()=>{mode='sport';if(ev==='tug')spEv('kar');else{SP=null;bandIntro()}})}return}
+  if(p.ph==='won'||p.ph==='lost'){if(p.t>1.6){const ev=p.ev,won=p.ph==='won';p.ph='talk';const L=[['kuv',(won?SWIN1:SLOSE)[ev]+` Счёт ${p.us}:${p.them}.`]];if(ev==='kar'){const ok=p.us>=p.them;SPW=ok;if(!ok){if(loseLife()<=0){HEARTS=1;saveHearts()}note='Спартакиада проиграна — минус жизнь!';noteT=3}L.push(...(ok?SWINEND:SLOSEEND))}talk(L,()=>{mode='sport';if(ev==='tug')spEv('kar');else{SP=null;bandIntro()}})}return}
   if(p.ph!=='go')return;
   if(!p.ins&&p.t>2.5){p.ins=1;const [a,b]=SINS[p.ev];p.bub.push({w:a[0],txt:a[1],t:2.4});setTimeout(()=>{if(SP)SP.bub.push({w:b[0],txt:b[1],t:2.6})},1300)}
   if(p.ev==='tug'){if(keys.left&&!p.lk){p.R-=.05;p.pow=Math.min(1,p.pow+.2);snd(180+Math.random()*60,.04,'square',.03)}p.lk=keys.left;p.pow=Math.max(0,p.pow-dt*.9);p.bcd-=dt;if(p.brace>0)p.brace-=dt;p.nextS-=dt;if(p.nextS<=0&&p.surge<=0){p.surge=1.1;p.nextS=2.4+Math.random()*1.8}
@@ -2290,7 +2302,7 @@ function inp(){if(JOY.on&&Math.hypot(JOY.x,JOY.y)>.25)return[JOY.x,JOY.y];return
   window.__joy={JOY,LOOK}})();
 function loop(now){if(now-last<15&&now>last){requestAnimationFrame(loop);return}if(NET.guest){netGuestTick();requestAnimationFrame(loop);return}$('tc').classList.toggle('rh',mode==='rhythm'||(mode==='band'&&BZ&&!BZ.sing));$('tc').classList.toggle('bh',mode==='band'&&!!BZ&&!!BZ.hold);musTick();const dt=Math.min(.05,(now-last)/1000);last=now;typeStep(dt);update(dt);netHostTick();if(LOOK.on&&LOOK.dir&&(mode==='play'||mode==='brawl')&&!P.sit)P.dir=LOOK.dir;render();requestAnimationFrame(loop)}
 setup();titleScreen();requestAnimationFrame(loop);
-{const _R=render;render=function(){_R();if(mode==='qr'&&QR){try{drawQR()}catch(e){}}if(FLB&&mode==='dialog'){try{drawFLB()}catch(e){}}}}
+{const _R=render;render=function(){_R();try{drawHearts()}catch(e){}if(mode==='qr'&&QR){try{drawQR()}catch(e){}}if(FLB&&mode==='dialog'){try{drawFLB()}catch(e){}}}}
 }
 
 </script>
