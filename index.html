@@ -2193,6 +2193,11 @@ function drawBand(top){const z=BZ,t=z.t,beat=Math.floor(t/.476),bob=beat%2,hop=z
 
 /* ===== ИГРА ПО СЕТИ (PeerJS / WebRTC) ===== */
 const NET={host:0,guest:0,peer:null,conn:null,code:'',last:'',lastOv:'',ui:0,ks:''};
+function rtcFix(){const R0=window.RTCPeerConnection||window.webkitRTCPeerConnection||window.mozRTCPeerConnection;
+  if(!R0){nsay('Этот браузер не умеет играть по сети (нет WebRTC). Открой tarasula.github.io/shgsh в Safari или Chrome — не во встроенном браузере Telegram/Instagram и не с иконки «Домой».');return false}
+  if(!window.RTCPeerConnection)window.RTCPeerConnection=R0;
+  try{const u=(window.peerjs&&window.peerjs.util)||(window.Peer&&window.Peer.util);if(u&&u.supports){u.supports.webRTC=true;u.supports.data=true;u.supports.audioVideo=true;u.supports.reliable=true;u.supports.binaryBlob=false}}catch(e){}
+  return true}
 function peerLib(){return new Promise((ok,no)=>{if(window.Peer)return ok();const urls=['https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js'];let i=0;
   const next=()=>{if(i>=urls.length)return no();const sc=document.createElement('script');sc.src=urls[i++];sc.onload=()=>window.Peer?ok():next();sc.onerror=next;document.head.appendChild(sc)};next()})}
 function netMenu(){mode='title';
@@ -2203,7 +2208,7 @@ function netMenu(){mode='title';
   const ni=$('nc');ni.addEventListener('keydown',e=>e.stopPropagation());
   $('nh').onclick=()=>netHost();$('nj').onclick=()=>netJoin(ni.value.trim());$('nb').onclick=()=>titleScreen()}
 function nsay(t){const e=$('ns');if(e)e.textContent=t}
-function netHost(){nsay('Создаю комнату…');peerLib().then(()=>{const code=String(Math.floor(1000+Math.random()*9000));NET.code=code;
+function netHost(){nsay('Создаю комнату…');peerLib().then(()=>{if(!rtcFix())return;const code=String(Math.floor(1000+Math.random()*9000));NET.code=code;
   const peer=new Peer('shgsh-'+code);NET.peer=peer;
   peer.on('open',()=>{const link=location.origin+location.pathname+'?join='+code;show(`<div class="tag">КОМНАТА СОЗДАНА</div><h2 style="font-size:26px;letter-spacing:4px">${code}</h2><p style="font-size:13px">Скажи другу этот код или скинь ссылку:<br><b style="word-break:break-all">${link}</b></p><p id="ns" style="font-size:12px;color:#ffd84d">Ждём второго игрока…</p><button class="btn alt" id="nk">Копировать ссылку</button> <button class="btn alt" id="nb">На главный экран</button>`);
     $('nk').onclick=()=>{try{navigator.clipboard.writeText(link);nsay('Ссылка скопирована!')}catch(e){}};$('nb').onclick=()=>titleScreen()});
@@ -2221,7 +2226,7 @@ function netHostTick(){if(!NET.host||!NET.conn)return;const now=performance.now(
   const ui={t:'ui',dl:dlg.classList.contains('on')?1:0,dn:dn.textContent,dt:dt.textContent,task:task.innerHTML,hl:hl.textContent,hr:hr.textContent,ovOn:ov.classList.contains('on')?1:0,pct:pct.style.display==='block'?pv.textContent:'',lyr:lyr.style.display==='block'?lyr.textContent:''};
   const oh=ov.innerHTML;if(oh!==NET.lastOv){NET.lastOv=oh;ui.ov=oh}netSend(ui)}
 function netJoin(code){if(!/^\d{4}$/.test(code)){nsay('Введи 4 цифры кода');return}nsay('Подключаюсь…');
-  peerLib().then(()=>{const peer=new Peer();NET.peer=peer;
+  peerLib().then(()=>{if(!rtcFix())return;const peer=new Peer();NET.peer=peer;
     peer.on('open',()=>{const conn=peer.connect('shgsh-'+code,{reliable:true});NET.conn=conn;
       conn.on('open',()=>{NET.guest=1;mode='guest';hide();netGuestUI();note='';snd(880,.15,'square',.05)});
       conn.on('data',d=>netGuestData(d));conn.on('close',()=>{NET.guest=0;location.href=location.pathname})});
