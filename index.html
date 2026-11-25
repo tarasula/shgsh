@@ -801,6 +801,7 @@ function action(){
   if(n.target&&homePhase==='run'&&n.id==='mom'){talk(MOMHURT,()=>startSneak());return}
   if(n.target&&homePhase==='mom2'){homePhase='bro';talk([['mom','Дима! Господи, ты весь в синяках… Как прошёл день?'],['dima','Мам, сегодня к нам в школу ворвались…']],()=>startBrother());return}
   if(n.target&&curMap==='home'&&!S[lvl].homeCh&&homePhase!=='mom2'&&homePhase!=='run'){talk([[n.id,homePhase==='bed3'?'Дима, поздно уже. Иди спать.':'(шёпотом) Дима, тише…']]);return}
+  if(S[lvl].homeCh&&homePhase!=='mom'&&curMap==='home'){talk([[n.id,n.id==='mom'?'Дима, поздно уже. Иди спать — твоя комната справа по коридору.':n.id==='otchim'?'Чего встал? Спать иди, сынок.':(n.say||'…')]]);return}
   if(n.target&&S[lvl].homeCh&&homePhase==='mom'){mode='wait';homePhase='rec';play('otchim');const a=AEL.otchim;let done=0;const go2=()=>{if(done)return;done=1;talk(HOME,()=>{homePhase='bed';updTask()})};if(a){a.onended=go2}setTimeout(go2,6300);return}
   if(S[lvl].sportCh&&n.id==='malya'&&(mal8||POST)){talk([['malya','Я не хочу больше с тобой общаться.']]);return}
   if(POST&&n.target){talk([[n.id,n.say]]);return}
